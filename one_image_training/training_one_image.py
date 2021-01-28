@@ -60,9 +60,9 @@ class Estimator:
         self.kBp= \
             calculate_kBp(convert_to_1d(self.betas))
         self.Gamma = SIGMA_G
-        self.images = np.array([[0, 1, 1, 1, 0]]).T
+        self.images = IMAGE
         self.YTY = np.linalg.norm(self.images) ** 2
-        self.predictions = np.array([[0, 0, 0, 0, 0]]).T
+        self.predictions = PREDICT_INIT
 
     def to_minimize(self, b1d):
         result = (1 / 2) * np.matmul(b1d.T, np.matmul(np.linalg.inv(self.Gamma),

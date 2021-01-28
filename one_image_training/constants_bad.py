@@ -3,15 +3,20 @@ import numpy as np
 TEMPLATE_SD = 1
 DEFORM_SD = 1
 SD_INIT = 1
+
 ALPHAS_INIT = np.array([[0, 0]]).T
 BETAS_INIT = np.array([[0, 0]]).T
-IMAGE_DIM = 5
+KP = ALPHAS_INIT.size
+KG = BETAS_INIT.size
+
+IMAGE = np.array([[0, 1, 1, 1, 0]]).T
+IMAGE_DIM = IMAGE.size
+PREDICT_INIT = np.array([[0, 0, 0, 0, 0]]).T
+assert PREDICT_INIT.size == IMAGE_DIM
 
 AG = 1
 AP = 1
 N = 1
-KP = 2
-KG = 2
 MU_P = np.array([[0, 0]]).T
 
 # Initializers
