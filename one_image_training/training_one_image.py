@@ -2,11 +2,9 @@ from scipy import optimize
 
 from one_image_training.constants_bad import *
 
-
 def kernel_function(a, center, sd) -> int:
     return np.exp(-(np.linalg.norm(a - center) ** 2)
                   / (2 * sd ** 2))
-
 
 # Deformation
 def cal_deformation(x, b1d):
