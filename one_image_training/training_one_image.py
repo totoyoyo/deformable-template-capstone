@@ -31,7 +31,7 @@ def calculate_kBp(b1d):
     return tmp_kbp
 
 
-class Estimator:
+class Estimator1D1Image:
 
     def __init__(self):
         self.alphas = ALPHAS_INIT
@@ -104,7 +104,7 @@ class Estimator:
         print(self.predictions)
 
 
-my_estimator = Estimator()
+my_estimator = Estimator1D1Image()
 my_estimator.run_estimation(10)
 plt.plot(my_estimator.predictions)
 plt.show()
