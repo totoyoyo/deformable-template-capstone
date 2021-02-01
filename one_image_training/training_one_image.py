@@ -1,8 +1,8 @@
 from scipy import optimize
 
-from one_image_training.constants_better import *
-from one_image_training.constants_better import gaussian_kernel
+from one_image_training.constants_1d_1 import *
 
+import matplotlib.pyplot as plt
 
 # Deformation
 def cal_deformation(x, b1d):
@@ -105,4 +105,8 @@ class Estimator:
 
 
 my_estimator = Estimator()
-my_estimator.run_estimation(100)
+my_estimator.run_estimation(10)
+plt.plot(my_estimator.predictions)
+plt.show()
+plt.plot(my_estimator.images)
+plt.show()

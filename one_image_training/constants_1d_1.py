@@ -1,16 +1,20 @@
 import numpy
 import numpy as np
 
-TEMPLATE_SD = 1
-DEFORM_SD = 1
+TEMPLATE_SD = 0.3
+DEFORM_SD = 0.3
 SD_INIT = 1
 
-KP = 10
-KG = 10
+KP = 15
+KG = 15
 ALPHAS_INIT = np.zeros((KP,1))
 BETAS_INIT = np.zeros((KG,1))
-P_CENTERS = np.array([[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]]).T
-G_CENTERS = np.array([[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]]).T
+P_CENTERS = np.array([[30, 32, 34, 36, 38,
+                       40, 42, 44, 46, 48,
+                       50, 52, 54, 56, 58]]).T
+G_CENTERS = np.array([[30, 32, 34, 36, 38,
+                       40, 42, 44, 46, 48,
+                       50, 52, 54, 56, 58]]).T
 assert P_CENTERS.size == KP
 assert G_CENTERS.size == KG
 
@@ -38,7 +42,7 @@ PREDICT_INIT = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]).T
 assert PREDICT_INIT.size == IMAGE_DIM
-AG = 1
+AG = 5
 AP = 1
 N = 1
 MU_P = np.zeros((KP,1))
