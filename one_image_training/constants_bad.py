@@ -9,7 +9,7 @@ BETAS_INIT = np.array([[0, 0]]).T
 KP = ALPHAS_INIT.size
 KG = BETAS_INIT.size
 
-IMAGE = np.array([[1, 1, .5, 0, 0]]).T
+IMAGE = np.array([[0.3, 1, .5, 0, 0]]).T
 IMAGE_DIM = IMAGE.size
 PREDICT_INIT = np.array([[0, 0, 0, 0, 0]]).T
 assert PREDICT_INIT.size == IMAGE_DIM

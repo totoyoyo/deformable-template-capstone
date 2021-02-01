@@ -1,33 +1,15 @@
 from scipy import optimize
 
-from one_image_training.constants_bad import *
+from one_image_training.constants_better import *
+from one_image_training.constants_better import gaussian_kernel
 
-def kernel_function(a, center, sd) -> int:
-    return np.exp(-(np.linalg.norm(a - center) ** 2)
-                  / (2 * sd ** 2))
 
 # Deformation
 def cal_deformation(x, b1d):
     sumer = 0
     for index, center in enumerate(G_CENTERS):
-        sumer += b1d[index] * kernel_function(x, center, DEFORM_SD)
+        sumer += b1d[index] * gaussian_kernel(x, center, DEFORM_SD)
     return sumer
-
-
-for i in range(KP):
-    for j in range(KP):
-        SIGMA_P_INV[i, j] = kernel_function(P_CENTERS[i],
-                                            P_CENTERS[j],
-                                            TEMPLATE_SD)
-
-for i in range(KG):
-    for j in range(KG):
-        SIGMA_G_INV[i, j] = kernel_function(G_CENTERS[i],
-                                            G_CENTERS[j],
-                                            DEFORM_SD)
-
-SIGMA_P = np.linalg.inv(SIGMA_P_INV)
-SIGMA_G = np.linalg.inv(SIGMA_G_INV)
 
 
 def convert_to_1d(arr):
@@ -43,7 +25,7 @@ def calculate_kBp(b1d):
     for i in range(IMAGE_DIM):
         for j in range(KP):
             the_def = cal_deformation(i, b1d)
-            tmp_kbp[i, j] = kernel_function(i - the_def,
+            tmp_kbp[i, j] = gaussian_kernel(i - the_def,
                                             P_CENTERS[j],
                                             TEMPLATE_SD)
     return tmp_kbp
@@ -55,7 +37,7 @@ class Estimator:
         self.alphas = ALPHAS_INIT
         self.betas = BETAS_INIT
         self.sd2 = SD_INIT
-        self.kBp= \
+        self.kBp = \
             calculate_kBp(convert_to_1d(self.betas))
         self.Gamma = SIGMA_G
         self.images = IMAGE
@@ -63,11 +45,9 @@ class Estimator:
         self.predictions = PREDICT_INIT
 
     def to_minimize(self, b1d):
-        result = (1 / 2) * np.matmul(b1d.T, np.matmul(np.linalg.inv(self.Gamma),
-                                           b1d)) \
+        result = (1 / 2) * b1d.T @ np.linalg.inv(self.Gamma) @ b1d \
                  + (1 / (2 * self.sd2)) * np.linalg.norm(self.images - self.predictions) ** 2
         return result.item()
-
 
     # Depends on current beta, Gamma, sd2, predictions, images
     def best_betas(self):
@@ -104,14 +84,13 @@ class Estimator:
         new_alpha = np.matmul(np.linalg.inv(N * kk + self.sd2 * SIGMA_P_INV),
                               (N * ky + self.sd2 * np.matmul(SIGMA_P_INV, MU_P)))
         new_sd2 = (1 / (N * IMAGE_DIM * AP)) * (N * (self.YTY + self.alphas.T @ kk @ self.alphas
-                                               - 2 * self.alphas.T @ ky)
-                                          + AP * SD_INIT)
+                                                     - 2 * self.alphas.T @ ky)
+                                                + AP * SD_INIT)
         self.alphas = new_alpha
         self.sd2 = new_sd2
         self.update_prediction()
 
-
-    def run_estimation(self,iterations):
+    def run_estimation(self, iterations):
         for _ in range(iterations):
             self.update_Gamma()
             self.update_alpha_and_sd2()
@@ -119,9 +98,11 @@ class Estimator:
         print(self.alphas)
         print(self.sd2)
         print(self.Gamma)
+        print("here are betas")
+        print(self.betas)
         print("here are predictions")
         print(self.predictions)
 
 
 my_estimator = Estimator()
-my_estimator.run_estimation(1000)
+my_estimator.run_estimation(100)
