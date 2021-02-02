@@ -1,25 +1,25 @@
 import numpy
 import numpy as np
 
-TEMPLATE_SD = 0.3
-DEFORM_SD = 0.3
+TEMPLATE_SD = 1.5
+DEFORM_SD = 1.5
 SD_INIT = 1
 
-KP = 15
-KG = 15
+KP = 30
+KG = 30
 ALPHAS_INIT = np.zeros((KP,1))
 BETAS_INIT = np.zeros((KG,1))
-P_CENTERS = np.array([[30, 32, 34, 36, 38,
-                       40, 42, 44, 46, 48,
-                       50, 52, 54, 56, 58]]).T
-G_CENTERS = np.array([[30, 32, 34, 36, 38,
-                       40, 42, 44, 46, 48,
-                       50, 52, 54, 56, 58]]).T
+P_CENTERS = np.array([[30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+                       40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+                       50, 51, 52, 53, 54, 55, 56, 57, 58, 59]]).T
+G_CENTERS = np.array([[30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+                       40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+                       50, 51, 52, 53, 54, 55, 56, 57, 58, 59]]).T
 assert P_CENTERS.size == KP
 assert G_CENTERS.size == KG
 
 # 40 to 59 is 1
-IMAGE1 = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+IMAGE = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -29,19 +29,8 @@ IMAGE1 = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]).T
-IMAGE2 = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                   0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                   1, 1, 1, 1, 0, 1, 1, 1, 1, 1,
-                   1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]).T
-IMAGES = [IMAGE1, IMAGE2]
 # IMAGE = np.fromfunction(lambda i: 0.8 if (70. > i > 40.) else 0., shape=(100,))
-IMAGE_DIM = IMAGE1.size
+IMAGE_DIM = IMAGE.size
 PREDICT_INIT = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -55,7 +44,7 @@ PREDICT_INIT = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 assert PREDICT_INIT.size == IMAGE_DIM
 AG = 5
 AP = 1
-N = 2
+N = 1
 MU_P = np.zeros((KP,1))
 
 # Initializers
