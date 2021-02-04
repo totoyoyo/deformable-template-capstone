@@ -1,6 +1,6 @@
 from scipy import optimize
 
-from one_image_training.constants_1d_2 import *
+from constants.constants_1d_2 import *
 
 import matplotlib.pyplot as plt
 
