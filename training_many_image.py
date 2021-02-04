@@ -5,7 +5,7 @@ from typing import *
 import matplotlib.pyplot as plt
 
 
-# Deformation
+# Useful Functions
 def cal_deformation(x, b1d):
     counter = 0
     for index, center in enumerate(G_CENTERS):
@@ -30,6 +30,52 @@ def calculate_kBp(b1d):
                                             P_CENTERS[j],
                                             TEMPLATE_SD)
     return tmp_kbp
+
+# My gradiants
+
+def kBpa(beta, alpha, image_dim):
+    pass
+
+def grad_for_optimization(beta, alpha, G_inv, sdl, image):
+    def grad_left(beta):
+        return G_inv @ beta
+
+    def grad_kBpa(beta, alpha):
+        store_grad = np.empty(beta.size)
+
+        def grad_gaussian(x, center, sd):
+            # Should be scalar
+            return gaussian_kernel(x, center, sd) * - (x - center) / (sd ** 2)
+
+        def grad_zbx_wrt_a_beta(image_index, b_index):
+            # Should be scalar
+            return gaussian_kernel(image_index, G_CENTERS[b_index], DEFORM_SD)
+
+        def grad_kBpa_wrt_nth_beta(beta, alphas, beta_index):
+            # Should be image_dim matrix
+            store_grad = np.empty(IMAGE_DIM)
+            for image_index in range(IMAGE_DIM):
+                counter = 0
+                for alpha_index in range(alphas):
+                    # Should be scalar
+                    counter += alphas[alpha_index] \
+                               * (grad_gaussian((image_index - cal_deformation(image_index, beta)),
+                                            P_CENTERS[alpha_index],
+                                            TEMPLATE_SD)) \
+                               * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
+                store_grad[image_index] = counter
+            return store_grad
+
+        # Should be betas by image_dim matrix
+        # Careful, maybe we need to tke transpose
+        for beta_index in range(beta.size):
+            store_grad[beta_index] = grad_kBpa_wrt_nth_beta(beta, alpha, beta_index)
+
+    def grad_right(beta):
+        #Should be vector
+        -(1/sdl**2 ) * (image - kBpa(beta,alpha)) @  grad_kBpa(beta,alpha)
+
+    return grad_left(beta) + grad_right(beta)
 
 
 class Estimator1DNImages:
