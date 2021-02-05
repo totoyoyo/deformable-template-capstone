@@ -93,7 +93,7 @@ class Estimator1DNImages:
                   * (N * (self.YTY + self.alphas.T @ kkl @ self.alphas
                           - 2 * self.alphas.T @ kyl)
                      + AP * SD_INIT)
-        self.alphas = new_alpha
+        self.alphas = convert_to_1d(new_alpha)
         self.sd2 = new_sd2
         self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")

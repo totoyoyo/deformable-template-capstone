@@ -90,7 +90,7 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
 
 def generate_jacobian_callable(alpha, g_inv, sd2, image):
     def jac(beta_1d):
-        grad_for_optimization(beta_1d, alpha, g_inv, sd2, image)
+        return grad_for_optimization(beta_1d, alpha, g_inv, sd2, image)
     return jac
 
 def to_minimize(b1d, alpha, g_inv, sd2, image):  # Fix the static predictions
@@ -103,7 +103,7 @@ def to_minimize(b1d, alpha, g_inv, sd2, image):  # Fix the static predictions
 
 def generate_to_minimize(alpha, g_inv, sd2, image):
     def tmp_min(beta_1d):
-        to_minimize(beta_1d, alpha, g_inv, sd2, image)
+        return to_minimize(beta_1d, alpha, g_inv, sd2, image)
     return tmp_min
 
 
@@ -111,13 +111,10 @@ def generate_tomin_jac(alpha, g_inv, sd2, image):
     return generate_to_minimize(alpha, g_inv, sd2, image), \
            generate_jacobian_callable(alpha, g_inv, sd2, image)
 
-# print (grad_for_optimization(convert_to_1d(BETAS_INIT),
-#                       ALPHAS_INIT,
-#                       SIGMA_G_INV,
-#                       1,
-#                       IMAGE1))
-# print (to_minimize(convert_to_1d(BETAS_INIT),
-#                       ALPHAS_INIT,
-#                       SIGMA_G_INV,
-#                       1,
-#                       IMAGE1))
+to_min, jac = generate_tomin_jac(ALPHAS_INIT,
+                      SIGMA_G_INV,
+                      1,
+                      IMAGE1)
+
+# print(to_min(convert_to_1d(BETAS_INIT)))
+# print(jac(convert_to_1d(BETAS_INIT)))
