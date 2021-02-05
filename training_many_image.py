@@ -1,14 +1,12 @@
 from scipy import optimize
 
-from constants.constants_1d_many_images import *
 from typing import *
 import matplotlib.pyplot as plt
 
 
 # Useful Functions
-from functions.useful_functions_1d import cal_deformation, convert_to_1d, \
-    faster_norm_squared, convert_to_2d, calculate_kBp
-
+from functions.useful_functions_1d import *
+from constants.constants_1d_many_fix import *
 
 # My gradiants
 
@@ -32,53 +30,24 @@ class Estimator1DNImages:
         self.Gamma_update_count = 0
         self.asd2_update_count = 0
 
-    def grad_beta(self, beta):
-        def grad_left(beta):
-            pass
-
-        def grad_kBpa(beta, alpha):
-            store_grad = np.empty(beta.size)
-
-            def grad_gaussian(x, center, sd):
-                pass
-
-            def grad_x_zx(x, beta):
-                store_grad = np.empty(beta.size)
-                for n in range(beta.size):
-                    store_grad[n] = gaussian_kernel(x, G_CENTERS[n], DEFORM_SD)
-
-            def grad_a_n(beta, alphas, n):
-                counter = 0
-                for n in range(beta.size):
-                    counter += alphas[n] \
-                               * (grad_gaussian((n - cal_deformation(n, beta)),
-                                                P_CENTERS[n],
-                                                TEMPLATE_SD)) \
-                               * (grad_x_zx(n, beta))
-
-            for n in range(beta.size):
-                store_grad[n] = grad_a_n(beta, alpha, n)
-
-        def grad_right(beta):
-            100 * ...
-
-        return grad_left(beta)
-
-    def to_minimize(self, b1d, n):  # Fix the static predictions
-        image_difference = self.images[n] - self.calculate_prediction(b1d)
-        result = (1 / 2) * b1d.T @ self.Gamma_Inv @ b1d \
-                 + (1 / (2 * self.sd2)) \
-                 * faster_norm_squared(image_difference)
-        return result.item()
+    # def to_minimize(self, b1d, n):  # Fix the static predictions
+    #     image_difference = self.images[n] - self.calculate_prediction(b1d)
+    #     result = (1 / 2) * b1d.T @ self.Gamma_Inv @ b1d \
+    #              + (1 / (2 * self.sd2)) \
+    #              * faster_norm_squared(image_difference)
+    #     return result.item()
 
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
         def update_best_beta(n):
             betas_in_1d = convert_to_1d(self.betas[n])
-            out = optimize.minimize(self.to_minimize,
-                                    betas_in_1d, n,
-                                    method="L-BFGS-B",
-                                    options={'maxiter': 4}).x
+            to_min, jac = generate_tomin_jac(self.alphas,
+                                             self.Gamma_Inv,
+                                             self.sd2,
+                                             self.images[n])
+            out = optimize.minimize(to_min,
+                                    betas_in_1d,
+                                    jac=jac).x
             self.betas[n] = convert_to_2d(out)
             print(str(n) + "beta at")
             print(out)

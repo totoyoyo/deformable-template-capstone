@@ -1,4 +1,4 @@
-from constants.constants_1d_many_images import *
+from constants.constants_1d_many_fix import *
 
 def cal_deformation(x, b1d):
     counter = 0
@@ -15,11 +15,13 @@ def convert_to_1d(arr):
 def faster_norm_squared(arr):
     return np.sum(arr * arr)
 
+
 def convert_to_2d(mat):
     if mat.ndim < 2:
         return np.array([mat]).T
     else:
         return mat
+
 
 def calculate_kBp(b1d):
     tmp_kbp = np.empty((IMAGE_DIM, KP))
@@ -38,7 +40,7 @@ def kBpa(beta, alpha):
     return kBp @ alpha
 
 
-def grad_for_optimization(beta_1d, alpha, g_inv, sdl, image):
+def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
     # Gradient of left (gives vector)
     def grad_left(beta):
         return g_inv @ beta
@@ -46,8 +48,9 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl, image):
     # Gradient of right (gives vector)
     def grad_right(beta):
         # Should be vector with length IMAGE_DIM
-        grad_wrt_kBpa = (-(1 / (sdl ** 2)) * (image - kBpa(beta, alpha)))
-        return -(1 / (sdl ** 2)) * grad_kBpa(beta, alpha) @ grad_wrt_kBpa
+        my_kBpa = kBpa(beta, alpha)
+        grad_wrt_kBpa = (-(1 / (sdl2)) * (image - my_kBpa))
+        return -(1 / (sdl2)) * grad_kBpa(beta, alpha) @ grad_wrt_kBpa
 
     # Gradient of gaussian (gives scalar)
     def grad_gaussian(x, center, sd):
@@ -64,7 +67,7 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl, image):
         store_grad = np.empty(IMAGE_DIM)
         for image_index in range(IMAGE_DIM):
             counter = 0
-            for alpha_index in range(alphas):
+            for alpha_index in range(alphas.size):
                 # Should be scalar
                 counter += alphas[alpha_index] \
                            * (grad_gaussian((image_index - cal_deformation(image_index, beta)),
@@ -75,8 +78,7 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl, image):
         return store_grad
 
     def grad_kBpa(beta, alpha):
-        store_grad = np.empty(beta.size)
-
+        store_grad = np.empty([beta.size,IMAGE_DIM])
         # Should be betas by image_dim matrix
         # Careful, maybe we need to tke transpose
         for beta_index in range(beta.size):
@@ -84,3 +86,38 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl, image):
         return store_grad
 
     return grad_left(beta_1d) + grad_right(beta_1d)
+
+
+def generate_jacobian_callable(alpha, g_inv, sd2, image):
+    def jac(beta_1d):
+        grad_for_optimization(beta_1d, alpha, g_inv, sd2, image)
+    return jac
+
+def to_minimize(b1d, alpha, g_inv, sd2, image):  # Fix the static predictions
+    image_difference = image - kBpa(b1d, alpha)
+    result = (1 / 2) * b1d.T @ g_inv @ b1d \
+             + (1 / (2 * sd2)) \
+             * faster_norm_squared(image_difference)
+    return result
+
+
+def generate_to_minimize(alpha, g_inv, sd2, image):
+    def tmp_min(beta_1d):
+        to_minimize(beta_1d, alpha, g_inv, sd2, image)
+    return tmp_min
+
+
+def generate_tomin_jac(alpha, g_inv, sd2, image):
+    return generate_to_minimize(alpha, g_inv, sd2, image), \
+           generate_jacobian_callable(alpha, g_inv, sd2, image)
+
+# print (grad_for_optimization(convert_to_1d(BETAS_INIT),
+#                       ALPHAS_INIT,
+#                       SIGMA_G_INV,
+#                       1,
+#                       IMAGE1))
+# print (to_minimize(convert_to_1d(BETAS_INIT),
+#                       ALPHAS_INIT,
+#                       SIGMA_G_INV,
+#                       1,
+#                       IMAGE1))
