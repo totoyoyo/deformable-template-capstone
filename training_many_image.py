@@ -137,8 +137,10 @@ class Estimator1DNImages:
             out = optimize.minimize(self.to_minimize,
                                     betas_in_1d, n,
                                     method="L-BFGS-B",
-                                    options={'maxiter': 3}).x
+                                    options={'maxiter': 4}).x
             self.betas[n] = convert_to_2d(out)
+            print(str(n) + "beta at")
+            print(out)
 
         for n in range(self.number_of_images):
             update_best_beta(n)
