@@ -17,6 +17,10 @@ def convert_to_1d(arr):
     return arr.T[0]
 
 
+def faster_norm_squared(arr) -> float:
+    return np.sum(arr * arr)
+
+
 def convert_to_2d(mat):
     return np.array([mat]).T
 
@@ -31,10 +35,12 @@ def calculate_kBp(b1d):
                                             TEMPLATE_SD)
     return tmp_kbp
 
+
 # My gradiants
 
 def kBpa(beta, alpha, image_dim):
     pass
+
 
 def grad_for_optimization(beta, alpha, G_inv, sdl, image):
     def grad_left(beta):
@@ -60,8 +66,8 @@ def grad_for_optimization(beta, alpha, G_inv, sdl, image):
                     # Should be scalar
                     counter += alphas[alpha_index] \
                                * (grad_gaussian((image_index - cal_deformation(image_index, beta)),
-                                            P_CENTERS[alpha_index],
-                                            TEMPLATE_SD)) \
+                                                P_CENTERS[alpha_index],
+                                                TEMPLATE_SD)) \
                                * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
                 store_grad[image_index] = counter
             return store_grad
@@ -72,8 +78,9 @@ def grad_for_optimization(beta, alpha, G_inv, sdl, image):
             store_grad[beta_index] = grad_kBpa_wrt_nth_beta(beta, alpha, beta_index)
 
     def grad_right(beta):
-        #Should be vector
-        -(1/sdl**2 ) * (image - kBpa(beta,alpha)) @  grad_kBpa(beta,alpha)
+        # Should be vector with length IMAGE_DIM
+        grad_wrt_kBpa = (-(1 / (sdl ** 2)) * (image - kBpa(beta, alpha)))
+        return -(1 / (sdl ** 2)) * grad_kBpa(beta, alpha) @ grad_wrt_kBpa
 
     return grad_left(beta) + grad_right(beta)
 
@@ -88,46 +95,52 @@ class Estimator1DNImages:
             list(map((lambda beta: calculate_kBp(convert_to_1d(beta))), self.betas))
         self.Gamma: np.ndarray = SIGMA_G
         self.Gamma_Inv = SIGMA_G_INV
-        self.images = IMAGES
+        self.images: List[np.ndarray] = IMAGES
         self.number_of_images = N
-        self.YTY = np.linalg.norm(self.images) ** 2  # Many images
+        yty = list(map((lambda image: faster_norm_squared(image)), self.images))
+        self.YTY = (1 / self.number_of_images) \
+                   * sum(yty)  # Many images
         self.predictions = [PREDICT_INIT, PREDICT_INIT]
         self.Gamma_update_count = 0
         self.asd2_update_count = 0
 
-    def grad_beta(self,beta):
+    def grad_beta(self, beta):
         def grad_left(beta):
             pass
 
-        def grad_kBpa(beta,alpha):
+        def grad_kBpa(beta, alpha):
             store_grad = np.empty(beta.size)
-            def grad_gaussian(x,center,sd):
+
+            def grad_gaussian(x, center, sd):
                 pass
 
             def grad_x_zx(x, beta):
                 store_grad = np.empty(beta.size)
                 for n in range(beta.size):
-                    store_grad[n] = gaussian_kernel(x,G_CENTERS[n],DEFORM_SD)
+                    store_grad[n] = gaussian_kernel(x, G_CENTERS[n], DEFORM_SD)
 
-            def grad_a_n(beta,alphas,n):
+            def grad_a_n(beta, alphas, n):
                 counter = 0
                 for n in range(beta.size):
                     counter += alphas[n] \
                                * (grad_gaussian((n - cal_deformation(n, beta)),
-                                                                P_CENTERS[n],
-                                                                TEMPLATE_SD)) \
-                               * (grad_x_zx(n,beta))
+                                                P_CENTERS[n],
+                                                TEMPLATE_SD)) \
+                               * (grad_x_zx(n, beta))
+
             for n in range(beta.size):
-                store_grad[n] = grad_a_n(beta,alpha,n)
+                store_grad[n] = grad_a_n(beta, alpha, n)
 
         def grad_right(beta):
             100 * ...
+
         return grad_left(beta)
 
     def to_minimize(self, b1d, n):  # Fix the static predictions
+        image_difference = self.images[n] - self.calculate_prediction(b1d)
         result = (1 / 2) * b1d.T @ self.Gamma_Inv @ b1d \
                  + (1 / (2 * self.sd2)) \
-                 * np.linalg.norm(self.images[n] - self.calculate_prediction(b1d)) ** 2
+                 * faster_norm_squared(image_difference)
         return result.item()
 
     def update_all_betas(self):
@@ -211,7 +224,6 @@ class Estimator1DNImages:
             plt.plot(my_estimator.predictions[n])
             plt.title("Prediction" + str(n))
             plt.show()
-
 
 
 my_estimator = Estimator1DNImages()
