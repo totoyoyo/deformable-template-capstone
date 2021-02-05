@@ -3,10 +3,10 @@ from scipy import optimize
 from typing import *
 import matplotlib.pyplot as plt
 
-
 # Useful Functions
 from functions.useful_functions_1d import *
 from constants.constants_1d_many_fix import *
+
 
 # My gradiants
 
@@ -93,8 +93,8 @@ class Estimator1DNImages:
                   * (N * (self.YTY + self.alphas.T @ kkl @ self.alphas
                           - 2 * self.alphas.T @ kyl)
                      + AP * SD_INIT)
-        self.alphas = convert_to_1d(new_alpha)
-        self.sd2 = new_sd2
+        self.alphas = new_alpha
+        self.sd2 = new_sd2.item()
         self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
         self.asd2_update_count += 1

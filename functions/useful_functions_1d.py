@@ -1,7 +1,7 @@
 from constants.constants_1d_many_fix import *
 
 def cal_deformation(x, b1d):
-    counter = 0
+    counter = 0.0
     for index, center in enumerate(G_CENTERS):
         counter += b1d[index] * gaussian_kernel(x, center, DEFORM_SD)
     return counter
@@ -42,15 +42,16 @@ def kBpa(beta, alpha):
 
 def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
     # Gradient of left (gives vector)
+    alpha1d = convert_to_1d(alpha)
     def grad_left(beta):
         return g_inv @ beta
 
     # Gradient of right (gives vector)
     def grad_right(beta):
         # Should be vector with length IMAGE_DIM
-        my_kBpa = kBpa(beta, alpha)
+        my_kBpa = kBpa(beta, alpha1d)
         grad_wrt_kBpa = (-(1 / (sdl2)) * (image - my_kBpa))
-        return -(1 / (sdl2)) * grad_kBpa(beta, alpha) @ grad_wrt_kBpa
+        return convert_to_1d(grad_kBpa(beta, alpha1d) @ grad_wrt_kBpa)
 
     # Gradient of gaussian (gives scalar)
     def grad_gaussian(x, center, sd):
@@ -66,7 +67,7 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
         # Should be image_dim matrix
         store_grad = np.empty(IMAGE_DIM)
         for image_index in range(IMAGE_DIM):
-            counter = 0
+            counter = 0.0
             for alpha_index in range(alphas.size):
                 # Should be scalar
                 counter += alphas[alpha_index] \
