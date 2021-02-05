@@ -1,4 +1,3 @@
-import numpy
 import numpy as np
 
 TEMPLATE_SD = 0.3

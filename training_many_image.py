@@ -6,83 +6,11 @@ import matplotlib.pyplot as plt
 
 
 # Useful Functions
-def cal_deformation(x, b1d):
-    counter = 0
-    for index, center in enumerate(G_CENTERS):
-        counter += b1d[index] * gaussian_kernel(x, center, DEFORM_SD)
-    return counter
-
-
-def convert_to_1d(arr):
-    return arr.T[0]
-
-
-def faster_norm_squared(arr) -> float:
-    return np.sum(arr * arr)
-
-
-def convert_to_2d(mat):
-    return np.array([mat]).T
-
-
-def calculate_kBp(b1d):
-    tmp_kbp = np.empty((IMAGE_DIM, KP))
-    for i in range(IMAGE_DIM):
-        for j in range(KP):
-            the_def = cal_deformation(i, b1d)
-            tmp_kbp[i, j] = gaussian_kernel(i - the_def,
-                                            P_CENTERS[j],
-                                            TEMPLATE_SD)
-    return tmp_kbp
+from functions.useful_functions_1d import cal_deformation, convert_to_1d, \
+    faster_norm_squared, convert_to_2d, calculate_kBp
 
 
 # My gradiants
-
-def kBpa(beta, alpha, image_dim):
-    pass
-
-
-def grad_for_optimization(beta, alpha, G_inv, sdl, image):
-    def grad_left(beta):
-        return G_inv @ beta
-
-    def grad_kBpa(beta, alpha):
-        store_grad = np.empty(beta.size)
-
-        def grad_gaussian(x, center, sd):
-            # Should be scalar
-            return gaussian_kernel(x, center, sd) * - (x - center) / (sd ** 2)
-
-        def grad_zbx_wrt_a_beta(image_index, b_index):
-            # Should be scalar
-            return gaussian_kernel(image_index, G_CENTERS[b_index], DEFORM_SD)
-
-        def grad_kBpa_wrt_nth_beta(beta, alphas, beta_index):
-            # Should be image_dim matrix
-            store_grad = np.empty(IMAGE_DIM)
-            for image_index in range(IMAGE_DIM):
-                counter = 0
-                for alpha_index in range(alphas):
-                    # Should be scalar
-                    counter += alphas[alpha_index] \
-                               * (grad_gaussian((image_index - cal_deformation(image_index, beta)),
-                                                P_CENTERS[alpha_index],
-                                                TEMPLATE_SD)) \
-                               * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
-                store_grad[image_index] = counter
-            return store_grad
-
-        # Should be betas by image_dim matrix
-        # Careful, maybe we need to tke transpose
-        for beta_index in range(beta.size):
-            store_grad[beta_index] = grad_kBpa_wrt_nth_beta(beta, alpha, beta_index)
-
-    def grad_right(beta):
-        # Should be vector with length IMAGE_DIM
-        grad_wrt_kBpa = (-(1 / (sdl ** 2)) * (image - kBpa(beta, alpha)))
-        return -(1 / (sdl ** 2)) * grad_kBpa(beta, alpha) @ grad_wrt_kBpa
-
-    return grad_left(beta) + grad_right(beta)
 
 
 class Estimator1DNImages:
