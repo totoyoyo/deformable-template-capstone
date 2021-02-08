@@ -35,12 +35,12 @@ def calculate_kBp(b1d):
                                             TEMPLATE_SD)
     return tmp_kbp
 
-
+# Returns nparray dim (IMAGEDIM,1)
 def kBpa(beta, alpha):
     b1d = convert_to_1d(beta)
     # Should be IMAGE_DIM by ALPHA_DIM
     kBp = calculate_kBp(b1d)
-    return kBp @ alpha
+    return convert_to_2d(kBp @ alpha)
 
 
 def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
@@ -51,7 +51,7 @@ def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
 
     # Gradient of right (gives vector)
     def grad_right(beta):
-        # Should be vector with length IMAGE_DIM
+        # Should be matrix with dim (IMAGE_DIM,1)
         my_kBpa = kBpa(beta, alpha1d)
         # Dim (IMAGEDIM,1)
         grad_wrt_kBpa = (-(1 / (sdl2)) * (image - my_kBpa))
@@ -123,12 +123,25 @@ def generate_tomin_jac(alpha, g_inv, sd2, image):
 #                       IMAGE1)
 
 error_counter = 0.0
+beta_list = []
+alpha_list = []
+sig_inv_list = []
+sd_list = []
+
 for i in range(10):
     random_beta = (np.random.rand(KG) * 2) - 1
+    beta_list.append(random_beta)
+
     random_alpha = (np.random.rand(KP) * 2) - 1
+    alpha_list.append(random_alpha)
+
     sigma_g_inv_maker = np.random.rand(KG, KG)
     random_sigma_g_inv = sigma_g_inv_maker @ sigma_g_inv_maker.T
+    sig_inv_list.append(random_sigma_g_inv)
+
     random_sd = np.random.uniform(0,1)
+    sd_list.append(random_sd)
+
     to_min, jac = generate_tomin_jac(random_alpha, random_sigma_g_inv,random_sd,
                        IMAGE1)
     tmp_error = check_grad(to_min, jac, random_beta)
