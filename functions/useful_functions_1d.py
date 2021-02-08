@@ -60,62 +60,68 @@ def kBpa(beta, alpha):
     return convert_to_2d(kBp @ alpha)
 
 
+# Gradient of left (gives vector)
+def grad_left(beta, g_inv):
+    return g_inv @ beta
+
+
+# Gradient of right (gives vector)
+def grad_right(beta, alpha1d, sdl2, image):
+    # Should be matrix with dim (IMAGE_DIM,1)
+    my_kBpa = kBpa(beta, alpha1d)
+    # Dim (IMAGEDIM,1)
+    grad_wrt_kBpa = (-(1 / (sdl2)) * (image - my_kBpa))
+    # grad_kBpa should be (BETA_DIM,IMAGE_DIM)
+    return convert_to_1d(grad_kBpa(beta, alpha1d) @ grad_wrt_kBpa)
+
+
+# Gradient of gaussian (gives scalar)
+def grad_gaussian(x, center, sd):
+    # Should be scalar
+    return gaussian_kernel(x, center, sd) * - (x - center) / (sd ** 2)
+
+
+# Gradient of zbx wrt to a beta
+def grad_zbx_wrt_a_beta(image_index, b_index):
+    # Should be scalar
+    return gaussian_kernel(image_index, G_CENTERS[b_index], DEFORM_SD)
+
+
+def grad_kBpa(beta, alpha):
+    store_grad = np.empty([beta.size, IMAGE_DIM])
+    # Should be betas by image_dim matrix
+    # Careful, maybe we need to tke transpose
+    for beta_index in range(beta.size):
+        store_grad[beta_index] = grad_kBpa_wrt_nth_beta(beta, alpha, beta_index)
+    return store_grad
+
+
+def grad_kBpa_wrt_nth_beta(beta, alphas, beta_index):
+    # Should be array of IMAGE_DIM length
+    store_grad = np.empty(IMAGE_DIM)
+    for image_index in range(IMAGE_DIM):
+        counter = 0.0
+        for alpha_index in range(alphas.size):
+            # Should be scalar
+            counter += alphas[alpha_index] \
+                       * (grad_gaussian((image_index
+                                         - cal_deformation(image_index, beta)),
+                                        P_CENTERS[alpha_index],
+                                        TEMPLATE_SD)) \
+                       * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
+        store_grad[image_index] = counter
+    return store_grad
+
+
 def grad_for_optimization(beta_1d, alpha, g_inv, sdl2, image):
-    # Gradient of left (gives vector)
     alpha1d = convert_to_1d(alpha)
-
-    def grad_left(beta):
-        return g_inv @ beta
-
-    # Gradient of right (gives vector)
-    def grad_right(beta):
-        # Should be matrix with dim (IMAGE_DIM,1)
-        my_kBpa = kBpa(beta, alpha1d)
-        # Dim (IMAGEDIM,1)
-        grad_wrt_kBpa = (-(1 / (sdl2)) * (image - my_kBpa))
-        # grad_kBpa should be (BETA_DIM,IMAGE_DIM)
-        return convert_to_1d(grad_kBpa(beta, alpha1d) @ grad_wrt_kBpa)
-
-    # Gradient of gaussian (gives scalar)
-    def grad_gaussian(x, center, sd):
-        # Should be scalar
-        return gaussian_kernel(x, center, sd) * - (x - center) / (sd ** 2)
-
-    # Gradient of zbx wrt to a beta
-    def grad_zbx_wrt_a_beta(image_index, b_index):
-        # Should be scalar
-        return gaussian_kernel(image_index, G_CENTERS[b_index], DEFORM_SD)
-
-    def grad_kBpa_wrt_nth_beta(beta, alphas, beta_index):
-        # Should be array of IMAGE_DIM length
-        store_grad = np.empty(IMAGE_DIM)
-        for image_index in range(IMAGE_DIM):
-            counter = 0.0
-            for alpha_index in range(alphas.size):
-                # Should be scalar
-                counter += alphas[alpha_index] \
-                           * (grad_gaussian((image_index - cal_deformation(image_index, beta)),
-                                            P_CENTERS[alpha_index],
-                                            TEMPLATE_SD)) \
-                           * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
-            store_grad[image_index] = counter
-        return store_grad
-
-    def grad_kBpa(beta, alpha):
-        store_grad = np.empty([beta.size, IMAGE_DIM])
-        # Should be betas by image_dim matrix
-        # Careful, maybe we need to tke transpose
-        for beta_index in range(beta.size):
-            store_grad[beta_index] = grad_kBpa_wrt_nth_beta(beta, alpha, beta_index)
-        return store_grad
-
-    return grad_left(beta_1d) + grad_right(beta_1d)
+    return grad_left(beta_1d, g_inv) + grad_right(beta_1d, alpha1d=alpha1d,
+                                                  sdl2=sdl2, image=image)
 
 
 def generate_jacobian_callable(alpha, g_inv, sd2, image):
     def jac(beta_1d):
         return grad_for_optimization(beta_1d, alpha, g_inv, sd2, image)
-
     return jac
 
 
@@ -169,7 +175,9 @@ def test_gradient(iter):
                                          IMAGE1)
         tmp_error = check_grad(to_min, jac, random_beta)
         error_counter += tmp_error
-    return beta_list, alpha_list, sig_inv_list, sd_list, error_counter
+    return {'error': error_counter, 'betas' : beta_list,
+            'alphas': alpha_list, 'Sigma_inv': sig_inv_list,
+            "sd2": sd_list}
 
 
 def handle_save(path, image_name):
@@ -190,4 +198,6 @@ def handle_save(path, image_name):
                 + str(save_counter)
                 + ".jpg")
 
+
 # print(calculate_template(np.linspace(0,1,KP)))
+error_counter = test_gradient(1)
