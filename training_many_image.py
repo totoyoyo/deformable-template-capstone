@@ -1,3 +1,6 @@
+import os
+import datetime
+
 from scipy import optimize
 
 from typing import *
@@ -14,6 +17,7 @@ from constants.constants_1d_many_fix import *
 class Estimator1DNImages:
 
     def __init__(self):
+        self.template = None
         self.alphas: np.ndarray = ALPHAS_INIT
         self.betas: List[np.ndarray] = [BETAS_INIT, BETAS_INIT]
         self.sd2: int = SD_INIT
@@ -103,6 +107,7 @@ class Estimator1DNImages:
         for _ in range(iterations):
             self.update_Gamma()
             self.update_alpha_and_sd2()
+        self.calculate_template()
         print("here are alphas, sd2, and Gamma in that order")
         print(self.alphas)
         print(self.sd2)
@@ -111,16 +116,33 @@ class Estimator1DNImages:
         print(self.betas)
         print("here are predictions")
         print(self.predictions)
+        print("here is the template")
+
+    def calculate_template(self):
+        self.template = calculate_template(self.alphas)
 
     def show_plots(self):
+        path = ".\\plots\\"
         for n in range(self.number_of_images):
-            plt.plot(my_estimator.images[n])
-            plt.title("Image" + str(n))
+            plt.plot(self.images[n])
+            image_name = "image" + str(n)
+            plt.title(image_name)
+            handle_save(path, image_name)
             plt.show()
+
         for n in range(self.number_of_images):
-            plt.plot(my_estimator.predictions[n])
-            plt.title("Prediction" + str(n))
+            plt.plot(self.predictions[n])
+            image_name = "Prediction" + str(n)
+            plt.title(image_name)
+            handle_save(path, image_name)
             plt.show()
+
+        plt.plot(self.template)
+        image_name = "Template"
+        plt.title(image_name)
+        handle_save(path, image_name)
+        plt.show()
+
 
 
 my_estimator = Estimator1DNImages()
