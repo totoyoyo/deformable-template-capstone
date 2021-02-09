@@ -1,17 +1,21 @@
 import datetime
 import os
+import time
+
 import matplotlib.pyplot as plt
 
 from constants.constants_1d_many_fix import *
 from scipy.optimize import check_grad
 import functools
 
+import cProfile
+
 
 def cal_deformation(x, b1d):
-    counter = 0.0
-    for index, center in enumerate(G_CENTERS):
-        counter += b1d[index] * gaussian_kernel(x, center, DEFORM_SD)
-    return counter
+    deformation_list = [b1d[index[0]] * gaussian_kernel(x, center, DEFORM_SD)
+                        for index, center in np.ndenumerate(G_CENTERS)]
+    my_sum = sum(deformation_list)
+    return my_sum
 
 
 def convert_to_1d(arr):
@@ -33,22 +37,19 @@ def convert_to_2d(mat):
 
 
 def calculate_kBp(b1d):
-    tmp_kbp = np.empty((IMAGE_DIM, KP))
-    for i in range(IMAGE_DIM):
-        for j in range(KP):
-            the_def = cal_deformation(i, b1d)
-            tmp_kbp[i, j] = gaussian_kernel(i - the_def,
-                                            P_CENTERS[j],
-                                            TEMPLATE_SD)
-    return tmp_kbp
+    kBp = np.array([[gaussian_kernel(i - cal_deformation(i, b1d),
+                                     P_CENTERS[j],
+                                     TEMPLATE_SD)
+                     for j in range(KP)]
+                    for i in range(IMAGE_DIM)])
+    return kBp
 
 
 def calculate_template(alphas):
     a1d = convert_to_1d(alphas)
-    template = np.empty((IMAGE_DIM, 1))
-    for i in range(IMAGE_DIM):
-        template[i, 0] = sum([alpha * gaussian_kernel(i, P_CENTERS[index], TEMPLATE_SD)
-                              for index, alpha in enumerate(a1d)])
+    template = np.array([[sum([alpha * gaussian_kernel(i, P_CENTERS[index], TEMPLATE_SD)
+                              for index, alpha in enumerate(a1d)])]
+                         for i in range(IMAGE_DIM)])
     return template
 
 
@@ -98,18 +99,13 @@ def grad_kBpa(beta, alpha):
 
 def grad_kBpa_wrt_nth_beta(beta, alphas, beta_index):
     # Should be array of IMAGE_DIM length
-    store_grad = np.empty(IMAGE_DIM)
-    for image_index in range(IMAGE_DIM):
-        counter = 0.0
-        for alpha_index in range(alphas.size):
-            # Should be scalar
-            counter += alphas[alpha_index] \
-                       * (grad_gaussian((image_index
-                                         - cal_deformation(image_index, beta)),
-                                        P_CENTERS[alpha_index],
-                                        TEMPLATE_SD)) \
-                       * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
-        store_grad[image_index] = counter
+    store_grad = np.array([sum([alpha * (grad_gaussian((image_index
+                                                        - cal_deformation(image_index, beta)),
+                                                       P_CENTERS[alpha_index],
+                                                       TEMPLATE_SD))
+                                * (- (grad_zbx_wrt_a_beta(image_index, beta_index)))
+                                for alpha_index, alpha in enumerate(alphas)])[0]
+                           for image_index in range(IMAGE_DIM)])
     return store_grad
 
 
@@ -174,11 +170,13 @@ def test_gradient(iter):
 
         to_min, jac = generate_tomin_jac(random_alpha, random_sigma_g_inv, random_sd,
                                          IMAGE1)
+
         tmp_error = check_grad(to_min, jac, random_beta)
         error_counter += tmp_error
     return {'error': error_counter, 'betas': beta_list,
             'alphas': alpha_list, 'Sigma_inv': sig_inv_list,
             'sd2': sd_list}
+
 
 def test_speed(iter):
     error_counter = 0.0
@@ -210,6 +208,7 @@ def test_speed(iter):
 
     return {'times_to_min': times_to_min, 'times_grad': times_grad}
 
+
 def handle_save(path, image_name):
     date_str = str(datetime.date.today())
     to_save = path + image_name
@@ -230,13 +229,6 @@ def handle_save(path, image_name):
 
 
 # print(calculate_template(np.linspace(0,1,KP)))
-# error_counter = test_gradient(1)
-#
-# import timeit
-#
-# timeout = timeit.timeit('test_gradient(2)',number=2)
-import time
-
-# outs = test_speed(10)
-
 # error_counter = test_gradient(5)
+
+times = test_speed(10)
