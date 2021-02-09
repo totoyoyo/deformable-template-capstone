@@ -53,7 +53,7 @@ class Estimator1DNImages:
                                     betas_in_1d,
                                     jac=jac).x
             self.betas[n] = convert_to_2d(out)
-            print(str(n) + "beta at")
+            print("beta at" + str(n))
             print(out)
 
         for n in range(self.number_of_images):

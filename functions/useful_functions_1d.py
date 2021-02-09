@@ -177,7 +177,7 @@ def test_gradient(iter):
         error_counter += tmp_error
     return {'error': error_counter, 'betas' : beta_list,
             'alphas': alpha_list, 'Sigma_inv': sig_inv_list,
-            "sd2": sd_list}
+            'sd2': sd_list}
 
 
 def handle_save(path, image_name):
