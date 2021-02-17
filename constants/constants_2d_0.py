@@ -8,7 +8,7 @@ SD_INIT = 1
 KP = 16
 KG = 16
 ALPHAS_INIT = np.zeros((KP, 1))
-BETAS_INIT = np.zeros((KG, 1))
+BETAS_INIT = np.zeros((KG, 2))
 
 P_CENTERS = np.array([[0, 0], [1, 1],
                       [2, 2], [3, 3],
@@ -45,7 +45,8 @@ IMAGE_NCOLS = 16
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGES = [np.zeros((IMAGE_NROWS,IMAGE_NCOLS)),
           np.zeros((IMAGE_NROWS,IMAGE_NCOLS))]
-
+FLAT_IMAGES = list(map(lambda image: image.flatten(),
+                       IMAGES))
 
 SIGMA_P = np.zeros((KP, KP))
 SIGMA_P_INV = np.zeros((KP, KP))
