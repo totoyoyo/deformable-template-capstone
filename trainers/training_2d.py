@@ -4,6 +4,7 @@ import numpy as np
 from scipy import optimize
 # My gradiants
 from typing import *
+import matplotlib.pyplot as plt
 
 class Estimator2DNImages:
 
@@ -36,16 +37,16 @@ class Estimator2DNImages:
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
         def update_best_beta(n):
-            curr_beta = self.betas[n]
-            to_min= func.generate_to_minimize(self.alphas,
-                                             self.Gamma_Inv,
-                                             self.sd2,
-                                             self.images[n])
+            curr_beta = self.betas[n].flatten()
+            to_min = func.generate_to_minimize(self.alphas,
+                                               self.Gamma_Inv,
+                                               self.sd2,
+                                               self.images[n])
             out = optimize.minimize(to_min,
-                                    betas_in_1d,
-                                    method='SLSQP',
-                                    jac=jac).x
-            self.betas[n] = convert_to_2d(out)
+                                    curr_beta,
+                                    method='SLSQP').x
+
+            self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))
             print(out)
 
@@ -60,36 +61,38 @@ class Estimator2DNImages:
 
     def update_Gamma(self):
         print("Updating Gamma", self.Gamma_update_count, "time")
-        self.Gamma = (1 / (N + AG)) * (N * self._bbtl() + AG * SIGMA_G)
+        self.Gamma = (1 / (self.number_of_images + const.AG)) \
+                     * (self.number_of_images * self._bbtl()
+                        + const.AG * const.SIGMA_G)
         self.Gamma_Inv = np.linalg.inv(self.Gamma)
         print("Finished Gamma", self.Gamma_update_count, "time")
         self.Gamma_update_count += 1
 
     def update_kBps(self):  # Can be part of minimization?
-        self.kBps = list(map((lambda beta: calculate_kBp(convert_to_1d(beta))), self.betas))
+        self.kBps = list(map((lambda beta: func.calculate_kBp(beta)),
+                             self.betas))
 
     def update_predictions(self):
         self.predictions = list(map((lambda kBp: kBp @ self.alphas), self.kBps))
-
-    def calculate_prediction(self, b1d):
-        return calculate_kBp(b1d) @ self.alphas
 
     def ky_kk(self):
         # self.update_all_betas()
         self.update_kBps()
         ky = list(map((lambda kBp, image: kBp.T @ image), self.kBps, self.images))
         kk = list(map((lambda kBp: kBp.T @ kBp), self.kBps))
-        return (1 / self.number_of_images) * sum(ky), (1 / self.number_of_images) * sum(kk)
+        return (1 / self.number_of_images) * sum(ky), \
+               (1 / self.number_of_images) * sum(kk)
 
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        new_alpha = np.linalg.inv(N * kkl + self.sd2 * SIGMA_P_INV) @ \
-                    (N * kyl + self.sd2 * (SIGMA_P_INV @ MU_P))
-        new_sd2 = (1 / (N * IMAGE_DIM * AP)) \
-                  * (N * (self.YTY + self.alphas.T @ kkl @ self.alphas
+        new_alpha = np.linalg.inv(self.number_of_images * kkl
+                                  + self.sd2 * const.SIGMA_P_INV) @ \
+                    (self.number_of_images * kyl + self.sd2 * (const.SIGMA_P_INV @ const.MU_P))
+        new_sd2 = (1 / (self.number_of_images * const.IMAGE_TOTAL * const.AP)) \
+                  * (self.number_of_images * (self.YTY + self.alphas.T @ kkl @ self.alphas
                           - 2 * self.alphas.T @ kyl)
-                     + AP * SD_INIT)
+                     + const.AP * const.SD_INIT)
         self.alphas = new_alpha
         self.sd2 = new_sd2.item()
         self.update_predictions()
@@ -112,7 +115,7 @@ class Estimator2DNImages:
         print("here is the template")
 
     def calculate_template(self):
-        self.template = calculate_template(self.alphas)
+        self.template = func.calculate_template(self.alphas)
 
     def show_plots(self):
         path = "..\\plots\\"
@@ -120,25 +123,23 @@ class Estimator2DNImages:
             plt.plot(self.images[n])
             image_name = "image" + str(n)
             plt.title(image_name)
-            handle_save(path, image_name)
+            func.handle_save(path, image_name)
             plt.show()
 
         for n in range(self.number_of_images):
             plt.plot(self.predictions[n])
             image_name = "Prediction" + str(n)
             plt.title(image_name)
-            handle_save(path, image_name)
+            func.handle_save(path, image_name)
             plt.show()
 
         plt.plot(self.template)
         image_name = "Template"
         plt.title(image_name)
-        handle_save(path, image_name)
+        func.handle_save(path, image_name)
         plt.show()
 
 
-
-my_estimator = Estimator1DNImages()
+my_estimator = Estimator2DNImages()
 my_estimator.run_estimation(5)
 my_estimator.show_plots()
-

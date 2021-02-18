@@ -6,7 +6,6 @@ import datetime
 import os
 import matplotlib.pyplot as plt
 
-@njit
 def cal_deformation(pixel_location, betas):
     counter = np.array([0.0, 0.0])
     for index, center in enumerate(const.G_CENTERS):
@@ -46,7 +45,6 @@ def convert_to_2d(mat):
         return mat
 
 
-@njit
 def calculate_kBp(betas):
     tmp_kbp = np.empty((const.IMAGE_TOTAL, const.KP))
     for i in range(const.IMAGE_TOTAL):
@@ -56,7 +54,6 @@ def calculate_kBp(betas):
             tmp_kbp[i, j] = const.gaussian_kernel_2d(position - the_def, const.P_CENTERS[j],
                                                      const.TEMPLATE_SD)
     return tmp_kbp
-
 
 def calculate_template(alphas):
     a1d = convert_to_1d(alphas)
@@ -77,19 +74,26 @@ def kBpa(betas, alphas):
     return kBp @ alphas
 
 
-def to_minimize(b1d, alpha, g_inv, sd2, image):  # Fix the static predictions
-    image_difference = image - kBpa(b1d, alpha)
-    result = (1 / 2) * b1d.T @ g_inv @ b1d \
-             + (1 / (2 * sd2)) \
-             * faster_norm_squared(image_difference)
-    return result
+def to_minimize(beta, alpha, g_inv, sd2, image):  # Fix the static predictions
+    image_difference = image - kBpa(beta, alpha)
+    left = (1 / 2) * np.trace(beta.T @ g_inv @ beta)
+    right = (1 / (2 * sd2)) * faster_norm_squared(image_difference)
+    return left + right
 
 
 def generate_to_minimize(alpha, g_inv, sd2, image):
-    def tmp_min(beta_1d):
-        return to_minimize(beta_1d, alpha, g_inv, sd2, image)
-
+    def tmp_min(beta_flat):
+        beta_reshaped = betas_to_2D(beta_flat)
+        return to_minimize(beta_reshaped, alpha, g_inv, sd2, image)
     return tmp_min
+
+
+def betas_to_1D(betas):
+    return betas.flatten()
+
+
+def betas_to_2D(flat_beta):
+    return flat_beta.reshape((-1,2))
 
 
 def handle_save(path, image_name):

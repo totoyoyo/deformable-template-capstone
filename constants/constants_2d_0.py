@@ -45,8 +45,13 @@ IMAGE_NCOLS = 16
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGES = [np.zeros((IMAGE_NROWS,IMAGE_NCOLS)),
           np.zeros((IMAGE_NROWS,IMAGE_NCOLS))]
-FLAT_IMAGES = list(map(lambda image: image.flatten(),
+FLAT_IMAGES = list(map(lambda image: image.reshape(-1,1),
                        IMAGES))
+
+SD_INIT = 1
+AG = 5
+AP = 1
+MU_P = np.zeros((KP, 1))
 
 SIGMA_P = np.zeros((KP, KP))
 SIGMA_P_INV = np.zeros((KP, KP))
