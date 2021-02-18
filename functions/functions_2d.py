@@ -1,17 +1,37 @@
 import constants.constants_2d_0 as const
 from scipy.optimize import check_grad
-from numba import jit, njit
 import numpy as np
 import datetime
 import os
 import matplotlib.pyplot as plt
+import numba as nb
 
+
+# @jit(signature_or_function="float64(array(int32, 1d, C), array(float64, 2d, C))")
+# @nb.jit(signature_or_function="float64[::1](float64[::1], float64[:,::1])")
+# @nb.njit(parallel=True)
+# def cal_deformation(pixel_location, betas):
+#     counter = np.array([0.0, 0.0])
+#     for index, center in enumerate(const.G_CENTERS):
+#         counter += betas[index] * const.gaussian_kernel_2d(pixel_location, center, const.DEFORM_SD)
+#     return counter
+
+# @nb.njit(parallel=True)
+# def cal_deformation(pixel_location, betas):
+#     counter = np.array([0.0, 0.0])
+#     counter += betas[1] * const.gaussian_kernel_2d(pixel_location, np.array([1,2]), const.DEFORM_SD)
+#     return counter
+
+@nb.jit(parallel=True, forceobj=True)
 def cal_deformation(pixel_location, betas):
     counter = np.array([0.0, 0.0])
-    for index, center in enumerate(const.G_CENTERS):
-        counter += betas[index] * const.gaussian_kernel_2d(pixel_location, center, const.DEFORM_SD)
+    for beta_index in nb.prange(const.KG):
+        value = const.gaussian_kernel_2d(pixel_location, const.G_CENTERS[beta_index], const.DEFORM_SD)
+        counter += value * betas[beta_index]
     return counter
 
+
+cal_deformation(np.array([2.0,3.0]), const.BETAS_INIT)
 
 def pixel_index_to_position(p_index):
     row = p_index // const.IMAGE_NCOLS

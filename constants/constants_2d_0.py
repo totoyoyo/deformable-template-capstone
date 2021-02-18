@@ -7,8 +7,8 @@ SD_INIT = 1
 
 KP = 16
 KG = 16
-ALPHAS_INIT = np.zeros((KP, 1))
-BETAS_INIT = np.zeros((KG, 2))
+ALPHAS_INIT = np.zeros((KP, 1)).astype('float64')
+BETAS_INIT = np.zeros((KG, 2)).astype('float64')
 
 P_CENTERS = np.array([[0, 0], [1, 1],
                       [2, 2], [3, 3],
@@ -43,21 +43,55 @@ def gaussian_kernel_2d(x_val, center_val, sd):
 IMAGE_NROWS = 16
 IMAGE_NCOLS = 16
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-IMAGES = [np.zeros((IMAGE_NROWS,IMAGE_NCOLS)),
-          np.zeros((IMAGE_NROWS,IMAGE_NCOLS))]
+IMAGE1 = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                   ]).astype('float64')
+IMAGE2 = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                   [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                   ]).astype('float64')
+IMAGES = [IMAGE1,IMAGE2]
+# IMAGES = [np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.5),
+#           np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.4)]
 FLAT_IMAGES = list(map(lambda image: image.reshape(-1,1),
                        IMAGES))
 
-SD_INIT = 1
 AG = 5
 AP = 1
-MU_P = np.zeros((KP, 1))
+MU_P = np.zeros((KP, 1)).astype('float64')
 
-SIGMA_P = np.zeros((KP, KP))
-SIGMA_P_INV = np.zeros((KP, KP))
+SIGMA_P = np.zeros((KP, KP)).astype('float64')
+SIGMA_P_INV = np.zeros((KP, KP)).astype('float64')
 
-SIGMA_G = np.zeros((KG, KG))
-SIGMA_G_INV = np.zeros((KG, KG))
+SIGMA_G = np.zeros((KG, KG)).astype('float64')
+SIGMA_G_INV = np.zeros((KG, KG)).astype('float64')
 
 
 for i in range(KP):
