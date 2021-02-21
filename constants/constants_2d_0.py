@@ -10,10 +10,10 @@ KG = 16
 ALPHAS_INIT = np.zeros((KP, 1)).astype('float64')
 BETAS_INIT = np.zeros((KG, 2)).astype('float64')
 
-P_CENTERS = np.array([[0, 0], [1, 1],
+P_CENTERS = np.array([[7, 7], [0, 0], [1, 1],
                       [2, 2], [3, 3],
                       [4, 4], [5, 5],
-                      [6, 6], [7, 7],
+                      [6, 6],
                       [8, 8], [9, 9],
                       [10, 10], [11, 11],
                       [12, 12], [13, 13],

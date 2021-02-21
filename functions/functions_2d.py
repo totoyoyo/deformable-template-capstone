@@ -22,7 +22,7 @@ import numba as nb
 #     counter += betas[1] * const.gaussian_kernel_2d(pixel_location, np.array([1,2]), const.DEFORM_SD)
 #     return counter
 
-@nb.jit(parallel=True, forceobj=True)
+# @nb.jit(parallel=True, forceobj=True)
 def cal_deformation(pixel_location, betas):
     counter = np.array([0.0, 0.0])
     for beta_index in nb.prange(const.KG):
@@ -31,7 +31,7 @@ def cal_deformation(pixel_location, betas):
     return counter
 
 
-cal_deformation(np.array([2.0,3.0]), const.BETAS_INIT)
+# cal_deformation(np.array([2.0,3.0]), const.BETAS_INIT)
 
 def pixel_index_to_position(p_index):
     row = p_index // const.IMAGE_NCOLS
@@ -45,6 +45,9 @@ def position_to_pixel_index(position):
 
 def flatten_image(image):
     return image.flatten()
+
+def unflatten_image(image):
+    return image.reshape((-1,const.IMAGE_NCOLS))
 
 
 def convert_to_1d(arr):

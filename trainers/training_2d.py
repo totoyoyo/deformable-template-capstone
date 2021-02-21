@@ -42,6 +42,7 @@ class Estimator2DNImages:
                                                self.Gamma_Inv,
                                                self.sd2,
                                                self.images[n])
+
             out = optimize.minimize(to_min,
                                     curr_beta,
                                     method='SLSQP').x
@@ -118,22 +119,25 @@ class Estimator2DNImages:
         self.template = func.calculate_template(self.alphas)
 
     def show_plots(self):
-        path = "..\\plots\\"
+        path = "..\\plots\\2D\\"
         for n in range(self.number_of_images):
-            plt.plot(self.images[n])
+            image_to_show = func.unflatten_image(self.images[n])
+            plt.imshow(image_to_show)
             image_name = "image" + str(n)
             plt.title(image_name)
             func.handle_save(path, image_name)
             plt.show()
 
         for n in range(self.number_of_images):
-            plt.plot(self.predictions[n])
+            prediction_to_show = func.unflatten_image(self.predictions[n])
+            plt.imshow(prediction_to_show)
             image_name = "Prediction" + str(n)
             plt.title(image_name)
             func.handle_save(path, image_name)
             plt.show()
 
-        plt.plot(self.template)
+        template_to_show = func.unflatten_image(self.template)
+        plt.imshow(template_to_show)
         image_name = "Template"
         plt.title(image_name)
         func.handle_save(path, image_name)
@@ -141,5 +145,5 @@ class Estimator2DNImages:
 
 
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
+my_estimator.run_estimation(1)
 my_estimator.show_plots()
