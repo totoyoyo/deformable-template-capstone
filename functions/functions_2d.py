@@ -23,12 +23,20 @@ import numba as nb
 #     return counter
 
 # @nb.jit(parallel=True, forceobj=True)
+# def cal_deformation(pixel_location, betas):
+#     counter = np.array([0.0, 0.0])
+#     for beta_index in range(const.KG):
+#         value = const.gaussian_kernel_2d(pixel_location, const.G_CENTERS[beta_index], const.DEFORM_SD)
+#         counter += value * betas[beta_index]
+#     return counter
+
 def cal_deformation(pixel_location, betas):
-    counter = np.array([0.0, 0.0])
-    for beta_index in nb.prange(const.KG):
-        value = const.gaussian_kernel_2d(pixel_location, const.G_CENTERS[beta_index], const.DEFORM_SD)
-        counter += value * betas[beta_index]
-    return counter
+    repeated_pixel_location = np.full((const.KG, 2), pixel_location)
+    kernel_out = const.gaussian_kernel_2d_many(repeated_pixel_location,
+                                               const.G_CENTERS,
+                                               const.DEFORM_SD)
+    total_deformation = kernel_out @ betas
+    return total_deformation
 
 
 # cal_deformation(np.array([2.0,3.0]), const.BETAS_INIT)
@@ -119,7 +127,7 @@ def betas_to_2D(flat_beta):
     return flat_beta.reshape((-1,2))
 
 
-def handle_save(path, image_name):
+def handle_save_plot(path, image_name):
     date_str = str(datetime.date.today())
     to_save = path + image_name
     save_counter = 0
@@ -136,3 +144,22 @@ def handle_save(path, image_name):
                 + "_"
                 + str(save_counter)
                 + ".jpg")
+
+
+def handle_save_arr(path, arr_name, arr):
+    date_str = str(datetime.date.today())
+    to_save = path + arr_name
+    save_counter = 0
+    while (os.path.isfile(to_save
+                          + "_"
+                          + date_str
+                          + "_"
+                          + str(save_counter)
+                          + ".txt")):
+        save_counter += 1
+    np.save(to_save
+                + "_"
+                + date_str
+                + "_"
+                + str(save_counter)
+                + ".txt")
