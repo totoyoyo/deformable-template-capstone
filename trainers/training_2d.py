@@ -3,7 +3,7 @@ import constants.constants_2d_0 as const
 import numpy as np
 from scipy import optimize
 # My gradiants
-from typing import *
+import typing
 import matplotlib.pyplot as plt
 
 class Estimator2DNImages:

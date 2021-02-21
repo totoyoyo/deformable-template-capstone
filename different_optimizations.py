@@ -1,4 +1,4 @@
-from trainers.training_many_image_est import *
+from trainers.one_dim_train.training_many_image_est import *
 
 # all_ops = ['Nelder-Mead',
 #            'Powell',

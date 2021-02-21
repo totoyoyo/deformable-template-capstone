@@ -4,11 +4,8 @@ import time
 
 import matplotlib.pyplot as plt
 
-from constants.constants_1d_many_fix import *
+from constants.one_dim.constants_1d_many_fix import *
 from scipy.optimize import check_grad
-import functools
-
-import cProfile
 
 
 def cal_deformation(x, b1d):

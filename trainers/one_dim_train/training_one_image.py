@@ -1,6 +1,6 @@
 from scipy import optimize
 
-from constants.constants_1d_2 import *
+from constants.one_dim.constants_1d_2 import *
 
 import matplotlib.pyplot as plt
 

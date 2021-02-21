@@ -1,22 +1,17 @@
-import os
-import datetime
-
 from scipy import optimize
 
-from typing import *
-import matplotlib.pyplot as plt
-
 # Useful Functions
-from functions.useful_functions_1d import *
-from constants.constants_1d_many_fix import *
+from functions.one_dim_func.useful_functions_1d import *
+from constants.one_dim.constants_1d_many_fix import *
 
 
 # My gradiants
 
 
-class Estimator1DNImages:
+class Estimator1DNImagesMethod:
 
-    def __init__(self):
+    def __init__(self,op_method):
+        self.op_method = op_method
         self.template = None
         self.alphas: np.ndarray = ALPHAS_INIT
         self.betas: List[np.ndarray] = [BETAS_INIT, BETAS_INIT]
@@ -51,7 +46,7 @@ class Estimator1DNImages:
                                              self.images[n])
             out = optimize.minimize(to_min,
                                     betas_in_1d,
-                                    method='SLSQP',
+                                    method=self.op_method,
                                     jac=jac).x
             self.betas[n] = convert_to_2d(out)
             print("beta at" + str(n))
@@ -109,21 +104,30 @@ class Estimator1DNImages:
             self.update_Gamma()
             self.update_alpha_and_sd2()
         self.calculate_template()
-        print("here are alphas, sd2, and Gamma in that order")
-        print(self.alphas)
-        print(self.sd2)
-        print(self.Gamma)
-        print("here are betas")
-        print(self.betas)
-        print("here are predictions")
-        print(self.predictions)
-        print("here is the template")
+        # print("here are alphas, sd2, and Gamma in that order")
+        # print(self.alphas)
+        # print(self.sd2)
+        # print(self.Gamma)
+        # print("here are betas")
+        # print(self.betas)
+        # print("here are predictions")
+        # print(self.predictions)
+        # print("here is the template")
+
+    def remember_time(self,iters):
+        t0 = time.time()
+        self.run_estimation(iters)
+        t1 = time.time()
+        total = t1 - t0
+        print(total)
+        return total
+
 
     def calculate_template(self):
         self.template = calculate_template(self.alphas)
 
     def show_plots(self):
-        path = "..\\plots\\"
+        path = "../../plots\\"
         for n in range(self.number_of_images):
             plt.plot(self.images[n])
             image_name = "image" + str(n)
@@ -143,9 +147,3 @@ class Estimator1DNImages:
         plt.title(image_name)
         handle_save(path, image_name)
         plt.show()
-
-
-
-my_estimator = Estimator1DNImages()
-my_estimator.run_estimation(5)
-my_estimator.show_plots()
