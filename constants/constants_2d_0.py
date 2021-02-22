@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit, njit
+from numba import njit
 
 TEMPLATE_SD = 4
 DEFORM_SD = 4
@@ -147,71 +147,58 @@ SIGMA_G = np.linalg.inv(SIGMA_G_INV)
 #
 # out = gaussian_kernel_2d_many(myinput,G_CENTERS,1)
 
-def precompute_gaussian(nrows, ncols, sd2=1):
-    """
-    Calculates a gaussian kernel
-    :param nrows: number of rows in the image
-    :param ncols: number of columns in the image
-    :param sd2: SD^2 of the gaussian
-    :return: (nrows, ncol) matrix with
-    """
-    rows = np.arange(nrows)
-    cols = np.arange(ncols)
-    xx, yy = np.meshgrid(rows, cols)
-    return gaussian_kernel_naive(xx, yy, sd2)
 
-
-COMPUTED_GAUSSIAN_G = precompute_gaussian(IMAGE_NROWS,IMAGE_NCOLS,DEFORM_SD)
-
-COMPUTED_GAUSSIAN_P = precompute_gaussian(IMAGE_NROWS,IMAGE_NCOLS,TEMPLATE_SD)
-
-
-def get_gaussian_g(x_val, center):
-    """
-    Looks up the gaussian for deformation
-
-    Maybe swap x_val and center?
-    :param x_val: np.array(_) x values (can be many)
-    :param center: np.array() center (only 1)
-    :return: np.array() of scalars for output
-    """
-    vector = np.abs(x_val - center)
-    row_lookup, col_lookup = vector.T
-    return COMPUTED_GAUSSIAN_G[row_lookup,col_lookup]
+# def get_gaussian_g(x_val, center):
+#     """
+#     Looks up the gaussian for deformation
+#
+#     Maybe swap x_val and center?
+#     :param x_val: np.array(_) x values (can be many)
+#     :param center: np.array() center (only 1)
+#     :return: np.array() of scalars for output
+#     """
+#     vector = np.abs(x_val - center)
+#     row_lookup, col_lookup = vector.T
+#     return COMPUTED_GAUSSIAN_G[row_lookup, col_lookup]
 
 
 
-def get_gaussian_extream(all_pixels, all_centers):
-    """
-
-    :param all_pixels: an array of all pixels ex. [[0,0],[0,1]...
-    :param all_centers:  an array of all centers ex. [[0,0],[0,1]...
-    :return: (n_pixels, n_centers) array with evaluated gaussian values
-    """
-    n_pixels = np.shape(all_pixels)[0]
-    n_centers = np.shape(all_centers)[0]
-    pixels_pixels = np.repeat(all_pixels,n_centers,axis=0)
-    centers_centers = np.tile(all_centers,(n_pixels,1))
-    vector = np.abs(pixels_pixels - centers_centers)
-    row_lookup, col_lookup = vector.T
-    gaussian_out = COMPUTED_GAUSSIAN_G[row_lookup,col_lookup]
-    reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
-    return reshaped_gauss
+# def get_gaussian_extream(all_pixels, all_centers):
+#     """
+#
+#     :param all_pixels: an array of all pixels ex. [[0,0],[0,1]...
+#     :param all_centers:  an array of all centers ex. [[0,0],[0,1]...
+#     :return: (n_pixels, n_centers) array with evaluated gaussian values
+#     """
+#     n_pixels = np.shape(all_pixels)[0]
+#     n_centers = np.shape(all_centers)[0]
+#     pixels_pixels = np.repeat(all_pixels,n_centers,axis=0)
+#     centers_centers = np.tile(all_centers,(n_pixels,1))
+#     vector = np.abs(pixels_pixels - centers_centers)
+#     row_lookup, col_lookup = vector.T
+#     gaussian_out = COMPUTED_GAUSSIAN_G[row_lookup, col_lookup]
+#     reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
+#     return reshaped_gauss
 
 pixels = np.array([[0,0],[0,1],[1,1]])
 centers = np.array([[3,3],[2,2]])
 
-get_gaussian_extream(pixels,centers)
+# get_gaussian_extream(pixels,centers)
 
-def get_gaussian_p(x_val, center):
-    """
-    get gaussians for p
-    :param x_val: np.array(_) x values (can be many)
-    :param deformation: np.array() deformation (1 deformation)
-    :param center:
-    :return:
-    """
-    vector = np.abs(x_val - center)
-    rounded_vector = np.rint(vector)
-    row_lookup, col_lookup = rounded_vector.T
-    return COMPUTED_GAUSSIAN_P[row_lookup, col_lookup]
+# def get_gaussian_p(x_val, center):
+#     """
+#     get gaussians for p
+#     :param x_val: np.array(_) x values (can be many)
+#     :param deformation: np.array() deformation (1 deformation)
+#     :param center:
+#     :return:
+#     """
+#     vector = np.abs(x_val - center)
+#     rounded_vector = np.rint(vector)
+#     row_lookup, col_lookup = rounded_vector.T
+#     return COMPUTED_GAUSSIAN_P[row_lookup, col_lookup]
+
+
+IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
+
+ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()]

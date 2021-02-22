@@ -163,3 +163,58 @@ def handle_save_arr(path, arr_name, arr):
                 + "_"
                 + str(save_counter)
                 + ".txt", arr)
+
+
+def precompute_gaussian(nrows, ncols, sd2=1):
+    """
+    Calculates a gaussian kernel
+    :param nrows: number of rows in the image
+    :param ncols: number of columns in the image
+    :param sd2: SD^2 of the gaussian
+    :return: (nrows, ncol) matrix with
+    """
+    rows = np.arange(nrows)
+    cols = np.arange(ncols)
+    xx, yy = np.meshgrid(rows, cols)
+    return const.gaussian_kernel_naive(xx, yy, sd2)
+
+
+COMPUTED_GAUSSIAN_G = precompute_gaussian(const.IMAGE_NROWS,const.IMAGE_NCOLS,const.DEFORM_SD)
+COMPUTED_GAUSSIAN_P = precompute_gaussian(const.IMAGE_NROWS,const.IMAGE_NCOLS,const.TEMPLATE_SD)
+
+
+def lookup_gaussian(indexes, precomputed_gaussian):
+    """
+    :param precomputed_gaussian:
+    :param indexes: np.array of all indexes to lookup ex. np.array([[0,0],[1,1],...] )
+    :return:
+    """
+    int_indexes = indexes.astype('int')
+
+    row_lookup, col_lookup = int_indexes.T
+    gaussian_out = precomputed_gaussian[row_lookup, col_lookup]
+    return gaussian_out
+
+
+def get_pixel_by_centers_matrix(all_pixels, all_centers, precomputed_gaussian):
+    """
+
+    :param all_pixels: an array of all pixels ex. [[0,0],[0,1]...
+    :param all_centers:  an array of all centers ex. [[0,0],[0,1]...
+    :return: (n_pixels, n_centers) array with evaluated gaussian values
+    """
+    n_pixels = np.shape(all_pixels)[0]
+    n_centers = np.shape(all_centers)[0]
+    pixels_pixels = np.repeat(all_pixels,n_centers,axis=0)
+    centers_centers = np.tile(all_centers,(n_pixels,1))
+    vector = np.abs(pixels_pixels - centers_centers)
+
+    gaussian_out = lookup_gaussian(vector, precomputed_gaussian)
+    reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
+    return reshaped_gauss
+
+PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
+                                                     const.G_CENTERS,
+                                                     COMPUTED_GAUSSIAN_G)
+
+
