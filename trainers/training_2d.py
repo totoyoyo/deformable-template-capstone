@@ -106,7 +106,7 @@ class Estimator2DNImages:
     def save_data(self):
         path = "../outputs/"
         func.handle_save_arr(path, "alpha", self.alphas)
-        func.handle_save_arr(path, "beta", self.betas)
+        # func.handle_save_arr(path, "beta", self.betas)
         func.handle_save_arr(path, "Gamma", self.Gamma)
         func.handle_save_arr(path, "sigma_squared", [self.sd2])
         func.handle_save_arr(path, "time", [self.estimation_time])
@@ -163,5 +163,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-# my_estimator.run_estimation(1)
-# my_estimator.show_plots()
+my_estimator.run_estimation(1)
+my_estimator.show_plots()
+my_estimator.save_data()

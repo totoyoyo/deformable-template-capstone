@@ -157,9 +157,9 @@ def handle_save_arr(path, arr_name, arr):
                           + str(save_counter)
                           + ".txt")):
         save_counter += 1
-    np.save(to_save
+    np.savetxt(to_save
                 + "_"
                 + date_str
                 + "_"
                 + str(save_counter)
-                + ".txt")
+                + ".txt", arr)

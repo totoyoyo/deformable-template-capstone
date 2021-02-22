@@ -1,17 +1,17 @@
 import numpy as np
 from numba import jit, njit
 
-TEMPLATE_SD = 0.3
-DEFORM_SD = 0.3
+TEMPLATE_SD = 4
+DEFORM_SD = 4
 SD_INIT = 1
 
-IMAGE_NROWS = 16
-IMAGE_NCOLS = 16
+IMAGE_NROWS = 10
+IMAGE_NCOLS = 10
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE1[6:10, 6:10] = 1.0
-IMAGE2[8:12, 8:12] = 1.0
+IMAGE1[4:6, 4:6] = 1.0
+IMAGE2[6:8, 6:8] = 1.0
 
 IMAGES = [IMAGE1, IMAGE2]
 # IMAGES = [np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.5),
@@ -32,18 +32,21 @@ def kernel_on_every_pixel(img_dim_x, img_dim_y):
 
 kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
-P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+# P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
-G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+# G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
-# P_CENTERS = np.array([[0, 0], [1, 1],
-#                       [2, 2], [3, 3],
-#                       [4, 4], [5, 5],
-#                       [6, 6], [7, 7],
-#                       [8, 8], [9, 9],
-#                       [10, 10], [11, 11],
-#                       [12, 12], [13, 13],
-#                       [14, 14], [15, 15]]).astype('float64')
+P_CENTERS = np.array([[2,2], [2,4], [2,6], [2,8],
+                      [4,2], [4,4], [4,6], [4,8],
+                      [6,2], [6,4], [6,6], [6,8],
+                      [8,2], [8,4], [8,6], [8,8]]).astype('float64')
+
+G_CENTERS = np.array([[2,2], [2,4], [2,6], [2,8],
+                      [4,2], [4,4], [4,6], [4,8],
+                      [6,2], [6,4], [6,6], [6,8],
+                      [8,2], [8,4], [8,6], [8,8]]).astype('float64')
+#
+
 #
 # G_CENTERS = np.array([[0, 0], [1, 1],
 #                       [2, 2], [3, 3],
