@@ -1,4 +1,4 @@
-import functions.functions_2d as func
+import functions.functions_2d_1d_gaussian as func
 import constants.constants_2d_0 as const
 import numpy as np
 import time
@@ -39,10 +39,14 @@ class Estimator2DNImages:
                                                self.sd2,
                                                self.images[n])
 
+            # out = optimize.minimize(to_min,
+            #                         curr_beta,
+            #                         method='SLSQP',
+            #                         options={'eps' : 0.0001}).x
             out = optimize.minimize(to_min,
                                     curr_beta,
                                     method='SLSQP',
-                                    options={'eps' : 0.0001}).x
+                                    options={'eps' : 0.00001}).x
 
             self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))

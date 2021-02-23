@@ -157,21 +157,26 @@ def precompute_gaussian_big():
     return const.gaussian_kernel_naive_2(xx, yy, 1)
 
 
-COMPUTED_GAUSSIAN_BIG = precompute_gaussian_big()
-COMPUTED_GAUSSIAN_BIG = np.pad(COMPUTED_GAUSSIAN_BIG,
-                               ((0,1),(0,1)),mode='constant',
-                               constant_values=0.0)
+def precompute_1D_gaussian_big():
+    inputs = np.linspace(0, 36, num=36000001)
+    gauss_out = const.gaussian_kernel_input2_sd2(inputs,1)
+    return gauss_out
 
-def lookup_big_gaussian(indexes, sd):
-    z = indexes / sd
-    new_indexes = (z * 1000).astype(int)
-    clipped_indexes = np.clip(new_indexes, a_min=0, a_max=5001)
-    row_lookup, col_lookup = clipped_indexes.T
-    gaussian_out = COMPUTED_GAUSSIAN_BIG[row_lookup, col_lookup]
+
+gaussian_1d = precompute_1D_gaussian_big()
+
+
+def lookup_big_gaussian(indexes, sd2):
+    row_lookup, col_lookup = indexes.T
+    squared = row_lookup ** 2 + col_lookup ** 2
+    squared = squared / sd2
+    new_indexes = (squared * 1000000).astype(int)
+    clipped_indexes = np.clip(new_indexes, a_min=0, a_max=36000000)
+    gaussian_out = gaussian_1d[clipped_indexes]
     return gaussian_out
 
 
-def get_pixel_by_centers_matrix(all_pixels, all_centers, sd):
+def get_pixel_by_centers_matrix(all_pixels, all_centers, sd2):
     """
 
     :param all_pixels: an array of all pixels ex. [[0,0],[0,1]...
@@ -184,7 +189,7 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, sd):
     centers_centers = np.tile(all_centers,(n_pixels,1))
     vector = np.abs(pixels_pixels - centers_centers)
 
-    gaussian_out = lookup_big_gaussian(vector, sd)
+    gaussian_out = lookup_big_gaussian(vector, sd2)
     reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
     return reshaped_gauss
 
