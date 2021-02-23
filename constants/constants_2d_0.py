@@ -1,9 +1,13 @@
 import numpy as np
-from numba import njit
+from numba import jit
+import scipy.stats
 
-TEMPLATE_SD = 0.3
-DEFORM_SD = 0.3
+
+TEMPLATE_SD2 = 0.3
+DEFORM_SD2 = 0.3
 SD_INIT = 1
+
+
 
 IMAGE_NROWS = 10
 IMAGE_NCOLS = 10
@@ -30,21 +34,20 @@ def kernel_on_every_pixel(img_dim_x, img_dim_y):
     return X_2D.astype('float64')
 
 
-kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
-# P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
-# G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
-P_CENTERS = np.array([[2, 2], [2, 4], [2, 6], [2, 8],
-                      [4, 2], [4, 4], [4, 6], [4, 8],
-                      [6, 2], [6, 4], [6, 6], [6, 8],
-                      [8, 2], [8, 4], [8, 6], [8, 8]]).astype('float64')
+# P_CENTERS = np.array([[2, 2], [2, 4], [2, 6], [2, 8],
+#                       [4, 2], [4, 4], [4, 6], [4, 8],
+#                       [6, 2], [6, 4], [6, 6], [6, 8],
+#                       [8, 2], [8, 4], [8, 6], [8, 8]]).astype('float64')
 
-G_CENTERS = np.array([[2, 2], [2, 4], [2, 6], [2, 8],
-                      [4, 2], [4, 4], [4, 6], [4, 8],
-                      [6, 2], [6, 4], [6, 6], [6, 8],
-                      [8, 2], [8, 4], [8, 6], [8, 8]]).astype('float64')
+# G_CENTERS = np.array([[2, 2], [2, 4], [2, 6], [2, 8],
+#                       [4, 2], [4, 4], [4, 6], [4, 8],
+#                       [6, 2], [6, 4], [6, 6], [6, 8],
+#                       [8, 2], [8, 4], [8, 6], [8, 8]]).astype('float64')
 #
 
 #
@@ -63,7 +66,6 @@ ALPHAS_INIT = np.zeros((KP, 1)).astype('float64')
 BETAS_INIT = np.zeros((KG, 2)).astype('float64')
 
 
-@njit
 def gaussian_kernel_2d(x_val, center_val, sd):
     diff = np.linalg.norm(x_val - center_val)
     inter = (-((diff) ** 2)
@@ -71,6 +73,25 @@ def gaussian_kernel_2d(x_val, center_val, sd):
     out = np.e ** inter
     # Should be a float
     return out
+
+# @jit()
+def gaussian_kernel_original(x_val, sd):
+    diff = np.linalg.norm(x_val)
+    inter = (-((diff) ** 2)
+             / (2 * sd**2))
+    out = np.exp(inter)
+    # Should be a float
+    return out
+
+
+def gaussian_kernel_one_point(x_vals, sd):
+    diff = np.linalg.norm(x_vals, axis=1)
+    inter = (-((diff) ** 2)
+             / (2 * sd**2))
+    out = np.exp(inter)
+    # Should be a float
+    return out
+
 
 
 def gaussian_kernel_2d_many(x_val, center_val, sd):
@@ -82,10 +103,19 @@ def gaussian_kernel_2d_many(x_val, center_val, sd):
     return out
 
 
-def gaussian_kernel_naive(pixel_row, pixel_col, sd):
+def gaussian_kernel_naive(pixel_row, pixel_col, sd2):
     diff = pixel_row ** 2 + pixel_col ** 2
     inter = (-(diff)
-             / (2 * sd))
+             / (2 * sd2))
+    out = np.e ** inter
+    # Should be a float
+    return out
+
+
+def gaussian_kernel_naive_2(pixel_row, pixel_col, sd):
+    diff = pixel_row ** 2 + pixel_col ** 2
+    inter = (-(diff)
+             / (2 * sd ** 2))
     out = np.e ** inter
     # Should be a float
     return out
@@ -132,13 +162,13 @@ for i in range(KP):
     for j in range(KP):
         SIGMA_P_INV[i, j] = gaussian_kernel_2d(P_CENTERS[i],
                                                P_CENTERS[j],
-                                               TEMPLATE_SD)
+                                               TEMPLATE_SD2)
 
 for i in range(KG):
     for j in range(KG):
         SIGMA_G_INV[i, j] = gaussian_kernel_2d(G_CENTERS[i],
                                                G_CENTERS[j],
-                                               DEFORM_SD)
+                                               DEFORM_SD2)
 SIGMA_P = np.linalg.inv(SIGMA_P_INV)
 SIGMA_G = np.linalg.inv(SIGMA_G_INV)
 
@@ -202,3 +232,8 @@ centers = np.array([[3,3],[2,2]])
 IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
 
 ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()]
+
+one_point = gaussian_kernel_one_point(ALL_PIXELS,0.2)
+
+
+#sqrt_sd * 6 is 0
