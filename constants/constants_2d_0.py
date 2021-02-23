@@ -3,8 +3,8 @@ from numba import jit
 import scipy.stats
 
 
-TEMPLATE_SD2 = 0.3
-DEFORM_SD2 = 0.3
+TEMPLATE_SD = 0.3
+DEFORM_SD = 0.3
 SD_INIT = 1
 
 
@@ -162,13 +162,13 @@ for i in range(KP):
     for j in range(KP):
         SIGMA_P_INV[i, j] = gaussian_kernel_2d(P_CENTERS[i],
                                                P_CENTERS[j],
-                                               TEMPLATE_SD2)
+                                               TEMPLATE_SD)
 
 for i in range(KG):
     for j in range(KG):
         SIGMA_G_INV[i, j] = gaussian_kernel_2d(G_CENTERS[i],
                                                G_CENTERS[j],
-                                               DEFORM_SD2)
+                                               DEFORM_SD)
 SIGMA_P = np.linalg.inv(SIGMA_P_INV)
 SIGMA_G = np.linalg.inv(SIGMA_G_INV)
 

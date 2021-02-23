@@ -41,7 +41,8 @@ class Estimator2DNImages:
 
             out = optimize.minimize(to_min,
                                     curr_beta,
-                                    method='SLSQP').x
+                                    method='SLSQP',
+                                    options={'eps' : 0.0001}).x
 
             self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))
@@ -159,6 +160,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
+my_estimator.run_estimation(10)
 my_estimator.show_plots()
 my_estimator.save_data()

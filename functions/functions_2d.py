@@ -13,20 +13,20 @@ import numba as nb
 # def cal_deformation(pixel_location, betas):
 #     counter = np.array([0.0, 0.0])
 #     for index, center in enumerate(const.G_CENTERS):
-#         counter += betas[index] * const.gaussian_kernel_2d(pixel_location, center, const.DEFORM_SD2)
+#         counter += betas[index] * const.gaussian_kernel_2d(pixel_location, center, const.DEFORM_SD)
 #     return counter
 
 # @nb.njit(parallel=True)
 # def cal_deformation(pixel_location, betas):
 #     counter = np.array([0.0, 0.0])
-#     counter += betas[1] * const.gaussian_kernel_2d(pixel_location, np.array([1,2]), const.DEFORM_SD2)
+#     counter += betas[1] * const.gaussian_kernel_2d(pixel_location, np.array([1,2]), const.DEFORM_SD)
 #     return counter
 
 # @nb.jit(parallel=True, forceobj=True)
 # def cal_deformation(pixel_location, betas):
 #     counter = np.array([0.0, 0.0])
 #     for beta_index in range(const.KG):
-#         value = const.gaussian_kernel_2d(pixel_location, const.G_CENTERS[beta_index], const.DEFORM_SD2)
+#         value = const.gaussian_kernel_2d(pixel_location, const.G_CENTERS[beta_index], const.DEFORM_SD)
 #         counter += value * betas[beta_index]
 #     return counter
 
@@ -34,7 +34,7 @@ def cal_deformation(pixel_location, betas):
     repeated_pixel_location = np.full((const.KG, 2), pixel_location)
     kernel_out = const.gaussian_kernel_2d_many(repeated_pixel_location,
                                                const.G_CENTERS,
-                                               const.DEFORM_SD2)
+                                               const.DEFORM_SD)
     total_deformation = kernel_out @ betas
     return total_deformation
 
@@ -79,7 +79,7 @@ def convert_to_2d(mat):
 def calculate_template(alphas):
     return (get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                         const.P_CENTERS,
-                                        COMPUTED_GAUSSIAN_P) @ alphas)
+                                        const.TEMPLATE_SD) @ alphas)
 
 
 # Returns nparray dim (IMAGEDIM,)
@@ -170,10 +170,13 @@ def precompute_gaussian_big():
 
 
 COMPUTED_GAUSSIAN_BIG = precompute_gaussian_big()
+COMPUTED_GAUSSIAN_BIG = np.pad(COMPUTED_GAUSSIAN_BIG,
+                               ((0,1),(0,1)),mode='constant',
+                               constant_values=0.0)
 
 
-COMPUTED_GAUSSIAN_G = precompute_gaussian(const.IMAGE_NROWS, const.IMAGE_NCOLS, const.DEFORM_SD2)
-COMPUTED_GAUSSIAN_P = precompute_gaussian(const.IMAGE_NROWS, const.IMAGE_NCOLS, const.TEMPLATE_SD2)
+COMPUTED_GAUSSIAN_G = precompute_gaussian(const.IMAGE_NROWS, const.IMAGE_NCOLS, const.DEFORM_SD)
+COMPUTED_GAUSSIAN_P = precompute_gaussian(const.IMAGE_NROWS, const.IMAGE_NCOLS, const.TEMPLATE_SD)
 
 
 def lookup_gaussian(indexes, precomputed_gaussian):
@@ -199,13 +202,13 @@ def manual_gaussian(indexes, precomputed_gaussian):
 def lookup_big_gaussian(indexes, sd):
     z = indexes / sd
     new_indexes = (z * 1000).astype(int)
-    clipped_indexes = np.clip(new_indexes, a_min=0, a_max=5000)
+    clipped_indexes = np.clip(new_indexes, a_min=0, a_max=5001)
     row_lookup, col_lookup = clipped_indexes.T
     gaussian_out = COMPUTED_GAUSSIAN_BIG[row_lookup, col_lookup]
     return gaussian_out
 
 
-def get_pixel_by_centers_matrix(all_pixels, all_centers, precomputed_gaussian):
+def get_pixel_by_centers_matrix(all_pixels, all_centers, sd):
     """
 
     :param all_pixels: an array of all pixels ex. [[0,0],[0,1]...
@@ -218,22 +221,18 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, precomputed_gaussian):
     centers_centers = np.tile(all_centers,(n_pixels,1))
     vector = np.abs(pixels_pixels - centers_centers)
 
-    gaussian_out = manual_gaussian(vector, precomputed_gaussian)
+    gaussian_out = lookup_big_gaussian(vector, sd)
     reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
     return reshaped_gauss
 
 PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
-                                                     COMPUTED_GAUSSIAN_G)
+                                                     const.DEFORM_SD)
 
 def calculate_kBp(betas):
     deformation = PIXEL_G_CENTERS_MATRIX @ betas
     deformed_pixel = const.ALL_PIXELS - deformation
     return get_pixel_by_centers_matrix(deformed_pixel,
                                 const.P_CENTERS,
-                                COMPUTED_GAUSSIAN_P)
+                                const.TEMPLATE_SD)
 
-
-out = lookup_big_gaussian(const.ALL_PIXELS,1)
-
-print('done')
