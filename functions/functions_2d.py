@@ -76,26 +76,10 @@ def convert_to_2d(mat):
         return mat
 
 
-def calculate_kBp(betas):
-    tmp_kbp = np.empty((const.IMAGE_TOTAL, const.KP))
-    for i in range(const.IMAGE_TOTAL):
-        for j in range(const.KP):
-            position = pixel_index_to_position(i)
-            the_def = cal_deformation(position, betas)
-            tmp_kbp[i, j] = const.gaussian_kernel_2d(position - the_def, const.P_CENTERS[j],
-                                                     const.TEMPLATE_SD)
-    return tmp_kbp
-
 def calculate_template(alphas):
-    a1d = convert_to_1d(alphas)
-    template = np.empty((const.IMAGE_TOTAL, 1))
-    for i in range(const.IMAGE_TOTAL):
-        position = pixel_index_to_position(i)
-        template[i, 0] = sum([alpha * const.gaussian_kernel_2d(position,
-                                                               const.P_CENTERS[index],
-                                                               const.TEMPLATE_SD)
-                              for index, alpha in enumerate(a1d)])
-    return template
+    return (get_pixel_by_centers_matrix(const.ALL_PIXELS,
+                                        const.P_CENTERS,
+                                        COMPUTED_GAUSSIAN_P) @ alphas)
 
 
 # Returns nparray dim (IMAGEDIM,)
@@ -189,8 +173,7 @@ def lookup_gaussian(indexes, precomputed_gaussian):
     :param indexes: np.array of all indexes to lookup ex. np.array([[0,0],[1,1],...] )
     :return:
     """
-    np.rint(indexes,out=indexes)
-    int_indexes = indexes.astype(int)
+    int_indexes = np.rint(indexes).astype(int)
     row_lookup, col_lookup = int_indexes.T
     gaussian_out = precomputed_gaussian[row_lookup, col_lookup]
     return gaussian_out
@@ -217,4 +200,9 @@ PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
                                                      COMPUTED_GAUSSIAN_G)
 
-
+def calculate_kBp(betas):
+    deformation = PIXEL_G_CENTERS_MATRIX @ betas
+    deformed_pixel = const.ALL_PIXELS - deformation
+    return get_pixel_by_centers_matrix(deformed_pixel,
+                                const.P_CENTERS,
+                                COMPUTED_GAUSSIAN_P)

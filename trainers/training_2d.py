@@ -14,9 +14,9 @@ class Estimator2DNImages:
         self.estimation_time = 0
         self.number_of_images = len(const.FLAT_IMAGES)
         self.alphas: np.ndarray = const.ALPHAS_INIT
-        self.betas: typing.List[np.ndarray] = [const.BETAS_INIT] * self.number_of_images
+        self.betas = [const.BETAS_INIT] * self.number_of_images
         self.sd2: int = const.SD_INIT
-        self.kBps: typing.List[np.ndarray] = \
+        self.kBps = \
             list(map((lambda beta: func.calculate_kBp(beta)),
                      self.betas))
         self.Gamma: np.ndarray = const.SIGMA_G
@@ -29,12 +29,6 @@ class Estimator2DNImages:
         self.Gamma_update_count = 0
         self.asd2_update_count = 0
 
-    # def to_minimize(self, b1d, n):  # Fix the static predictions
-    #     image_difference = self.images[n] - self.calculate_prediction(b1d)
-    #     result = (1 / 2) * b1d.T @ self.Gamma_Inv @ b1d \
-    #              + (1 / (2 * self.sd2)) \
-    #              * faster_norm_squared(image_difference)
-    #     return result.item()
 
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
@@ -99,7 +93,7 @@ class Estimator2DNImages:
                          + const.AP * const.SD_INIT)
             self.alphas = new_alpha
             self.sd2 = new_sd2.item()
-        self.update_predictions()
+        # self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
         self.asd2_update_count += 1
 
@@ -117,9 +111,11 @@ class Estimator2DNImages:
             self.update_Gamma()
             self.update_alpha_and_sd2()
         self.calculate_template()
+        self.update_predictions()
         end_time = time.time()
         total = end_time - self.start_time
         self.estimation_time = total
+
         # print("Here is the time")
         # print(total)
         # print("here are alphas, sd2, and Gamma in that order")
@@ -163,6 +159,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(1)
+my_estimator.run_estimation(5)
 my_estimator.show_plots()
 my_estimator.save_data()

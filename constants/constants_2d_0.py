@@ -1,8 +1,8 @@
 import numpy as np
 from numba import njit
 
-TEMPLATE_SD = 4
-DEFORM_SD = 4
+TEMPLATE_SD = 0.3
+DEFORM_SD = 0.3
 SD_INIT = 1
 
 IMAGE_NROWS = 10
