@@ -189,8 +189,8 @@ def lookup_gaussian(indexes, precomputed_gaussian):
     :param indexes: np.array of all indexes to lookup ex. np.array([[0,0],[1,1],...] )
     :return:
     """
-    int_indexes = indexes.astype('int')
-
+    np.rint(indexes,out=indexes)
+    int_indexes = indexes.astype(int)
     row_lookup, col_lookup = int_indexes.T
     gaussian_out = precomputed_gaussian[row_lookup, col_lookup]
     return gaussian_out
@@ -201,7 +201,7 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, precomputed_gaussian):
 
     :param all_pixels: an array of all pixels ex. [[0,0],[0,1]...
     :param all_centers:  an array of all centers ex. [[0,0],[0,1]...
-    :return: (n_pixels, n_centers) array with evaluated gaussian values
+    :return: (n_pixels, n_centers) array with evaluated gaussian values relative to each center
     """
     n_pixels = np.shape(all_pixels)[0]
     n_centers = np.shape(all_centers)[0]
