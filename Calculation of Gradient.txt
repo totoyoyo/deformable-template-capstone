@@ -1,0 +1,33 @@
+The K matrix for finding deformation is
+
+K = exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P*Cb')) / (2 * sdg2))
+
+where P is the matrix with each row being a pixel location, and C is the matrix with each row being a beta center. oneCOL2 is just [1 1]transpose and oneROWKg is [Kg elements of 1]. Likewise, oneROWL is [L elements of 1], with L being the number of pixels. The ' denotes that its a transpose of a column vector. 
+
+Since, D = KB, we know
+
+D = (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)
+
+Now, we want to find KBp, to calculate KBpA. But we know that it KBp takes the same form as K above, except with P := (P - D) and different centers. So, we can write,
+
+KBp = (exp(((((P - D).^2) * oneCOL2 * oneROWKp') + ((Ca.^2) * oneCOL2 * oneROWL')' - (2 * (P - D) * Ca')) / (2 * sdp2)))
+
+This gives KBpA as 
+KBpA = (exp(((((P - D).^2) * oneCOL2 * oneROWKp') + ((Ca.^2) * oneCOL2 * oneROWL')' - (2 * (P - D) * Ca')) / (2 * sdp2))) * A.
+
+We can then inline D to get the following. 
+
+KBpA = (exp(((((P - (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)).^2) * oneCOL2 * oneROWKp') + ((Ca.^2) * oneCOL2 * oneROWL')' - (2 * (P - (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)) * Ca')) / (2 * sdp2))) * A
+
+Recall that the full optimization problem is given by
+
+best_beta = argmin b ((1/2) * tr(B' * Ginv  * B) + (1/(2*sdl2)) * norm2(image - KBpA)^2)
+
+Inlining everything yields:
+
+((exp(((((P - (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)).^2) * oneCOL2 * oneROWKp') + ((Ca.^2) * oneCOL2 * oneROWL')' - (2 * (P - (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)) * Ca')) / (2 * sdp2))) * A)
+
+
+best_beta = argmin b ((1/2) * tr(B' * Ginv  * B) + (1/(2*sdl2)) * norm2(image - ((exp(((((P - (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)).^2) * oneCOL2 * oneROWKp') + ((Ca.^2) * oneCOL2 * oneROWL')' - (2 * (P - (exp((((P.^2) * oneCOL2 * oneROWKg') + ((Cb.^2) * oneCOL2 * oneROWL')' - (2 * P * Cb')) / (2 * sdg2)) * B)) * Ca')) / (2 * sdp2))) * A))^2)
+
+

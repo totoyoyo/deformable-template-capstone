@@ -149,10 +149,28 @@ PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
                                                      const.DEFORM_SD2)
 
+from timeit import default_timer as timer
+
+
 def calculate_kBp(betas):
     deformation = PIXEL_G_CENTERS_MATRIX @ betas
+    start = timer()
     deformed_pixel = const.ALL_PIXELS - deformation
-    return get_pixel_by_centers_matrix(deformed_pixel,
+    out_matrix = get_pixel_by_centers_matrix(deformed_pixel,
                                 const.P_CENTERS,
                                 const.TEMPLATE_SD2)
+    end = timer()
+    totaltime = end - start
+    return totaltime, out_matrix
 
+
+rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
+         np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)
+bx, by = np.meshgrid(rx, ry)
+# Pair up elems from gx and gy to create array of pairs
+B_2D = np.c_[bx.ravel(), by.ravel()]
+
+
+res = calculate_kBp(B_2D)
+plt.imshow(res[1])
+plt.show()

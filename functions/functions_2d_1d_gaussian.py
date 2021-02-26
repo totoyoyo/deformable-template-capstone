@@ -7,39 +7,6 @@ import matplotlib.pyplot as plt
 import numba as nb
 
 
-# @jit(signature_or_function="float64(array(int32, 1d, C), array(float64, 2d, C))")
-# @nb.jit(signature_or_function="float64[::1](float64[::1], float64[:,::1])")
-# @nb.njit(parallel=True)
-# def cal_deformation(pixel_location, betas):
-#     counter = np.array([0.0, 0.0])
-#     for index, center in enumerate(const.G_CENTERS):
-#         counter += betas[index] * const.gaussian_kernel_2d(pixel_location, center, const.DEFORM_SD)
-#     return counter
-
-# @nb.njit(parallel=True)
-# def cal_deformation(pixel_location, betas):
-#     counter = np.array([0.0, 0.0])
-#     counter += betas[1] * const.gaussian_kernel_2d(pixel_location, np.array([1,2]), const.DEFORM_SD)
-#     return counter
-
-# @nb.jit(parallel=True, forceobj=True)
-# def cal_deformation(pixel_location, betas):
-#     counter = np.array([0.0, 0.0])
-#     for beta_index in range(const.KG):
-#         value = const.gaussian_kernel_2d(pixel_location, const.G_CENTERS[beta_index], const.DEFORM_SD)
-#         counter += value * betas[beta_index]
-#     return counter
-
-def cal_deformation(pixel_location, betas):
-    repeated_pixel_location = np.full((const.KG, 2), pixel_location)
-    kernel_out = const.gaussian_kernel_2d_many(repeated_pixel_location,
-                                               const.G_CENTERS,
-                                               const.DEFORM_SD)
-    total_deformation = kernel_out @ betas
-    return total_deformation
-
-
-# cal_deformation(np.array([2.0,3.0]), const.BETAS_INIT)
 
 def pixel_index_to_position(p_index):
     row = p_index // const.IMAGE_NCOLS
@@ -79,7 +46,7 @@ def convert_to_2d(mat):
 def calculate_template(alphas):
     return (get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                         const.P_CENTERS,
-                                        const.TEMPLATE_SD) @ alphas)
+                                        const.TEMPLATE_SD2) @ alphas)
 
 
 # Returns nparray dim (IMAGEDIM,)
@@ -149,14 +116,6 @@ def handle_save_arr(path, arr_name, arr):
                 + ".txt", arr)
 
 
-
-def precompute_gaussian_big():
-    rows = np.linspace(0,5,num=5001)
-    cols = np.linspace(0,5,num=5001)
-    xx, yy = np.meshgrid(rows, cols)
-    return const.gaussian_kernel_naive_2(xx, yy, 1)
-
-
 def precompute_1D_gaussian_big():
     inputs = np.linspace(0, 36, num=36000001)
     gauss_out = const.gaussian_kernel_input2_sd2(inputs,1)
@@ -195,12 +154,28 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, sd2):
 
 PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
-                                                     const.DEFORM_SD)
+                                                     const.DEFORM_SD2)
+from timeit import default_timer as timer
 
 def calculate_kBp(betas):
     deformation = PIXEL_G_CENTERS_MATRIX @ betas
+    start = timer()
     deformed_pixel = const.ALL_PIXELS - deformation
-    return get_pixel_by_centers_matrix(deformed_pixel,
+    out_matrix = get_pixel_by_centers_matrix(deformed_pixel,
                                 const.P_CENTERS,
-                                const.TEMPLATE_SD)
+                                const.TEMPLATE_SD2)
+    end = timer()
+    totaltime = end - start
+    return totaltime, out_matrix
 
+
+rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
+         np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)
+bx, by = np.meshgrid(rx, ry)
+# Pair up elems from gx and gy to create array of pairs
+B_2D = np.c_[bx.ravel(), by.ravel()]
+
+
+res = calculate_kBp(B_2D)
+plt.imshow(res[1])
+plt.show()

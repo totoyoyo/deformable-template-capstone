@@ -115,9 +115,9 @@ def precompute_gaussian(nrows, ncols, sd2=1):
 
 
 COMPUTED_GAUSSIAN_G = precompute_gaussian(const.IMAGE_NROWS, const.IMAGE_NCOLS,
-                                          const.DEFORM_SD)
+                                          const.DEFORM_SD2)
 COMPUTED_GAUSSIAN_P = precompute_gaussian(const.IMAGE_NROWS, const.IMAGE_NCOLS,
-                                          const.TEMPLATE_SD)
+                                          const.TEMPLATE_SD2)
 
 
 def lookup_gaussian(indexes, precomputed_gaussian):

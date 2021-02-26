@@ -43,10 +43,15 @@ class Estimator2DNImages:
             #                         curr_beta,
             #                         method='SLSQP',
             #                         options={'eps' : 0.0001}).x
+            # out = optimize.minimize(to_min,
+            #                         curr_beta,
+            #                         method='SLSQP',
+            #                         options={'eps' : 0.00001}).x
             out = optimize.minimize(to_min,
                                     curr_beta,
                                     method='SLSQP',
-                                    options={'eps' : 0.00001}).x
+                                    options={"maxiter" : 20,
+                                             'eps' : 0.00001}).x
 
             self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))
