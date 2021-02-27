@@ -1,11 +1,11 @@
-import functions.functions_2d_1d_gaussian as func
+import functions.functions_2d_fix as func
 import constants.constants_2d_0 as const
 import numpy as np
 import time
 from scipy import optimize
 # My gradiants
 import matplotlib.pyplot as plt
-from helpers.solver import solve
+from helpers.solver_2 import solve
 
 class Estimator2DNImages:
 
@@ -35,9 +35,20 @@ class Estimator2DNImages:
         # Depends on current beta, Gamma, sd2, predictions, images
         def update_best_beta(n):
             curr_beta = self.betas[n].flatten()
-            out = solve(self.Gamma_Inv)
-
-            self.betas[n] = func.betas_to_2D(out)
+            tmp_a = self.alphas.flatten()
+            out = solve(self.Gamma_Inv,
+                        const.ALL_PIXELS,
+                        func.PIXEL_G_CENTERS_MATRIX,
+                        const.P_CENTERS,
+                        self.images[n],
+                        const.ONE_COL2,
+                        const.ONE_KP,
+                        const.ONE_L,
+                        tmp_a,
+                        self.sd2,
+                        const.TEMPLATE_SD2
+                        )
+            self.betas[n] = out['B']
             print("beta at" + str(n))
             print(out)
 
@@ -72,16 +83,18 @@ class Estimator2DNImages:
         self.update_kBps()
         ky = list(map((lambda kBp, image: kBp.T @ image), self.kBps, self.images))
         kk = list(map((lambda kBp: kBp.T @ kBp), self.kBps))
-        return (1 / self.number_of_images) * sum(ky), \
+        kyl = (1 / self.number_of_images) * sum(ky)
+        return kyl.reshape(-1,1), \
                (1 / self.number_of_images) * sum(kk)
 
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        for x in range(10):
-            new_alpha = np.linalg.inv(self.number_of_images * kkl
-                                      + self.sd2 * const.SIGMA_P_INV) @ \
-                        (self.number_of_images * kyl + self.sd2 * (const.SIGMA_P_INV @ const.MU_P))
+        for x in range(5):
+            a_left = np.linalg.inv(self.number_of_images * kkl
+                                      + self.sd2 * const.SIGMA_P_INV)
+            a_right = (self.number_of_images * kyl + self.sd2 * (const.SIGMA_P_INV @ const.MU_P))
+            new_alpha = a_left @ a_right
             new_sd2 = (1 / (self.number_of_images * const.IMAGE_TOTAL * const.AP)) \
                       * (self.number_of_images * (self.YTY + self.alphas.T @ kkl @ self.alphas
                               - 2 * self.alphas.T @ kyl)

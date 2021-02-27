@@ -1,5 +1,5 @@
 """
-Sample code automatically generated on 2021-02-27 14:02:42
+Sample code automatically generated on 2021-02-27 15:39:40
 
 by geno from www.geno-project.org
 
@@ -11,7 +11,6 @@ parameters
   matrix K
   matrix Ca
   vector image
-  vector y
   vector oneCOL2
   vector oneROWKp
   vector oneROWL
@@ -19,9 +18,9 @@ parameters
   scalar sdl2
   scalar sdp2
 variables
-  scalar B
+  matrix B
 min
-  1/2*tr(B*B*Ginv)+1/(2*sdl2)*norm2(image-exp(((P-B*K).^2*oneCOL2*oneROWKp'+(Ca.^2*oneCOL2*oneROWL')'-2*(P-B*K)*Ca')/(2*sdp2))*A).^2
+  1/2*tr(B'*Ginv*B)+1/(2*sdl2)*norm2(image-exp(((P-K*B).^2*oneCOL2*oneROWKp'+(Ca.^2*oneCOL2*oneROWL')'-2*(P-K*B)*Ca')/(2*sdp2))*A).^2
 
 
 The generated code is provided "as is" without warranty of any kind.
@@ -34,17 +33,25 @@ from timeit import default_timer as timer
 import numpy as np
 
 
-try:
-    from genosolver import minimize, check_version
-    USE_GENO_SOLVER = True
-except ImportError:
-    from scipy.optimize import minimize
-    USE_GENO_SOLVER = False
-    WRN = 'WARNING: GENO solver not installed. Using SciPy solver instead.\n' + \
-          'Run:     pip install genosolver'
-    print('*' * 63)
-    print(WRN)
-    print('*' * 63)
+# try:
+#     from genosolver import minimize, check_version
+#     USE_GENO_SOLVER = False
+# except ImportError:
+#     from scipy.optimize import minimize
+#     USE_GENO_SOLVER = False
+#     WRN = 'WARNING: GENO solver not installed. Using SciPy solver instead.\n' + \
+#           'Run:     pip install genosolver'
+#     print('*' * 63)
+#     print(WRN)
+#     print('*' * 63)
+
+from scipy.optimize import minimize
+USE_GENO_SOLVER = False
+WRN = 'WARNING: GENO solver not installed. Using SciPy solver instead.\n' + \
+      'Run:     pip install genosolver'
+print('*' * 63)
+print(WRN)
+print('*' * 63)
 
 class GenoNLP:
     def __init__(self, Ginv, P, K, Ca, image, oneCOL2, oneROWKp, oneROWL, A, sdl2, sdp2):
@@ -114,14 +121,14 @@ class GenoNLP:
             assert dim == (1, )
         self.sdp2_rows = 1
         self.sdp2_cols = 1
-        self.B_rows = 1
-        self.B_cols = 1
+        self.B_rows = self.Ginv_rows
+        self.B_cols = self.P_cols
         self.B_size = self.B_rows * self.B_cols
         # the following dim assertions need to hold for this problem
-        assert self.Ginv_rows == self.Ginv_cols
         assert self.oneROWL_rows == self.K_rows == self.P_rows == self.image_rows
         assert self.A_rows == self.Ca_rows == self.oneROWKp_rows
-        assert self.Ca_cols == self.K_cols == self.P_cols == self.oneCOL2_rows
+        assert self.Ca_cols == self.B_cols == self.P_cols == self.oneCOL2_rows
+        assert self.K_cols == self.B_rows == self.Ginv_cols == self.Ginv_rows
 
     def getBounds(self):
         bounds = []
@@ -134,21 +141,19 @@ class GenoNLP:
 
     def variables(self, _x):
         B = _x
+        B = B.reshape(self.B_rows, self.B_cols)
         return B
 
     def fAndG(self, _x):
         B = self.variables(_x)
-        T_0 = (self.P - (B * self.K))
-        t_1 = np.trace(self.Ginv)
-        t_2 = (1 / (2 * self.sdp2))
-        t_3 = ((T_0 ** 2)).dot(self.oneCOL2)
-        t_4 = ((self.Ca ** 2)).dot(self.oneCOL2)
-        T_5 = np.exp((t_2 * ((np.multiply.outer(self.oneROWKp, t_3) + np.multiply.outer(t_4, self.oneROWL)) - (2 * (self.Ca).dot(T_0.T)))))
-        t_6 = (self.image - (self.A).dot(T_5))
-        t_7 = ((4 * self.sdp2) * self.sdl2)
-        f_ = ((((B ** 2) * t_1) / 2) + ((np.linalg.norm((self.image - (np.exp((t_2 * ((np.multiply.outer(t_3, self.oneROWKp) + np.multiply.outer(self.oneROWL, t_4)) - (2 * (T_0).dot(self.Ca.T)))))).dot(self.A))) ** 2) / (2 * self.sdl2)))
-        g_0 = ((B * t_1) - (((4 * np.trace(((self.K).dot(self.Ca.T)).dot(((self.A[:, np.newaxis] * T_5) * t_6[np.newaxis, :])))) / t_7) - ((4 * np.trace((self.K).dot(((self.oneCOL2[:, np.newaxis] * T_0.T) * (t_6 * ((self.oneROWKp * self.A)).dot(T_5))[np.newaxis, :])))) / t_7)))
-        g_ = g_0
+        T_0 = (self.P - (self.K).dot(B))
+        t_1 = (1 / 2)
+        T_2 = np.exp(((1 / (2 * self.sdp2)) * ((np.multiply.outer(((T_0 ** 2)).dot(self.oneCOL2), self.oneROWKp) + np.multiply.outer(self.oneROWL, ((self.Ca ** 2)).dot(self.oneCOL2))) - (2 * (T_0).dot(self.Ca.T)))))
+        t_3 = (self.image - (T_2).dot(self.A))
+        t_4 = (4 / ((4 * self.sdp2) * self.sdl2))
+        f_ = ((np.trace(((B.T).dot(self.Ginv)).dot(B)) / 2) + ((np.linalg.norm(t_3) ** 2) / (2 * self.sdl2)))
+        g_0 = (((t_1 * (self.Ginv).dot(B)) + (t_1 * (self.Ginv.T).dot(B))) - ((t_4 * (((self.K.T).dot((t_3[:, np.newaxis] * T_2)) * self.A[np.newaxis, :])).dot(self.Ca)) - (t_4 * ((self.K.T).dot(((t_3 * (T_2).dot((self.A * self.oneROWKp)))[:, np.newaxis] * T_0)) * self.oneCOL2[np.newaxis, :]))))
+        g_ = g_0.reshape(-1)
         return f_, g_
 
 def toArray(v):

@@ -1,22 +1,22 @@
 import numpy as np
 
-TEMPLATE_SD2 = 10
-DEFORM_SD2 = 10
+TEMPLATE_SD2 = 2
+DEFORM_SD2 = 2
 SD_INIT = 1
-
-# IMAGE_NROWS = 10
-# IMAGE_NCOLS = 10
-# IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE1[4:6, 4:6] = 1.0
-# IMAGE2[6:8, 6:8] = 1.0
 
 IMAGE_NROWS = 10
 IMAGE_NCOLS = 10
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+IMAGE1[4:6, 4:6] = 1.0
+IMAGE2[6:8, 6:8] = 1.0
+
+# IMAGE_NROWS = 10
+# IMAGE_NCOLS = 10
+# IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 # IMAGE1[20:30, 20:30] = 1.0
 # IMAGE2[30:40, 30:40] = 1.0
 
@@ -24,6 +24,9 @@ IMAGES = [IMAGE1, IMAGE2]
 # IMAGES = [np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.5),
 #           np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.4)]
 FLAT_IMAGES = list(map(lambda image: image.reshape(-1, 1),
+                       IMAGES))
+
+FLAT_IMAGES = list(map(lambda image: image.flatten(),
                        IMAGES))
 
 
@@ -168,3 +171,10 @@ ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()]
 # one_point = gaussian_kernel_one_point(ALL_PIXELS,0.2)
 
 
+ONE_COL2 = np.array([1,1])
+
+ONE_KP = np.ones((KP,))
+
+ONE_L = np.ones((IMAGE_TOTAL,))
+
+ONE_KG = np.ones((KG,))
