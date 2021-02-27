@@ -5,6 +5,7 @@ import time
 from scipy import optimize
 # My gradiants
 import matplotlib.pyplot as plt
+from helpers.solver_fix import solve
 
 class Estimator2DNImages:
 
@@ -38,7 +39,6 @@ class Estimator2DNImages:
                                                self.Gamma_Inv,
                                                self.sd2,
                                                self.images[n])
-
             # out = optimize.minimize(to_min,
             #                         curr_beta,
             #                         method='SLSQP',
@@ -50,8 +50,8 @@ class Estimator2DNImages:
             out = optimize.minimize(to_min,
                                     curr_beta,
                                     method='SLSQP',
-                                    options={"maxiter" : 20,
-                                             'eps' : 0.00001}).x
+                                    options={"maxiter": 20,
+                                             'eps': 0.00001}).x
 
             self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))
@@ -88,16 +88,18 @@ class Estimator2DNImages:
         self.update_kBps()
         ky = list(map((lambda kBp, image: kBp.T @ image), self.kBps, self.images))
         kk = list(map((lambda kBp: kBp.T @ kBp), self.kBps))
-        return (1 / self.number_of_images) * sum(ky), \
+        kyl = (1 / self.number_of_images) * sum(ky)
+        return kyl.reshape(-1,1), \
                (1 / self.number_of_images) * sum(kk)
 
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        for x in range(10):
-            new_alpha = np.linalg.inv(self.number_of_images * kkl
-                                      + self.sd2 * const.SIGMA_P_INV) @ \
-                        (self.number_of_images * kyl + self.sd2 * (const.SIGMA_P_INV @ const.MU_P))
+        for x in range(5):
+            a_left = np.linalg.inv(self.number_of_images * kkl
+                                      + self.sd2 * const.SIGMA_P_INV)
+            a_right = (self.number_of_images * kyl + self.sd2 * (const.SIGMA_P_INV @ const.MU_P))
+            new_alpha = a_left @ a_right
             new_sd2 = (1 / (self.number_of_images * const.IMAGE_TOTAL * const.AP)) \
                       * (self.number_of_images * (self.YTY + self.alphas.T @ kkl @ self.alphas
                               - 2 * self.alphas.T @ kyl)

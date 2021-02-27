@@ -36,11 +36,12 @@ class Estimator2DNImages:
         def update_best_beta(n):
             curr_beta = self.betas[n].flatten()
             tmp_a = self.alphas.flatten()
+            flat_image = self.images[n].flatten()
             out = solve(self.Gamma_Inv,
                         const.ALL_PIXELS,
                         func.PIXEL_G_CENTERS_MATRIX,
                         const.P_CENTERS,
-                        self.images[n],
+                        flat_image,
                         const.ONE_COL2,
                         const.ONE_KP,
                         const.ONE_L,

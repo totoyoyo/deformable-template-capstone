@@ -4,21 +4,21 @@ TEMPLATE_SD2 = 1
 DEFORM_SD2 = 1
 SD_INIT = 1
 
-IMAGE_NROWS = 10
-IMAGE_NCOLS = 10
-IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE1[4:6, 4:6] = 1.0
-IMAGE2[6:8, 6:8] = 1.0
-
 # IMAGE_NROWS = 10
 # IMAGE_NCOLS = 10
 # IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE1[20:30, 20:30] = 1.0
-# IMAGE2[30:40, 30:40] = 1.0
+# IMAGE1[4:6, 4:6] = 1.0
+# IMAGE2[6:8, 6:8] = 1.0
+
+IMAGE_NROWS = 50
+IMAGE_NCOLS = 50
+IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+IMAGE1[20:30, 20:30] = 1.0
+IMAGE2[30:40, 30:40] = 1.0
 
 IMAGES = [IMAGE1, IMAGE2]
 # IMAGES = [np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.5),
@@ -26,9 +26,15 @@ IMAGES = [IMAGE1, IMAGE2]
 FLAT_IMAGES = list(map(lambda image: image.reshape(-1, 1),
                        IMAGES))
 
-FLAT_IMAGES = list(map(lambda image: image.flatten(),
-                       IMAGES))
-
+# FLAT_IMAGES = list(map(lambda image: image.flatten(),
+#                        IMAGES))
+#
+# FLAT_IMAGES1 = list(map(lambda image: image.reshape(-1, 1),
+#                        IMAGES))
+#
+# FLAT_IMAGES2 = list(map(lambda image: image.flatten(),
+#                        IMAGES))
+#
 
 def kernel_on_every_pixel(img_dim_x, img_dim_y):
     rx, ry = np.arange(0, img_dim_x, 1), np.arange(0, img_dim_y, 1)
