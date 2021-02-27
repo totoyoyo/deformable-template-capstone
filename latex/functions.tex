@@ -1,66 +1,121 @@
+
 \documentclass[12pt]{article}
+
 
 \usepackage{fancyhdr}
 \usepackage[hmargin = 1in,vmargin=1in]{geometry}
 \usepackage[parfill]{parskip}
 \usepackage{breqn}
 
+\newcommand{\A}{\alpha}
+\newcommand{\B}{\beta}
+\newcommand{\longones}[1]{
+  \begin{bmatrix}
+    1\\
+    \vdots\\
+    1_{#1}
+  \end{bmatrix}
+}
+
+\DeclareMathSymbol{*}{\mathbin}{symbols}{"01}
+
+
 \begin{document}
-yo function:
+ function:
 
-
+We know that $D = K\beta$, and expanding $K$ yields:
 
 \begin{dmath*}
-  D = \exp\left(\left({P^{2}\cdot 
+  D = \exp\left(\frac{1}{2\cdot sd_g^2} * \left({P^{2}\cdot 
   \begin{bmatrix}
     1\\
     1
   \end{bmatrix} \cdot 
-  \begin{bmatrix}
-    1\\
-    \vdots\\
-    1_{Kg}
-  \end{bmatrix}^\top} 
+  \longones{K_g}^\top} 
   + {(C_b^{2}\cdot 
   \begin{bmatrix}
     1\\
     1
   \end{bmatrix}
   \cdot 
-  \begin{bmatrix}
-    1\\
-    \vdots\\
-    1_{|\Lambda|}
-  \end{bmatrix}^\top )^\top} 
-  -2\cdot P\cdot C_b^\top \right) \cdot\frac{1}{2\cdot sd_g^2}\right) \cdot B)
+  \longones{|\Lambda|}
+  ^\top )^\top} 
+  -2\cdot P\cdot C_b^\top \right)  \right) \cdot \B).
 \end{dmath*}
+
+The transpose of $D$ is then
 
 
 \begin{dmath*}
-  K_p^\beta= \exp\left(\left({
-    (P-D)^{2}\cdot 
+  D^\top = \exp\left(\frac{1}{2\cdot sd_g^2} * \left({\longones{K_g}
+  \left(P^{2} *  
   \begin{bmatrix}
     1\\
     1
-  \end{bmatrix} \cdot 
-  \begin{bmatrix}
-    1\\
-    \vdots\\
-    1_{Kp}
-  \end{bmatrix}^\top} 
-  + {(C_a^{2}\cdot 
+  \end{bmatrix} \right)^\top
+  } 
+  + {(C_b^{2}\cdot 
   \begin{bmatrix}
     1\\
     1
   \end{bmatrix}
   \cdot 
+  \longones{|\Lambda|}
+  ^\top )} 
+  -2\cdot C_b * P ^\top \right)  \right) \cdot \B).
+\end{dmath*}
+
+
+Now, with the deformation, we can calculate the $K_p^\beta$ matrix in a similar way, with:
+
+\begin{dmath*}
+  K_p^\beta = \exp\left(\frac{1}{2\cdot sd_p^2} * \left({(P-D)^{2}\cdot 
   \begin{bmatrix}
     1\\
-    \vdots\\
-    1_{|\Lambda|}
-  \end{bmatrix}^\top )^\top} 
-  -2\cdot (P-D)\cdot C_a^\top \right) \cdot\frac{1}{2\cdot sd_p^2}\right) 
+    1
+  \end{bmatrix} \cdot 
+  \longones{K_p}^\top} 
+  + {(C_\A^{2}\cdot 
+  \begin{bmatrix}
+    1\\
+    1
+  \end{bmatrix}
+  \cdot 
+  \longones{|\Lambda|}
+  ^\top )^\top} 
+  -2\cdot (P-D)\cdot C_\A^\top \right)  \right).
 \end{dmath*}
+
+Now, consider the right side of the optimization problem
+
+\begin{dmath*}
+  R = \frac{1}{2sd_l^2} 
+  \left\| 
+  y - K_p^\B\A
+  \right\|^2
+\end{dmath*}
+
+Taking the derivative, we get 
+
+\begin{dmath*}
+  \frac{\partial R}{\partial \B} = -\left(
+    \frac{1}{sd_p^2 * sd_l ^2} *
+    K^\top * diag(y-K_p^\B\A) *
+    K_p^\B * diag(\A) * C_\A 
+    -\frac{1}{sd_p^2 * sd_l ^2} * K^\top * diag\left(
+      (y-K_p^\B\A) \odot \left(
+        K_p^\B * \left(
+          \A \odot \longones{K_p}
+        \right)
+      \right)
+    \right) * (P-K*\B) * diag(
+      \begin{bmatrix}
+      1\\
+      1
+      \end{bmatrix})
+  \right)
+\end{dmath*}
+
 
 \[
   f = 1/2\cdot \mathrm{tr}(B^\top \cdot Ginv\cdot B)+1/(2\cdot sdl2)\cdot \|image-\exp(((P-\exp((P^{2}\cdot oneCOL2\cdot oneROWKg^\top +(Cb^{2}\cdot oneCOL2\cdot oneROWL^\top )^\top -2\cdot P\cdot Cb^\top )/(2\cdot sdg2))\cdot B)^{2}\cdot oneCOL2\cdot oneROWKp^\top +(Ca^{2}\cdot oneCOL2\cdot oneROWL^\top )^\top -2\cdot (P-\exp((P^{2}\cdot oneCOL2\cdot oneROWKg^\top +(Cb^{2}\cdot oneCOL2\cdot oneROWL^\top )^\top -2\cdot P\cdot Cb^\top )/(2\cdot sdg2))\cdot B)\cdot Ca^\top )/(2\cdot sdp2))\cdot A\|_2^{2}

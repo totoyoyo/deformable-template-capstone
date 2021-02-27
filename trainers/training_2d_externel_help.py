@@ -1,10 +1,11 @@
-import functions.functions_2d_fix as func
+import functions.functions_2d_1d_gaussian as func
 import constants.constants_2d_0 as const
 import numpy as np
 import time
 from scipy import optimize
 # My gradiants
 import matplotlib.pyplot as plt
+from helpers.solver import solve
 
 class Estimator2DNImages:
 
@@ -34,24 +35,7 @@ class Estimator2DNImages:
         # Depends on current beta, Gamma, sd2, predictions, images
         def update_best_beta(n):
             curr_beta = self.betas[n].flatten()
-            to_min = func.generate_to_minimize(self.alphas,
-                                               self.Gamma_Inv,
-                                               self.sd2,
-                                               self.images[n])
-
-            # out = optimize.minimize(to_min,
-            #                         curr_beta,
-            #                         method='SLSQP',
-            #                         options={'eps' : 0.0001}).x
-            # out = optimize.minimize(to_min,
-            #                         curr_beta,
-            #                         method='SLSQP',
-            #                         options={'eps' : 0.00001}).x
-            out = optimize.minimize(to_min,
-                                    curr_beta,
-                                    method='SLSQP',
-                                    options={"maxiter" : 20,
-                                             'eps' : 0.00001}).x
+            out = solve(self.Gamma_Inv)
 
             self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))
