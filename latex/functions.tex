@@ -26,7 +26,7 @@
 We know that $D = K\beta$, and expanding $K$ yields:
 
 \begin{dmath*}
-  D = \exp\left(\frac{1}{2\cdot sd_g^2} * \left({P^{2}\cdot 
+  D = \exp\left(\frac{-1}{2\cdot sd_g^2} * \left({P^{2}\cdot 
   \begin{bmatrix}
     1\\
     1
@@ -47,7 +47,7 @@ The transpose of $D$ is then
 
 
 \begin{dmath*}
-  D^\top = \exp\left(\frac{1}{2\cdot sd_g^2} * \left({\longones{K_g}
+  D^\top = \exp\left(\frac{-1}{2\cdot sd_g^2} * \left({\longones{K_g}
   \left(P^{2} *  
   \begin{bmatrix}
     1\\
@@ -69,7 +69,7 @@ The transpose of $D$ is then
 Now, with the deformation, we can calculate the $K_p^\beta$ matrix in a similar way, with:
 
 \begin{dmath*}
-  K_p^\beta = \exp\left(\frac{1}{2\cdot sd_p^2} * \left({(P-D)^{2}\cdot 
+  K_p^\beta = \exp\left(\frac{-1}{2\cdot sd_p^2} * \left({(P-D)^{2}\cdot 
   \begin{bmatrix}
     1\\
     1
@@ -98,7 +98,7 @@ Now, consider the right side of the optimization problem
 Taking the derivative, we get 
 
 \begin{dmath*}
-  \frac{\partial R}{\partial \B} = -\left(
+  \frac{\partial R}{\partial \B} = 
     \frac{1}{sd_p^2 * sd_l ^2} *
     K^\top * diag(y-K_p^\B\A) *
     K_p^\B * diag(\A) * C_\A 
@@ -113,7 +113,6 @@ Taking the derivative, we get
       1\\
       1
       \end{bmatrix})
-  \right)
 \end{dmath*}
 
 

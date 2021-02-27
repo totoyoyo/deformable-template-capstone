@@ -125,9 +125,28 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, sd2):
     reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
     return reshaped_gauss
 
+def get_pixel_by_centers_matrix_mul_only(all_pixels, all_centers, sd2):
+    one_col2 = np.ones((2, 1))
+    n_pixels = np.shape(all_pixels)[0]
+    n_centers = np.shape(all_centers)[0]
+    p_norm_squared = (all_pixels ** 2) @ one_col2
+    c_norm_squared = (all_centers ** 2) @ one_col2
+    p_norm_squared_repeated = p_norm_squared @ np.ones((1, n_centers))
+    c_norm_squared_repeated = (c_norm_squared @ np.ones((1, n_pixels))).T
+    p_dot_c = 2 * (all_pixels @ all_centers.T)
+    big_matrix = p_norm_squared_repeated + c_norm_squared_repeated - p_dot_c
+    K = np.exp( - big_matrix / (2 * sd2))
+    return K
+
+
+
 PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
                                                      const.DEFORM_SD2)
+
+PIXEL_G_CENTERS_MATRIX_2 = get_pixel_by_centers_matrix_mul_only(const.ALL_PIXELS,
+                                                                const.G_CENTERS,
+                                                                const.DEFORM_SD2)
 
 
 def calculate_kBp(betas):
@@ -145,7 +164,7 @@ def timed_calculate_kBp(betas):
     deformation = PIXEL_G_CENTERS_MATRIX @ betas
     start = timer()
     deformed_pixel = const.ALL_PIXELS - deformation
-    out_matrix = get_pixel_by_centers_matrix(deformed_pixel,
+    out_matrix = get_pixel_by_centers_matrix_mul_only(deformed_pixel,
                                 const.P_CENTERS,
                                 const.TEMPLATE_SD2)
     end = timer()

@@ -1,7 +1,7 @@
 import numpy as np
 
-TEMPLATE_SD2 = 2
-DEFORM_SD2 = 2
+TEMPLATE_SD2 = 1
+DEFORM_SD2 = 1
 SD_INIT = 1
 
 IMAGE_NROWS = 10
@@ -82,16 +82,16 @@ def gaussian_kernel_original(x_val, sd):
     return out
 
 
-def gaussian_kernel_given_diffs(diffs, sd):
+def gaussian_kernel_given_diffs(diffs, sd2):
     """
 
     :param diffs: a 2d array with each row denoting vector (calculated diff)
     :param sd: sd not squared
     :return: A 1d array of calculated gaussians
     """
-    norm2_squared =  np.sum((diffs ** 2),axis=1)
-    inter = (-((norm2_squared) ** 2)
-             / (2 * sd**2))
+    norm2_squared = np.sum((diffs ** 2),axis=1)
+    inter = (-((norm2_squared))
+             / (2 * sd2))
     out = np.exp(inter)
     # Should be a float
     return out

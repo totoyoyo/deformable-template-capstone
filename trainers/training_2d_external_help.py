@@ -5,7 +5,7 @@ import time
 from scipy import optimize
 # My gradiants
 import matplotlib.pyplot as plt
-from helpers.solver_2 import solve
+from helpers.solver_fix import solve
 
 class Estimator2DNImages:
 

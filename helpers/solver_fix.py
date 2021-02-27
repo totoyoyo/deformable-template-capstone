@@ -1,5 +1,5 @@
 """
-Sample code automatically generated on 2021-02-27 15:39:40
+Sample code automatically generated on 2021-02-27 18:17:25
 
 by geno from www.geno-project.org
 
@@ -20,7 +20,7 @@ parameters
 variables
   matrix B
 min
-  1/2*tr(B'*Ginv*B)+1/(2*sdl2)*norm2(image-exp(((P-K*B).^2*oneCOL2*oneROWKp'+(Ca.^2*oneCOL2*oneROWL')'-2*(P-K*B)*Ca')/(2*sdp2))*A).^2
+  1/2*tr(B'*Ginv*B)+1/(2*sdl2)*norm2(image-exp(((P-K*B).^2*oneCOL2*oneROWKp'+(Ca.^2*oneCOL2*oneROWL')'-2*(P-K*B)*Ca')/((-2)*sdp2))*A).^2
 
 
 The generated code is provided "as is" without warranty of any kind.
@@ -47,11 +47,6 @@ except ImportError:
 
 # from scipy.optimize import minimize
 # USE_GENO_SOLVER = False
-# WRN = 'WARNING: GENO solver not installed. Using SciPy solver instead.\n' + \
-#       'Run:     pip install genosolver'
-# print('*' * 63)
-# print(WRN)
-# print('*' * 63)
 
 class GenoNLP:
     def __init__(self, Ginv, P, K, Ca, image, oneCOL2, oneROWKp, oneROWL, A, sdl2, sdp2):
@@ -148,11 +143,11 @@ class GenoNLP:
         B = self.variables(_x)
         T_0 = (self.P - (self.K).dot(B))
         t_1 = (1 / 2)
-        T_2 = np.exp(((1 / (2 * self.sdp2)) * ((np.multiply.outer(((T_0 ** 2)).dot(self.oneCOL2), self.oneROWKp) + np.multiply.outer(self.oneROWL, ((self.Ca ** 2)).dot(self.oneCOL2))) - (2 * (T_0).dot(self.Ca.T)))))
+        T_2 = np.exp(-((1 / (2 * self.sdp2)) * ((np.multiply.outer(((T_0 ** 2)).dot(self.oneCOL2), self.oneROWKp) + np.multiply.outer(self.oneROWL, ((self.Ca ** 2)).dot(self.oneCOL2))) - (2 * (T_0).dot(self.Ca.T)))))
         t_3 = (self.image - (T_2).dot(self.A))
         t_4 = (4 / ((4 * self.sdp2) * self.sdl2))
         f_ = ((np.trace(((B.T).dot(self.Ginv)).dot(B)) / 2) + ((np.linalg.norm(t_3) ** 2) / (2 * self.sdl2)))
-        g_0 = (((t_1 * (self.Ginv).dot(B)) + (t_1 * (self.Ginv.T).dot(B))) - ((t_4 * (((self.K.T).dot((t_3[:, np.newaxis] * T_2)) * self.A[np.newaxis, :])).dot(self.Ca)) - (t_4 * ((self.K.T).dot(((t_3 * (T_2).dot((self.A * self.oneROWKp)))[:, np.newaxis] * T_0)) * self.oneCOL2[np.newaxis, :]))))
+        g_0 = (((t_1 * (self.Ginv).dot(B)) + (t_1 * (self.Ginv.T).dot(B))) + ((t_4 * (((self.K.T).dot((t_3[:, np.newaxis] * T_2)) * self.A[np.newaxis, :])).dot(self.Ca)) - (t_4 * ((self.K.T).dot(((t_3 * (T_2).dot((self.A * self.oneROWKp)))[:, np.newaxis] * T_0)) * self.oneCOL2[np.newaxis, :]))))
         g_ = g_0.reshape(-1)
         return f_, g_
 
