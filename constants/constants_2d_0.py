@@ -4,21 +4,30 @@ TEMPLATE_SD2 = 1
 DEFORM_SD2 = 1
 SD_INIT = 1
 
-IMAGE_NROWS = 10
-IMAGE_NCOLS = 10
+# IMAGE_NROWS = 10
+# IMAGE_NCOLS = 10
+# IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+# IMAGE1[4:6, 4:6] = 1.0
+# IMAGE2[6:8, 6:8] = 1.0
+
+IMAGE_NROWS = 28
+IMAGE_NCOLS = 28
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE1[4:6, 4:6] = 1.0
-IMAGE2[6:8, 6:8] = 1.0
+IMAGE1[10:14, 10:14] = 1.0
+IMAGE2[11:15, 11:15] = 1.0
 
-# IMAGE_NROWS = 28
-# IMAGE_NCOLS = 28
+# IMAGE_NROWS = 50
+# IMAGE_NCOLS = 50
 # IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 # IMAGE1[10:14, 10:14] = 1.0
 # IMAGE2[11:15, 11:15] = 1.0
+
 
 IMAGES = [IMAGE1, IMAGE2]
 # IMAGES = [np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.5),
@@ -146,7 +155,7 @@ def gaussian_kernel_input2_sd2(input2, sd2):
 
 
 
-AG = 5
+AG = 1
 AP = 1
 MU_P = np.zeros((KP, 1)).astype('float64')
 

@@ -6,6 +6,7 @@ from scipy import optimize
 # My gradiants
 import matplotlib.pyplot as plt
 from helpers.solver_fix import solve
+import helpers.optimizer as op
 
 class Estimator2DNImages:
 
@@ -35,24 +36,18 @@ class Estimator2DNImages:
         # Depends on current beta, Gamma, sd2, predictions, images
         def update_best_beta(n):
             curr_beta = self.betas[n].flatten()
-            to_min = func.generate_to_minimize(self.alphas,
-                                               self.Gamma_Inv,
-                                               self.sd2,
-                                               self.images[n])
-            # out = optimize.minimize(to_min,
-            #                         curr_beta,
-            #                         method='SLSQP',
-            #                         options={'eps' : 0.0001}).x
-            # out = optimize.minimize(to_min,
-            #                         curr_beta,
-            #                         method='SLSQP',
-            #                         options={'eps' : 0.00001}).x
-            out = optimize.minimize(to_min,
-                                    curr_beta,
-                                    method='SLSQP',
-                                    options={"maxiter": 20,
-                                             'eps': 0.00001}).x
-
+            optimizer = op.BetasOptimizer(self.alphas,
+                                         self.images[n],
+                                         self.Gamma_Inv,
+                                         const.TEMPLATE_SD2,
+                                         self.sd2,
+                                         func.PIXEL_G_CENTERS_MATRIX,
+                                         const.G_CENTERS)
+            out = optimize.minimize(fun=optimizer.loss_flat_betas,
+                                    x0= curr_beta,
+                                    jac=optimizer.gradient_flat_betas,
+                                    options={"maxiter": 10}
+                                    ).x
             self.betas[n] = func.betas_to_2D(out)
             print("beta at" + str(n))
             print(out)
@@ -69,9 +64,14 @@ class Estimator2DNImages:
 
     def update_Gamma(self):
         print("Updating Gamma", self.Gamma_update_count, "time")
-        self.Gamma = (1 / (self.number_of_images + const.AG)) \
-                     * (self.number_of_images * self._bbtl()
-                        + const.AG * const.SIGMA_G)
+        coef = (1 / (self.number_of_images + const.AG))
+        left = self.number_of_images * self._bbtl()
+        right = const.AG * const.SIGMA_G
+        new_gamma = coef * (left + right)
+        # self.Gamma = (1 / (self.number_of_images + const.AG)) \
+        #              * (self.number_of_images * self._bbtl()
+        #                 + const.AG * const.SIGMA_G)
+        self.Gamma = new_gamma
         self.Gamma_Inv = np.linalg.inv(self.Gamma)
         print("Finished Gamma", self.Gamma_update_count, "time")
         self.Gamma_update_count += 1
@@ -172,6 +172,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(10)
+my_estimator.run_estimation(5)
 my_estimator.show_plots()
 my_estimator.save_data()

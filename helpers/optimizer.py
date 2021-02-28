@@ -8,7 +8,7 @@ from scipy.optimize import check_grad
 class BetasOptimizer():
     def __init__(self, alphas, image, g_inv, sdp2, sdl2, K, C_a):
         self.alphas = alphas
-        self.KTonsd2 = K.T * (1/(sdl2 + sdp2))
+        self.KTonsd2 = (1/(sdl2 * sdp2)) * K.T
         self.diag_a_Ca = alphas * C_a
         self.image = image.reshape(-1,1)
         self.g_inv = g_inv

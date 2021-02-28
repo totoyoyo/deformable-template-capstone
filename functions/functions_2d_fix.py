@@ -174,8 +174,8 @@ def timed_calculate_kBp(betas):
     start = timer()
     deformed_pixel = const.ALL_PIXELS - deformation
     out_matrix = get_pixel_by_centers_matrix_mul_only(deformed_pixel,
-                                const.P_CENTERS,
-                                const.TEMPLATE_SD2)
+                                                      const.P_CENTERS,
+                                                      const.TEMPLATE_SD2)
     end = timer()
     totaltime = end - start
     return totaltime, out_matrix
