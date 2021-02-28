@@ -157,6 +157,15 @@ def calculate_kBp(betas):
                                 const.TEMPLATE_SD2)
     return out_matrix
 
+def calculate_kBp_and_deformation(betas):
+    deformation = PIXEL_G_CENTERS_MATRIX @ betas
+    deformed_pixel = const.ALL_PIXELS - deformation
+    out_matrix = get_pixel_by_centers_matrix(deformed_pixel,
+                                const.P_CENTERS,
+                                const.TEMPLATE_SD2)
+    return out_matrix, deformed_pixel
+
+
 from timeit import default_timer as timer
 
 

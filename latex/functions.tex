@@ -112,8 +112,22 @@ Taking the derivative, we get
       \begin{bmatrix}
       1\\
       1
-      \end{bmatrix})
+      \end{bmatrix}).
 \end{dmath*}
+
+Simplifying yields
+\begin{dmath*}
+  \frac{\partial R}{\partial \B} = 
+    \frac{1}{sd_p^2 * sd_l ^2} *
+    K^\top \left(diag(y-K_p^\B\A) *
+    K_p^\B * diag(\A) * C_\A 
+    - diag\left(
+      (y-K_p^\B\A) \odot \left(
+        K_p^\B \A 
+      \right)
+    \right) * (P-K*\B)\right)
+\end{dmath*}
+
 
 
 \[
