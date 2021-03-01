@@ -60,7 +60,8 @@ class PyTorchOptimizer():
         criterion = torch.nn.MSELoss(reduction='sum')
         # optimizer = torch.optim.Adam(image_predictor.parameters(),
         #                                 lr=1e-4)
-        optimizer = torch.optim.Adagrad(image_predictor.parameters())
+        optimizer = torch.optim.Adagrad(image_predictor.parameters(),
+                                        lr=1)
         # optimizer = torch.optim.LBFGS(params=image_predictor.parameters())
         for i in range(iter):
             pred = image_predictor()

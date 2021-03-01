@@ -35,9 +35,12 @@ class Estimator2DNImages:
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
         def update_best_beta(n):
+            curr_beta = self.betas[n]
+            copy_curr_beta = np.copy(curr_beta)
+
             optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
                                                image=self.images[n],
-                                               curr_beta=self.betas[n],
+                                               curr_beta=copy_curr_beta,
                                                g_inv=self.Gamma_Inv,
                                                sdp2=const.TEMPLATE_SD2,
                                                sdl2=self.sd2)
