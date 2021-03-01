@@ -43,8 +43,6 @@ class PyTorchOptimizer():
     def __init__(self, alphas, image, curr_beta, g_inv, sdp2, sdl2):
         self.alphas = torch.from_numpy(alphas).type(torch.FloatTensor).cuda()
         self.curr_betas = torch.from_numpy(curr_beta).type(torch.FloatTensor).cuda()
-        # self.KTonsd2 = torch.from_numpy((1/(sdl2 * sdp2)) * K.T)
-        # self.diag_a_Ca = torch.from_numpy(alphas * C_a)
         self.image = torch.from_numpy(image.reshape(-1, 1)).type(torch.FloatTensor).cuda()
         self.g_inv = torch.from_numpy(g_inv).type(torch.FloatTensor).cuda()
         self.sdp2 = sdp2
@@ -59,8 +57,7 @@ class PyTorchOptimizer():
                                all_p_centers=torch_C_a
                                ).cuda()
         criterion = torch.nn.MSELoss(reduction='sum').cuda()
-        # optimizer = torch.optim.Adam(image_predictor.parameters(),
-        #                                 lr=1e-4)
+        # optimizer = torch.optim.Adam(image_predictor.parameters())
         optimizer = torch.optim.RMSprop(image_predictor.parameters())
         # optimizer = torch.optim.LBFGS(params=image_predictor.parameters())
         for i in range(iter):

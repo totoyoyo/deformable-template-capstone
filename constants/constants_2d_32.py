@@ -15,11 +15,11 @@ SD_INIT = 1
 # IMAGE2[5:9, 5:9] = 1.0
 
 
-IMAGE_NROWS = 70
-IMAGE_NCOLS = 70
+IMAGE_NROWS = 50
+IMAGE_NCOLS = 50
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
+IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
 IMAGE1[10:14, 10:14] = 1.0
 IMAGE2[11:15, 11:15] = 1.0
 
@@ -55,7 +55,7 @@ def kernel_on_every_pixel(img_dim_x, img_dim_y):
     # Pair up elems from gx and gy to create array of pairs
     X_2D = np.c_[gx.ravel(), gy.ravel()]
 
-    return X_2D.astype('float64')
+    return X_2D.astype('float32')
 
 
 def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
@@ -63,7 +63,7 @@ def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
 
     x_2d = np.c_[IX.ravel(), IY.ravel()]
 
-    return x_2d.astype('float64')
+    return x_2d.astype('float32')
 
 
 P_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
@@ -72,8 +72,8 @@ G_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
 
 KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
-ALPHAS_INIT = np.zeros((KP, 1)).astype('float64')
-BETAS_INIT = np.zeros((KG, 2)).astype('float64')
+ALPHAS_INIT = np.zeros((KP, 1)).astype('float32')
+BETAS_INIT = np.zeros((KG, 2)).astype('float32')
 
 
 def gaussian_kernel_2d(x_val, center_val, sd2):
@@ -160,19 +160,17 @@ def gaussian_kernel_input2_sd2(input2, sd2):
 
 AG = 1
 AP = 1
-MU_P = np.zeros((KP, 1)).astype('float64')
+MU_P = np.zeros((KP, 1)).astype('float32')
 
 p_xx = np.repeat(P_CENTERS,KP,axis=0)
 p_yy = np.tile(P_CENTERS, (KP, 1))
 SIGMA_P_INV = gaussian_kernel_2d(p_xx,p_yy,TEMPLATE_SD2).reshape((KP,KP))
-
 
 g_xx = np.repeat(G_CENTERS,KG,axis=0)
 g_yy = np.tile(G_CENTERS, (KG, 1))
 SIGMA_G_INV = gaussian_kernel_2d(g_xx,g_yy,DEFORM_SD2).reshape((KG,KG))
 
 SIGMA_P = np.linalg.inv(SIGMA_P_INV)
-
 SIGMA_G = np.linalg.inv(SIGMA_G_INV)
 
 

@@ -2,11 +2,11 @@ import functions.functions_2d_fix as func
 import constants.constants_2d_0 as const
 import numpy as np
 import time
-from scipy import optimize
+
 # My gradiants
 import matplotlib.pyplot as plt
 import helpers.pytorch_optimizer as pt_op
-import helpers.optimizer as op
+
 
 class Estimator2DNImages:
 
@@ -23,7 +23,7 @@ class Estimator2DNImages:
                      self.betas))
         self.Gamma: np.ndarray = const.SIGMA_G
         self.Gamma_Inv = const.SIGMA_G_INV
-        self.images: typing.List[np.ndarray] = const.FLAT_IMAGES
+        self.images = const.FLAT_IMAGES
         yty = list(map((lambda image: func.faster_norm_squared(image)), self.images))
         self.YTY = (1 / self.number_of_images) \
                    * sum(yty)  # Many images
@@ -46,6 +46,7 @@ class Estimator2DNImages:
                                                sdl2=self.sd2)
             out = optimizer.optimize_betas(1000)
             self.betas[n] = out
+            del optimizer
             print("beta at" + str(n))
             print(out)
 
