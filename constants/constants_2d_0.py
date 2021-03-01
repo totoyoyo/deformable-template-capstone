@@ -4,21 +4,21 @@ TEMPLATE_SD2 = 1
 DEFORM_SD2 = 1
 SD_INIT = 1
 
-# IMAGE_NROWS = 10
-# IMAGE_NCOLS = 10
-# IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE1[4:6, 4:6] = 1.0
-# IMAGE2[6:8, 6:8] = 1.0
-
-IMAGE_NROWS = 28
-IMAGE_NCOLS = 28
+IMAGE_NROWS = 10
+IMAGE_NCOLS = 10
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE1[10:14, 10:14] = 1.0
-IMAGE2[11:15, 11:15] = 1.0
+IMAGE1[4:6, 4:6] = 1.0
+IMAGE2[6:8, 6:8] = 1.0
+
+# IMAGE_NROWS = 28
+# IMAGE_NCOLS = 28
+# IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+# IMAGE1[10:14, 10:14] = 1.0
+# IMAGE2[11:15, 11:15] = 1.0
 
 # IMAGE_NROWS = 50
 # IMAGE_NCOLS = 50
@@ -69,8 +69,8 @@ G_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
 
 KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
-ALPHAS_INIT = np.zeros((KP, 1)).astype('float64')
-BETAS_INIT = np.zeros((KG, 2)).astype('float64')
+ALPHAS_INIT = np.zeros((KP, 1)).astype('float32')
+BETAS_INIT = np.zeros((KG, 2)).astype('float32')
 
 
 def gaussian_kernel_2d(x_val, center_val, sd2):

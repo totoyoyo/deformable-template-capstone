@@ -142,11 +142,14 @@ def get_pixel_by_centers_matrix_mul_only(all_pixels, all_centers, sd2):
 
 PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
-                                                     const.DEFORM_SD2)
+                                                     const.DEFORM_SD2).\
+    astype('float32',casting="same_kind")
 
 PIXEL_G_CENTERS_MATRIX_2 = get_pixel_by_centers_matrix_mul_only(const.ALL_PIXELS,
                                                                 const.G_CENTERS,
-                                                                const.DEFORM_SD2)
+                                                                const.DEFORM_SD2).\
+    astype('float32',casting="same_kind")
+
 
 
 def calculate_kBp(betas):
@@ -187,6 +190,6 @@ bx, by = np.meshgrid(rx, ry)
 # Pair up elems from gx and gy to create array of pairs
 B_2D = np.c_[bx.ravel(), by.ravel()]
 
-res = timed_calculate_kBp(const.BETAS_INIT)
-plt.imshow(res[1],cmap='jet')
-plt.show()
+# res = timed_calculate_kBp(const.BETAS_INIT)
+# plt.imshow(res[1],cmap='jet')
+# plt.show()
