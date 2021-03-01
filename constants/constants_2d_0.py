@@ -4,30 +4,30 @@ TEMPLATE_SD2 = 1
 DEFORM_SD2 = 1
 SD_INIT = 1
 
-IMAGE_NROWS = 10
-IMAGE_NCOLS = 10
-IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE1[4:6, 4:6] = 1.0
-# IMAGE2[6:8, 6:8] = 1.0
-IMAGE1[1:4, 1:4] = 1.0
-IMAGE2[5:9, 5:9] = 1.0
-
-
-# IMAGE_NROWS = 28
-# IMAGE_NCOLS = 28
+# IMAGE_NROWS = 10
+# IMAGE_NCOLS = 10
 # IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE1[10:14, 10:14] = 1.0
-# IMAGE2[11:15, 11:15] = 1.0
+# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
+# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
+# # IMAGE1[4:6, 4:6] = 1.0
+# # IMAGE2[6:8, 6:8] = 1.0
+# IMAGE1[1:4, 1:4] = 1.0
+# IMAGE2[5:9, 5:9] = 1.0
+
+
+IMAGE_NROWS = 28
+IMAGE_NCOLS = 28
+IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
+IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
+IMAGE1[10:14, 10:14] = 1.0
+IMAGE2[11:15, 11:15] = 1.0
 
 # IMAGE_NROWS = 50
 # IMAGE_NCOLS = 50
 # IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
+# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
+# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
 # IMAGE1[10:14, 10:14] = 1.0
 # IMAGE2[11:15, 11:15] = 1.0
 
@@ -55,7 +55,7 @@ def kernel_on_every_pixel(img_dim_x, img_dim_y):
     # Pair up elems from gx and gy to create array of pairs
     X_2D = np.c_[gx.ravel(), gy.ravel()]
 
-    return X_2D.astype('float64')
+    return X_2D.astype('float32')
 
 
 def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
@@ -63,7 +63,7 @@ def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
 
     x_2d = np.c_[IX.ravel(), IY.ravel()]
 
-    return x_2d.astype('float64')
+    return x_2d.astype('float32')
 
 
 P_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
@@ -107,7 +107,7 @@ def gaussian_kernel_given_diffs(diffs, sd2):
     :param sd: sd not squared
     :return: A 1d array of calculated gaussians
     """
-    norm2_squared = np.sum((diffs ** 2),axis=1)
+    norm2_squared = np.sum((diffs ** 2),axis=1, dtype='float32')
     inter = (-((norm2_squared))
              / (2 * sd2))
     out = np.exp(inter)
@@ -160,15 +160,7 @@ def gaussian_kernel_input2_sd2(input2, sd2):
 
 AG = 1
 AP = 1
-MU_P = np.zeros((KP, 1)).astype('float64')
-
-# SIGMA_P = np.zeros((KP, KP)).astype('float64')
-# SIGMA_P_INV = np.zeros((KP, KP)).astype('float64')
-#
-# SIGMA_G = np.zeros((KG, KG)).astype('float64')
-# SIGMA_G_INV = np.zeros((KG, KG)).astype('float64')
-#
-
+MU_P = np.zeros((KP, 1)).astype('float32')
 
 p_xx = np.repeat(P_CENTERS,KP,axis=0)
 p_yy = np.tile(P_CENTERS, (KP, 1))
@@ -187,6 +179,18 @@ IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
 ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()]
 
 # one_point = gaussian_kernel_one_point(ALL_PIXELS,0.2)
+import matplotlib.pyplot as plt
+plt.imshow(SIGMA_G,cmap='jet')
+plt.show()
+
+plt.imshow(SIGMA_G_INV,cmap='jet')
+plt.show()
+
+plt.imshow(SIGMA_P,cmap='jet')
+plt.show()
+
+plt.imshow(SIGMA_P_INV,cmap='jet')
+plt.show()
 
 
 ONE_COL2 = np.array([1,1])
@@ -194,5 +198,3 @@ ONE_COL2 = np.array([1,1])
 ONE_KP = np.ones((KP,))
 
 ONE_L = np.ones((IMAGE_TOTAL,))
-
-ONE_KG = np.ones((KG,))

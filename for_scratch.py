@@ -1,11 +1,15 @@
 import torch
-torch.cuda.is_available()
+# torch.cuda.is_available()
+#
+#
+# big_zero = torch.tensor([[1,2,3],
+#                         [4,5,6]]).repeat((5,1))
+#
+#
+#
+#
+# big_zero.size()
 
+import trainers.training_2d_pytorch
+print('done')
 
-big_zero = torch.tensor([[1,2,3],
-                        [4,5,6]]).repeat((5,1))
-
-
-
-
-big_zero.size()
