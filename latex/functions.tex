@@ -21,7 +21,6 @@
 
 
 \begin{document}
- function:
 
 We know that $D = K\beta$, and expanding $K$ yields:
 
@@ -40,7 +39,7 @@ We know that $D = K\beta$, and expanding $K$ yields:
   \cdot 
   \longones{|\Lambda|}
   ^\top )^\top} 
-  -2\cdot P\cdot C_b^\top \right)  \right) \cdot \B).
+  -2\cdot P\cdot C_b^\top \right)  \right) \cdot \B.
 \end{dmath*}
 
 The transpose of $D$ is then
@@ -62,7 +61,7 @@ The transpose of $D$ is then
   \cdot 
   \longones{|\Lambda|}
   ^\top )} 
-  -2\cdot C_b * P ^\top \right)  \right) \cdot \B).
+  -2\cdot C_b * P ^\top \right)  \right) \cdot \B.
 \end{dmath*}
 
 
@@ -115,17 +114,6 @@ Taking the derivative, we get
       \end{bmatrix}).
 \end{dmath*}
 
-Another representation is
-\begin{dmath*}
-  \frac{\partial R}{\partial \B} = 
-    \frac{1}{sd_p^2 * sd_l ^2} *
-    K^\top * diag(y-K_p^\B\A) *
-    K_p^\B * diag(\A) * C_\A 
-    -\frac{1}{sd_p^2 * sd_l ^2} * K^\top * diag(y-K_p^\B\A) * ((
-        K_p^\B * diag(\A) *M1^\top) \odot 
-      (P-K*\B))
-\end{dmath*}
-
 
 Simplifying yields
 \begin{dmath*}
@@ -140,31 +128,64 @@ Simplifying yields
     \right) * (P-K*\B)\right)
 \end{dmath*}
 
+Now, the tool gives a different representation of the gradient of we instead write:
+
+\begin{dmath*}
+  K_p^\beta = \exp\left(\frac{-1}{2\cdot sd_p^2} * \left({(P-D)^{2}\cdot 
+  M1} 
+  + {(C_\A^{2}\cdot 
+  M2 )^\top} 
+  -2\cdot (P-D)\cdot C_\A^\top \right)  \right).
+\end{dmath*}
+Notice we simply replaced a few matrices with $M1$ and $M2$.
+
+With this, the tool gives the gradient as,
+\begin{dmath*}
+  \frac{\partial R}{\partial \B} = 
+    \frac{1}{sd_p^2 * sd_l ^2} *
+    K^\top * diag(y-K_p^\B\A) *
+    K_p^\B * diag(\A) * C_\A 
+    -\frac{1}{sd_p^2 * sd_l ^2} * K^\top * diag(y-K_p^\B\A) * ((
+        K_p^\B * diag(\A) *M1^\top) \odot 
+      (P-K*\B))
+\end{dmath*}
+
+Replacing $M1$ back, we get 
+
+\begin{dmath*}
+  \frac{\partial R}{\partial \B} = 
+    \frac{1}{sd_p^2 * sd_l ^2} *
+    K^\top * diag(y-K_p^\B\A) *
+    K_p^\B * diag(\A) * C_\A 
+    -\frac{1}{sd_p^2 * sd_l ^2} * K^\top * diag(y-K_p^\B\A) * ((
+        K_p^\B * diag(\A) *(
+        \begin{bmatrix}
+          1\\
+          1
+        \end{bmatrix} \cdot 
+        \longones{K_p}^\top) ^\top) \odot 
+      (P-K*\B)),
+\end{dmath*}
+
+which simplifies to
+\begin{dmath*}
+  \frac{\partial R}{\partial \B} = 
+    \frac{1}{sd_p^2 * sd_l ^2} *
+    K^\top * diag(y-K_p^\B\A) *
+    K_p^\B * diag(\A) * C_\A 
+    -\frac{1}{sd_p^2 * sd_l ^2} * K^\top * diag(y-K_p^\B\A) * ((
+        K_p^\B\A *
+        \begin{bmatrix}
+          1\\
+          1
+        \end{bmatrix}^\top)  \odot 
+      (P-K*\B))
+\end{dmath*}
+
+The first term is the same, but the second term is slightly jumbled up.
+
+The element-wise multiplication $\odot$ does not have nice associativity properties with the usual matrix multiplication $*$, so it is not apparent that this is same gradient as the one give earlier. 
 
 
-\[
-  f = 1/2\cdot \mathrm{tr}(B^\top \cdot Ginv\cdot B)+1/(2\cdot sdl2)\cdot \|image-\exp(((P-\exp((P^{2}\cdot oneCOL2\cdot oneROWKg^\top +(Cb^{2}\cdot oneCOL2\cdot oneROWL^\top )^\top -2\cdot P\cdot Cb^\top )/(2\cdot sdg2))\cdot B)^{2}\cdot oneCOL2\cdot oneROWKp^\top +(Ca^{2}\cdot oneCOL2\cdot oneROWL^\top )^\top -2\cdot (P-\exp((P^{2}\cdot oneCOL2\cdot oneROWKg^\top +(Cb^{2}\cdot oneCOL2\cdot oneROWL^\top )^\top -2\cdot P\cdot Cb^\top )/(2\cdot sdg2))\cdot B)\cdot Ca^\top )/(2\cdot sdp2))\cdot A\|_2^{2}
-\]
 
-gradient:
-\[
-  \frac{\partial f}{\partial B} = Ginv\cdot B-(1/(sdp2\cdot sdl2)\cdot \exp(1/(2\cdot sdg2)\cdot (oneROWKg\cdot (P^{2}\cdot oneCOL2)^\top +Cb^{2}\cdot oneCOL2\cdot oneROWL^\top -2\cdot Cb\cdot P^\top ))\cdot \mathrm{diag}(image-\exp(1/(2\cdot sdp2)\cdot ((P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)^{2}\cdot oneCOL2\cdot oneROWKp^\top +oneROWL\cdot (Ca^{2}\cdot oneCOL2)^\top -2\cdot (P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)\cdot Ca^\top ))\cdot A)\cdot \exp(1/(2\cdot sdp2)\cdot ((P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)^{2}\cdot oneCOL2\cdot oneROWKp^\top +oneROWL\cdot (Ca^{2}\cdot oneCOL2)^\top -2\cdot (P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)\cdot Ca^\top ))\cdot \mathrm{diag}(A)\cdot Ca-1/(sdp2\cdot sdl2)\cdot \exp(1/(2\cdot sdg2)\cdot (oneROWKg\cdot (P^{2}\cdot oneCOL2)^\top +Cb^{2}\cdot oneCOL2\cdot oneROWL^\top -2\cdot Cb\cdot P^\top ))\cdot \mathrm{diag}((image-\exp(1/(2\cdot sdp2)\cdot ((P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)^{2}\cdot oneCOL2\cdot oneROWKp^\top +oneROWL\cdot (Ca^{2}\cdot oneCOL2)^\top -2\cdot (P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)\cdot Ca^\top ))\cdot A)\odot (\exp(1/(2\cdot sdp2)\cdot ((P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)^{2}\cdot oneCOL2\cdot oneROWKp^\top +oneROWL\cdot (Ca^{2}\cdot oneCOL2)^\top -2\cdot (P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)\cdot Ca^\top ))\cdot (A\odot oneROWKp)))\cdot (P-\exp(1/(2\cdot sdg2)\cdot (P^{2}\cdot oneCOL2\cdot oneROWKg^\top +oneROWL\cdot (Cb^{2}\cdot oneCOL2)^\top -2\cdot P\cdot Cb^\top ))\cdot B)\cdot \mathrm{diag}(oneCOL2))
-\]
-where
-\begin{itemize}
-  \item $A$ is a vector
-  \item $B$ is a matrix
-  \item $Ca$ is a matrix
-  \item $Cb$ is a matrix
-  \item $Ginv$ is a symmetric matrix
-  \item $P$ is a matrix
-  \item $image$ is a vector
-  \item $oneCOL2$ is a vector
-  \item $oneROWKg$ is a vector
-  \item $oneROWKp$ is a vector
-  \item $oneROWL$ is a vector
-  \item $sdg2$ is a scalar
-  \item $sdl2$ is a scalar
-  \item $sdp2$ is a scalar
-\end{itemize}
 \end{document}
