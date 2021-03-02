@@ -115,6 +115,18 @@ Taking the derivative, we get
       \end{bmatrix}).
 \end{dmath*}
 
+Another representation is
+\begin{dmath*}
+  \frac{\partial R}{\partial \B} = 
+    \frac{1}{sd_p^2 * sd_l ^2} *
+    K^\top * diag(y-K_p^\B\A) *
+    K_p^\B * diag(\A) * C_\A 
+    -\frac{1}{sd_p^2 * sd_l ^2} * K^\top * diag(y-K_p^\B\A) * ((
+        K_p^\B * diag(\A) *M1^\top) \odot 
+      (P-K*\B))
+\end{dmath*}
+
+
 Simplifying yields
 \begin{dmath*}
   \frac{\partial R}{\partial \B} = 

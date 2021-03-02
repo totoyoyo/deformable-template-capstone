@@ -190,6 +190,6 @@ bx, by = np.meshgrid(rx, ry)
 # Pair up elems from gx and gy to create array of pairs
 B_2D = np.c_[bx.ravel(), by.ravel()]
 
-# res = timed_calculate_kBp(const.BETAS_INIT)
-# plt.imshow(res[1],cmap='jet')
-# plt.show()
+res = timed_calculate_kBp(const.BETAS_INIT)
+plt.imshow(res[1],cmap='jet')
+plt.show()
