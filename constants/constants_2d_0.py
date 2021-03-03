@@ -1,8 +1,15 @@
 import numpy as np
+from sys import getsizeof
 
-TEMPLATE_SD2 = 1
-DEFORM_SD2 = 1
-SD_INIT = 1
+import scipy.linalg as spl
+import scipy.sparse as ss
+
+TEMPLATE_SD2 = np.float32(1)
+DEFORM_SD2 = np.float32(1)
+SD_INIT = np.float32(1)
+
+e32 = np.exp(SD_INIT, dtype='float32')
+new = e32 * e32
 
 # IMAGE_NROWS = 10
 # IMAGE_NCOLS = 10
@@ -26,10 +33,17 @@ SD_INIT = 1
 IMAGE_NROWS = 50
 IMAGE_NCOLS = 50
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
-IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float32')
-IMAGE1[10:14, 10:14] = 1.0
-IMAGE2[11:15, 11:15] = 1.0
+IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
+IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
+# IMAGE3 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float64')
+
+IMAGE1[2:3, 2:3] = 1.0
+IMAGE2[4:5, 4:5] = 1.0
+
+
+
+# IMAGE1[10:14, 10:14] = 1.0
+# IMAGE2[11:15, 11:15] = 1.0
 
 
 IMAGES = [IMAGE1, IMAGE2]
@@ -55,7 +69,7 @@ def kernel_on_every_pixel(img_dim_x, img_dim_y):
     # Pair up elems from gx and gy to create array of pairs
     X_2D = np.c_[gx.ravel(), gy.ravel()]
 
-    return X_2D.astype('float64')
+    return X_2D.astype('float32')
 
 
 def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
@@ -63,7 +77,7 @@ def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
 
     x_2d = np.c_[IX.ravel(), IY.ravel()]
 
-    return x_2d.astype('float64')
+    return x_2d.astype('float32')
 
 
 P_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
@@ -72,8 +86,8 @@ G_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
 
 KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
-ALPHAS_INIT = np.zeros((KP, 1)).astype('float64')
-BETAS_INIT = np.zeros((KG, 2)).astype('float64')
+ALPHAS_INIT = np.zeros((KP, 1),dtype='float32')
+BETAS_INIT = np.zeros((KG, 2),dtype='float32')
 
 
 def gaussian_kernel_2d(x_val, center_val, sd2):
@@ -84,10 +98,10 @@ def gaussian_kernel_2d(x_val, center_val, sd2):
     :param sd2:
     :return: a 1d array of calculated gaussian (still needs to be reshaped)
     """
-    diff = np.linalg.norm(x_val - center_val,axis=1,)
+    diff = np.linalg.norm(x_val - center_val,axis=1)
     inter = (-((diff) ** 2)
              / (2 * sd2))
-    out = np.exp(inter)
+    out = np.exp(inter, dtype='float32')
     # Should be a float
     return out
 
@@ -95,7 +109,7 @@ def gaussian_kernel_original(x_val, sd):
     diff = np.linalg.norm(x_val)
     inter = (-((diff) ** 2)
              / (2 * sd**2))
-    out = np.exp(inter)
+    out = np.exp(inter, dtype='float32')
     # Should be a float
     return out
 
@@ -110,7 +124,7 @@ def gaussian_kernel_given_diffs(diffs, sd2):
     norm2_squared = np.sum((diffs ** 2),axis=1, dtype='float32')
     inter = (-((norm2_squared))
              / (2 * sd2))
-    out = np.exp(inter)
+    out = np.exp(inter, dtype='float32')
     # Should be a float
     return out
 
@@ -125,24 +139,9 @@ def gaussian_kernel_naive(pixel_row, pixel_col, sd2):
     diff = pixel_row ** 2 + pixel_col ** 2
     inter = (-(diff)
              / (2 * sd2))
-    out = np.exp(inter)
+    out = np.exp(inter, dtype='float32')
     return out
 
-
-def gaussian_kernel_naive_sd(pixel_row, pixel_col, sd):
-    """
-    Same as above but with not squared sd
-    :param pixel_row:
-    :param pixel_col:
-    :param sd:
-    :return:
-    """
-    diff = pixel_row ** 2 + pixel_col ** 2
-    inter = (-(diff)
-             / (2 * sd ** 2))
-    out = np.e ** inter
-    # Should be a float
-    return out
 
 def gaussian_kernel_input2_sd2(input2, sd2):
     """
@@ -157,28 +156,34 @@ def gaussian_kernel_input2_sd2(input2, sd2):
     return out
 
 
-
-AG = 1
-AP = 1
-MU_P = np.zeros((KP, 1)).astype('float64')
-
-p_xx = np.repeat(P_CENTERS,KP,axis=0)
-p_yy = np.tile(P_CENTERS, (KP, 1))
-SIGMA_P_INV = gaussian_kernel_2d(p_xx,p_yy,TEMPLATE_SD2).reshape((KP,KP))
+AG = np.float32(1)
+AP = np.float32(1)
+MU_P = np.zeros((KP, 1), dtype='float32')
 
 
-g_xx = np.repeat(G_CENTERS,KG,axis=0)
-g_yy = np.tile(G_CENTERS, (KG, 1))
-SIGMA_G_INV = gaussian_kernel_2d(g_xx,g_yy,DEFORM_SD2).reshape((KG,KG))
+def create_sigma_something_inverse(something_centers, k_something, some_sd2):
+    _xx = np.repeat(something_centers, k_something, axis=0)
+    _yy = np.tile(something_centers, (k_something, 1))
+    the_inv = gaussian_kernel_2d(_xx,_yy,some_sd2).reshape((k_something, k_something))
+    return the_inv
 
-SIGMA_P = np.linalg.inv(SIGMA_P_INV)
 
-SIGMA_G = np.linalg.inv(SIGMA_G_INV)
+
+# DO NOT FORGET TO UNCOMMENT
+SIGMA_P_INV = create_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2)
+# SIGMA_G_INV = create_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2)
+
+COO_P = ss.coo_matrix(SIGMA_P_INV)
+COO_G = ss.coo_matrix(SIGMA_P_INV)
+
+
+# SIGMA_P = spl.inv(SIGMA_P_INV)
+# SIGMA_G = spl.inv(SIGMA_G_INV)
 
 
 IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
 
-ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()]
+ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()].astype('float32')
 
 # one_point = gaussian_kernel_one_point(ALL_PIXELS,0.2)
 # import matplotlib.pyplot as plt

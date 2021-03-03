@@ -1,0 +1,4 @@
+worse < better
+
+COO < CSR CSC < DIA
+

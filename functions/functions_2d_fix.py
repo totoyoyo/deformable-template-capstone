@@ -1,9 +1,13 @@
 import constants.constants_2d_0 as const
-from scipy.optimize import check_grad
 import numpy as np
 import datetime
 import os
 import matplotlib.pyplot as plt
+import scipy.sparse as ss
+
+from helpers.sparse_size_calculator import sparse_dia_memory_usage, \
+    sparse_coo_memory_usage, sparse_other_memory_usage
+
 
 def flatten_image(image):
     return image.flatten()
@@ -125,6 +129,14 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, sd2):
     reshaped_gauss = gaussian_out.reshape((n_pixels,n_centers))
     return reshaped_gauss
 
+def get_sparse_pixel_by_centers(all_pixels, all_centers, sd2, error):
+    out = get_pixel_by_centers_matrix(all_pixels=all_pixels,
+                                      all_centers=all_centers,
+                                      sd2=sd2)
+    out[np.abs(out) < error] = 0.0
+    return out
+
+
 def get_pixel_by_centers_matrix_mul_only(all_pixels, all_centers, sd2):
     one_col2 = np.ones((2, 1))
     n_pixels = np.shape(all_pixels)[0]
@@ -142,13 +154,24 @@ def get_pixel_by_centers_matrix_mul_only(all_pixels, all_centers, sd2):
 
 PIXEL_G_CENTERS_MATRIX = get_pixel_by_centers_matrix(const.ALL_PIXELS,
                                                      const.G_CENTERS,
-                                                     const.DEFORM_SD2).\
-    astype('float32',casting="same_kind")
+                                                     const.DEFORM_SD2)
 
-PIXEL_G_CENTERS_MATRIX_2 = get_pixel_by_centers_matrix_mul_only(const.ALL_PIXELS,
-                                                                const.G_CENTERS,
-                                                                const.DEFORM_SD2).\
-    astype('float32',casting="same_kind")
+PIXEL_G_CENTERS_MATRIX[np.abs(PIXEL_G_CENTERS_MATRIX) < 1e-6] = 0.0
+
+CSR_PIXEL_G_CENTERS_MATRIX = ss.csr_matrix(PIXEL_G_CENTERS_MATRIX)
+CSC_PIXEL_G_CENTERS_MATRIX = ss.csc_matrix(PIXEL_G_CENTERS_MATRIX)
+DIA_PIXEL_G_CENTERS_MATRIX = ss.dia_matrix(PIXEL_G_CENTERS_MATRIX)
+COO_PIXEL_G_CENTERS_MATRIX = ss.coo_matrix(PIXEL_G_CENTERS_MATRIX)
+dia_s = sparse_dia_memory_usage(DIA_PIXEL_G_CENTERS_MATRIX)
+coo_s = sparse_coo_memory_usage(COO_PIXEL_G_CENTERS_MATRIX)
+csr_s = sparse_other_memory_usage(CSR_PIXEL_G_CENTERS_MATRIX)
+csc_s = sparse_other_memory_usage(CSC_PIXEL_G_CENTERS_MATRIX)
+normal_size = PIXEL_G_CENTERS_MATRIX.nbytes
+print('yo')
+# PIXEL_G_CENTERS_MATRIX_2 = get_pixel_by_centers_matrix_mul_only(const.ALL_PIXELS,
+#                                                                 const.G_CENTERS,
+#                                                                 const.DEFORM_SD2).\
+#     astype('float32',casting="same_kind")
 
 
 
