@@ -1,9 +1,12 @@
 import numpy as np
 import torch
-import constants.constants_2d_0 as const
-import functions.functions_2d_fix as func
+import constants.constants_2d_sparse as const
+import functions.functions_2d_sparse as func
 
-torch_K = torch.from_numpy(func.PIXEL_G_CENTERS_MATRIX).cuda()
+
+S_PIXEL_G_CENTERS_MATRIX
+
+torch_K = torch.from_numpy(func.S_PIXEL_G_CENTERS_MATRIX).cuda()
 torch_C_a = torch.from_numpy(const.P_CENTERS).type(torch.FloatTensor).cuda()
 torch_all_pixel = torch.from_numpy(const.ALL_PIXELS).type(torch.FloatTensor).cuda()
 n_pixels = torch_all_pixel.size()[0]

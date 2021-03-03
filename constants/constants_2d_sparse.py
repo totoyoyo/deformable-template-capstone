@@ -6,6 +6,7 @@ import scipy.sparse as ss
 
 TEMPLATE_SD2 = np.float32(1)
 DEFORM_SD2 = np.float32(1)
+TD_SAME = True
 SD_INIT = np.float32(1)
 
 e32 = np.exp(SD_INIT, dtype='float32')
@@ -30,8 +31,8 @@ new = e32 * e32
 # IMAGE1[10:14, 10:14] = 1.0
 # IMAGE2[11:15, 11:15] = 1.0
 
-IMAGE_NROWS = 50
-IMAGE_NCOLS = 50
+IMAGE_NROWS = 28
+IMAGE_NCOLS = 28
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
@@ -47,20 +48,10 @@ IMAGE2[4:5, 4:5] = 1.0
 
 
 IMAGES = [IMAGE1, IMAGE2]
-# IMAGES = [np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.5),
-#           np.full((IMAGE_NROWS,IMAGE_NCOLS), 0.4)]
+
 FLAT_IMAGES = list(map(lambda image: image.reshape(-1, 1),
                        IMAGES))
 
-# FLAT_IMAGES = list(map(lambda image: image.flatten(),
-#                        IMAGES))
-#
-# FLAT_IMAGES1 = list(map(lambda image: image.reshape(-1, 1),
-#                        IMAGES))
-#
-# FLAT_IMAGES2 = list(map(lambda image: image.flatten(),
-#                        IMAGES))
-#
 
 def kernel_on_every_pixel(img_dim_x, img_dim_y):
     rx, ry = np.arange(0, img_dim_x, 1), np.arange(0, img_dim_y, 1)
@@ -161,12 +152,6 @@ AP = np.float32(1)
 MU_P = np.zeros((KP, 1), dtype='float32')
 
 
-def create_sigma_something_inverse(something_centers, k_something, some_sd2):
-    _xx = np.repeat(something_centers, k_something, axis=0)
-    _yy = np.tile(something_centers, (k_something, 1))
-    the_inv = gaussian_kernel_2d(_xx,_yy,some_sd2).reshape((k_something, k_something))
-    return the_inv
-
 def create_sparse_sigma_something_inverse(something_centers, k_something, some_sd2,
                                           error):
     _xx = np.repeat(something_centers, k_something, axis=0)
@@ -176,22 +161,24 @@ def create_sparse_sigma_something_inverse(something_centers, k_something, some_s
     s_inv = ss.csc_matrix(the_inv)
     return s_inv
 
-# DO NOT FORGET TO UNCOMMENT
-SIGMA_P_INV = create_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2)
-SIGMA_G_INV = create_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2)
+SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
+                                                       1e-6)
+if TD_SAME:
+    SPARSE_SIGMA_G_INV = SPARSE_SIGMA_P_INV
+else:
+    SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
+                                                       1e-6)
 
-# SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
-#                                                        1e-6)
-# SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
-#                                                        1e-6)
-#
-# def invert_to_dense(sparse_mat):
-#     dense = sparse_mat.todense()
-#     inv_dense = sl.inv(dense)
-#     return inv_dense
+def invert_to_dense(sparse_mat):
+    dense = sparse_mat.todense()
+    inv_dense = sl.inv(dense)
+    return inv_dense
 
-SIGMA_P = sl.inv(SIGMA_P_INV)
-SIGMA_G = sl.inv(SIGMA_G_INV)
+def to_sparse(dense_mat,
+              error=1e-6):
+    dense_mat[dense_mat < error] = 0.0
+    out = ss.csc_matrix(dense_mat)
+    return out
 
 IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
 

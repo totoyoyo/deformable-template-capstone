@@ -2,3 +2,30 @@ worse < better
 
 COO < CSR CSC < DIA
 
+for 100x100 pic
+
+K matrix size (completely symmetric)
+no_ = 400000000
+coo = 10209312
+csr = 6846212
+csc = 6846212
+dia = 3560356
+
+kBp matrix size
+no_ = 400000000
+coo = 9884628
+csr = 6629756
+csc = 6629756
+dia = 14281428
+
+GInv is symmetric so sparse
+G however gives bad result
+Does G remain sparse at the end?
+
+sparse_size = 50010004
+normal_size = 25000000
+
+Note: 
+- inv only works on csr csc (others get converted automatically to csc)
+
+- spsolve is more efficient for CSC

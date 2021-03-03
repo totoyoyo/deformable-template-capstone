@@ -27,8 +27,18 @@ import scipy.sparse as ss
 #
 # haha = gc.isenabled()
 
-data = np.array([[1, 2, 3, 4]]).repeat(3, axis=0)
-offsets = np.array([0, -1, 2])
-d = ss.dia_matrix((data, offsets), shape=(4, 4))
-a = d.toarray()
+# data = np.array([[1, 2, 3, 4]]).repeat(3, axis=0)
+# offsets = np.array([0, -1, 2])
+# d = ss.dia_matrix((data, offsets), shape=(4, 4))
+# a = d.toarray()
+#
+# A = ss.csr_matrix([[1, 2, 0], [0, 0, 3], [4, 0, 5]])
+# v = np.array([1, 0, -1])
+# yo = A.dot(v)
+
+one = np.float32(1.0)
+e = np.exp(one,dtype='float32')
+
+out = one * e
+
 print('done')
