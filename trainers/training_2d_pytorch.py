@@ -118,6 +118,7 @@ class Estimator2DNImages:
 
 
     def run_estimation(self, iterations):
+        self.update_alpha_and_sd2()
         for _ in range(iterations):
             self.update_Gamma()
             self.update_alpha_and_sd2()

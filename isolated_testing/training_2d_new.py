@@ -1,5 +1,5 @@
-import functions.functions_2d_sparse as func
-import constants.constants_2d_sparse as const
+import functions_2d_new as func
+import constants_2d_new as const
 import numpy as np
 import time
 import scipy.linalg as sl
