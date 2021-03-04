@@ -6,7 +6,7 @@ import scipy.linalg as sl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import helpers.pytorch_optimizer as pt_op
+import helpers.pytorch_sparse as pt_op
 
 float_one = np.float32(1)
 
@@ -40,11 +40,12 @@ class Estimator2DNImages:
         def update_best_beta(n):
             curr_beta = self.betas[n]
             copy_curr_beta = np.copy(curr_beta)
+            dense_gamma_inv = self.Gamma_Inv.todense()
 
             optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
                                                image=self.images[n],
                                                curr_beta=copy_curr_beta,
-                                               g_inv=self.Gamma_Inv,
+                                               g_inv=dense_gamma_inv,
                                                sdp2=const.TEMPLATE_SD2,
                                                sdl2=self.sd2)
             out = optimizer.optimize_betas(1000)

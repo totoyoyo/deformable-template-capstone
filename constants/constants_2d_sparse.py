@@ -28,18 +28,19 @@ new = e32 * e32
 # IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
-# IMAGE1[10:14, 10:14] = 1.0
-# IMAGE2[11:15, 11:15] = 1.0
 
-IMAGE_NROWS = 28
-IMAGE_NCOLS = 28
+
+IMAGE_NROWS = 50
+IMAGE_NCOLS = 50
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
+IMAGE1[10:14, 10:14] = 1.0
+IMAGE2[11:15, 11:15] = 1.0
 # IMAGE3 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float64')
 
-IMAGE1[2:3, 2:3] = 1.0
-IMAGE2[4:5, 4:5] = 1.0
+# IMAGE1[2:3, 2:3] = 1.0
+# IMAGE2[4:5, 4:5] = 1.0
 
 
 
@@ -112,10 +113,10 @@ def gaussian_kernel_given_diffs(diffs, sd2):
     :param sd: sd not squared
     :return: A 1d array of calculated gaussians
     """
-    norm2_squared = np.sum((diffs ** 2),axis=1, dtype='float32')
+    norm2_squared = np.sum((diffs ** 2),axis=1)
     inter = (-((norm2_squared))
              / (2 * sd2))
-    out = np.exp(inter, dtype='float32')
+    out = np.exp(inter)
     # Should be a float
     return out
 

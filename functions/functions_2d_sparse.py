@@ -184,17 +184,17 @@ def calculate_kBp_and_deformation(betas):
                                 sparse_type=ss.csc_matrix)
     return out_matrix, deformed_pixel
 
-
-rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
-         np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)
-bx, by = np.meshgrid(rx, ry)
-# Pair up elems from gx and gy to create array of pairs
-B_2D = np.c_[bx.ravel(), by.ravel()]
-
-res = calculate_kBp(B_2D)
-
-plt.imshow(res.todense(),cmap='jet')
-plt.show()
-
-print('done')
+#
+# rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
+#          np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)
+# bx, by = np.meshgrid(rx, ry)
+# # Pair up elems from gx and gy to create array of pairs
+# B_2D = np.c_[bx.ravel(), by.ravel()]
+#
+# res = calculate_kBp(B_2D)
+#
+# plt.imshow(res.todense(),cmap='jet')
+# plt.show()
+#
+# print('done')
 
