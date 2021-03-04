@@ -162,12 +162,28 @@ def create_sparse_sigma_something_inverse(something_centers, k_something, some_s
     s_inv = ss.csc_matrix(the_inv)
     return s_inv
 
-SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
+# SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
+#                                                        1e-6)
+# if TD_SAME:
+#     SPARSE_SIGMA_G_INV = SPARSE_SIGMA_P_INV
+# else:
+#     SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
+#                                                        1e-6)
+
+def create_dense_sigma_something_inverse(something_centers, k_something, some_sd2,
+                                          error):
+    _xx = np.repeat(something_centers, k_something, axis=0)
+    _yy = np.tile(something_centers, (k_something, 1))
+    the_inv = gaussian_kernel_2d(_xx,_yy,some_sd2).reshape((k_something, k_something))
+    the_inv[np.abs(the_inv) < error] = 0.0
+    return the_inv
+
+DENSE_SIGMA_P_INV = create_dense_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
                                                        1e-6)
 if TD_SAME:
-    SPARSE_SIGMA_G_INV = SPARSE_SIGMA_P_INV
+    DENSE_SIGMA_G_INV = DENSE_SIGMA_P_INV
 else:
-    SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
+    DENSE_SIGMA_G_INV = create_dense_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
                                                        1e-6)
 
 def invert_to_dense(sparse_mat):
@@ -177,7 +193,7 @@ def invert_to_dense(sparse_mat):
 
 def to_sparse(dense_mat,
               error=1e-6):
-    dense_mat[dense_mat < error] = 0.0
+    dense_mat[np.abs(dense_mat) < error] = 0.0
     out = ss.csc_matrix(dense_mat)
     return out
 

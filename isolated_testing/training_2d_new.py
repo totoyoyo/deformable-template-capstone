@@ -24,8 +24,8 @@ class Estimator2DNImages:
         self.kBps = \
             list(map((lambda beta: func.calculate_kBp(beta)),
                      self.betas))
-        # self.Gamma: np.ndarray = const.SIGMA_G
-        self.Gamma_Inv = const.SPARSE_SIGMA_G_INV
+        self.Gamma_Inv = const.DENSE_SIGMA_G_INV
+        self.Gamma: np.ndarray = sl.inv(self.Gamma_Inv)
         self.images = const.FLAT_IMAGES
         yty = list(map((lambda image: func.faster_norm_squared(image)), self.images))
         self.YTY = (1 / self.number_of_images) \
@@ -37,7 +37,7 @@ class Estimator2DNImages:
 
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
-        dense_gamma_inv = self.Gamma_Inv.toarray()
+        dense_gamma_inv = self.Gamma_Inv
         def update_best_beta(n):
             curr_beta = self.betas[n]
             copy_curr_beta = np.copy(curr_beta)
@@ -65,7 +65,7 @@ class Estimator2DNImages:
 
     def update_Gamma(self):
         print("Updating Gamma", self.Gamma_update_count, "time")
-        current_Gamma = const.invert_to_dense(self.Gamma_Inv)
+        current_Gamma = self.Gamma
         coef = (1 / (self.number_of_images + const.AG))
         left = self.number_of_images * self._bbtl()
         right = const.AG * current_Gamma
@@ -73,8 +73,9 @@ class Estimator2DNImages:
         # self.Gamma = (1 / (self.number_of_images + const.AG)) \
         #              * (self.number_of_images * self._bbtl()
         #                 + const.AG * const.SIGMA_G)
-        tmp_inv = sl.inv(new_gamma)
-        self.Gamma_Inv = const.to_sparse(tmp_inv)
+        self.Gamma = new_gamma
+        self.Gamma_Inv = sl.inv(self.Gamma)
+        self.Gamma_Inv[np.abs(self.Gamma_Inv) < 1e-6] = 0.0
         print("Finished Gamma", self.Gamma_update_count, "time")
         self.Gamma_update_count += 1
 
@@ -101,7 +102,7 @@ class Estimator2DNImages:
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        p_inverse = const.SPARSE_SIGMA_P_INV.todense()
+        p_inverse = const.DENSE_SIGMA_P_INV
         for x in range(5):
             a_left = sl.inv(self.number_of_images * kkl
                                       + self.sd2 * p_inverse)
