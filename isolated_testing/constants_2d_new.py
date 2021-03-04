@@ -30,8 +30,8 @@ new = e32 * e32
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 
 
-IMAGE_NROWS = 20
-IMAGE_NCOLS = 20
+IMAGE_NROWS = 50
+IMAGE_NCOLS = 50
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')

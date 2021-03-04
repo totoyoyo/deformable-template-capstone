@@ -6,7 +6,7 @@ import scipy.linalg as sl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import helpers.pytorch_sparse as pt_op
+import pytorch_new as pt_op
 
 float_one = np.float32(1)
 
