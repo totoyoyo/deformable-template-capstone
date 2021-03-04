@@ -57,17 +57,79 @@ lnp = [np1,np2]
 
 t = list(map(lambda x: torch.from_numpy(x),lnp))
 
-sd2 = 2
-c = 6  # actually should depend on bandwith l
+# sd2 = 2
+# c = 6  # actually should depend on bandwith l
+#
+# x   = np.arange(0, 2*c + 1)
+# RBF = np.exp( -  (1/(2*sd2))  * (x - c)**2 )
+# RBF2 = np.outer(RBF,RBF)
+# import matplotlib.pyplot as plt
+#
+# plt.imshow(RBF2, cmap = 'jet')
+# plt.colorbar();
+# plt.show()
 
-x   = np.arange(0, 2*c + 1)
-RBF = np.exp( -  (1/(2*sd2))  * (x - c)**2 )
-RBF2 = np.outer(RBF,RBF)
+
 import matplotlib.pyplot as plt
 
-plt.imshow(RBF2, cmap = 'jet')
-plt.colorbar();
+
+#
+# sd2 = 9
+# c = 9  # actually should depend on bandwith l
+#
+# x   = np.arange(0, 2*c + 1)
+# RBF = np.exp( -  (1/(2*sd2))  * (x - c)**2 )
+# RBF2 = np.outer(RBF,RBF)
+# import matplotlib.pyplot as plt
+#
+# plt.imshow(RBF2, cmap = 'jet')
+# plt.colorbar();
+# plt.show()
 
 
+def generate_gaussian_kernel(sd2):
+    sd = np.sqrt(sd2)
+    c = np.ceil(sd * 4)
+    x = np.arange(0, 2 * c + 1)
+    RBF = np.exp(- (1 / (2 * sd2)) * (x - c) ** 2)
+    RBF2 = np.outer(RBF, RBF)
+    return c, RBF2
 
+
+import torch.nn.functional as tnf
+
+center_kernel, np_kernel = generate_gaussian_kernel(4)
+
+t_kernel = torch.from_numpy(np_kernel).type(torch.float32)
+k_view = t_kernel.view(1,1,-1)
+
+n = 28
+m = 28
+a = np.zeros((n,m))
+a[6:15,6:22] = 1
+a[8:13,8:20] = 0
+a[22:24,22:24] = 4
+
+t_a = torch.from_numpy(a).type(torch.float32)
+t_a = torch.unsqueeze(t_a,0)
+t_a = torch.unsqueeze(t_a,0)
+
+
+out = tnf.conv2d(t_a, t_kernel, padding=center_kernel)
+out = torch.squeeze(out)
+
+
+np_out = out.numpy()
+plt.imshow(np_out, cmap = 'gray')
+plt.colorbar()
+plt.show()
 print('done')
+
+from scipy import signal
+Conv = signal.fftconvolve(a, np_kernel, mode='same')
+
+
+plt.imshow(Conv, cmap = 'gray');
+plt.colorbar()
+plt.title("template");
+plt.show()

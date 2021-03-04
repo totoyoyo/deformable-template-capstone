@@ -2,23 +2,41 @@ import numpy as np
 import torch
 import constants_2d_new as const
 import functions_2d_new as func
-
+import torch.nn.functional as tnf
 # Convert from diag to coo and then to tensor
 # Also learn how to clear gpu memory
 # func.S_PIXEL_G_CENTERS_MATRIX.
 
-def get_pt_sparse_K(sparse_scipy_matrix):
-    sp_coo = sparse_scipy_matrix.tocoo()
-    indices = np.vstack((sp_coo.row, sp_coo.col))
-    values = sp_coo.data
-    pt_sparse = torch.sparse_coo_tensor(indices=indices,
-                                        values=values,
-                                        size=sp_coo.shape,
-                                        device=torch.device('cuda'))
-    return pt_sparse
+def double_unsqueeze(tensor):
+    u0 = torch.unsqueeze(tensor, 0)
+    u1 = torch.unsqueeze(u0, 0)
+    return u1
+
+padding, kernel = func.generate_gaussian_kernel(const.DEFORM_SD2)
+
+unsqueezed_kernel = double_unsqueeze(torch.from_numpy(kernel)).cuda()
+
+def get_deformation(betas):
+    dim0 = betas[:, 0]
+    shape = dim0.size()
+    usual_shape = shape
+    beta0_img = torch.reshape(dim0,(const.IMAGE_NROWS,const.IMAGE_NCOLS))
+    unsqueezed_beta0 = double_unsqueeze(beta0_img)
+    out0_img = tnf.conv2d(unsqueezed_beta0, unsqueezed_kernel, padding=padding)
+    deformation0 = torch.reshape(out0_img,(usual_shape[0],1))
+
+    dim1 = betas[:, 1]
+    shape = dim1.size()
+    beta1_img = torch.reshape(dim1, (const.IMAGE_NROWS, const.IMAGE_NCOLS))
+    unsqueezed_beta1 = double_unsqueeze(beta1_img)
+    out1_img = tnf.conv2d(unsqueezed_beta1, unsqueezed_kernel, padding=padding)
+    deformation1 = torch.reshape(out1_img, (usual_shape[0],1))
+    # for_cat = torch.unsqueeze(deformation0, 1)
+    both_deformation = torch.cat((deformation0, deformation1),
+                                 dim=1)
+    return both_deformation
 
 
-torch_K = get_pt_sparse_K(func.S_PIXEL_G_CENTERS_MATRIX)
 torch_C_a = torch.from_numpy(const.P_CENTERS).cuda()
 torch_all_pixel = torch.from_numpy(const.ALL_PIXELS).cuda()
 n_pixels = torch_all_pixel.size()[0]
@@ -33,17 +51,16 @@ one_col2 = torch.ones((2, 1),dtype=torch.float32,
 
 class KBpA(torch.nn.Module):
 
-    def __init__(self, alphas, curr_betas, sdp2, K, all_pixels, all_p_centers):
+    def __init__(self, alphas, curr_betas, sdp2, all_pixels, all_p_centers):
         super().__init__()
         self.betas = torch.nn.Parameter(curr_betas)
         self.alphas = alphas
         self.sdp2 = sdp2
-        self.K = K
         self.all_pixels = all_pixels
         self.all_p_centers = all_p_centers
 
     def forward(self):
-        deformation = torch.sparse.mm(self.K, self.betas)
+        deformation = get_deformation(self.betas)
         deformed_pixel = self.all_pixels - deformation
         p_norm_squared = torch.square(deformed_pixel) @ one_col2
         c_norm_squared = torch.square(self.all_p_centers) @ one_col2
@@ -72,7 +89,6 @@ class PyTorchOptimizer():
         image_predictor = KBpA(alphas=self.alphas,
                                curr_betas=self.curr_betas,
                                sdp2=self.sdp2,
-                               K=torch_K,
                                all_pixels=torch_all_pixel,
                                all_p_centers=torch_C_a
                                ).cuda()

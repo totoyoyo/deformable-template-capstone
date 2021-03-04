@@ -181,6 +181,14 @@ def calculate_kBp_and_deformation(betas):
                                 sparse_type=ss.csc_matrix)
     return out_matrix, deformed_pixel
 
+def generate_gaussian_kernel(sd2):
+    sd = np.sqrt(sd2)
+    c = np.ceil(sd * 4)
+    x = np.arange(0, 2 * c + 1)
+    RBF = np.exp(- (1 / (2 * sd2)) * (x - c) ** 2, dtype = 'float32')
+    RBF2 = np.outer(RBF, RBF)
+    return c.astype('int'), RBF2
+
 #
 # rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
 #          np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)

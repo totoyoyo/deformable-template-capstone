@@ -29,3 +29,8 @@ Note:
 - inv only works on csr csc (others get converted automatically to csc)
 
 - spsolve is more efficient for CSC
+
+Notes:
+
+For some unknown reason, storing only sparse Gamma_inv,
+doing inverses gives more precise results that storing both Gamma and Gamma_inv

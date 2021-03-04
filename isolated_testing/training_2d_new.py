@@ -6,7 +6,8 @@ import scipy.linalg as sl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import pytorch_new as pt_op
+import pytorch_conv as pt_op
+import time
 
 float_one = np.float32(1)
 
@@ -40,6 +41,7 @@ class Estimator2DNImages:
         dense_gamma_inv = self.Gamma_Inv.toarray()
         def update_best_beta(n):
             curr_beta = self.betas[n]
+            start_time = time.time()
             copy_curr_beta = np.copy(curr_beta)
             optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
                                                image=self.images[n],
@@ -50,6 +52,7 @@ class Estimator2DNImages:
             out = optimizer.optimize_betas(1000)
             self.betas[n] = out
             del optimizer
+            print("--- %s seconds ---" % (time.time() - start_time))
             print("beta at" + str(n))
             print(out)
 
