@@ -101,7 +101,6 @@ import torch.nn.functional as tnf
 center_kernel, np_kernel = generate_gaussian_kernel(4)
 
 t_kernel = torch.from_numpy(np_kernel).type(torch.float32)
-k_view = t_kernel.view(1,1,-1)
 
 n = 28
 m = 28
@@ -115,10 +114,29 @@ t_a = torch.unsqueeze(t_a,0)
 t_a = torch.unsqueeze(t_a,0)
 
 
+b = np.zeros((n,m))
+b[6:15,6:22] = 1
+b[8:13,8:20] = 0
+b[22:24,22:24] = 8
 
-pixels = torch.tensor([[0,0],[0,1],[0,2]])
-centers = torch.tensor([[0,0],[0,1],[0,2]])
-rep_pixels = pixels.repeat_interleave(repeats=3, dim = 0)
-tiled_centers = centers.repeat(3,1)
+
+ab = np.array([a.flatten(),b.flatten()]).T
+
+t_betas = torch.from_numpy(ab)
+new_t = t_betas.reshape((2,1,28,28))
+
+old_beta = t_betas.reshape((784,2))
+old_ab = old_beta.numpy()
+
+out = tnf.conv2d(t_a, t_kernel, padding=center_kernel)
+out = torch.squeeze(out)
+
+
+plt.show()
+
+# pixels = torch.tensor([[0,0],[0,1],[0,2]])
+# centers = torch.tensor([[0,0],[0,1],[0,2]])
+# rep_pixels = pixels.repeat_interleave(repeats=3, dim = 0)
+# tiled_centers = centers.repeat(3,1)
 
 print('done')

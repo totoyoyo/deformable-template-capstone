@@ -37,6 +37,13 @@ def get_deformation(betas):
     return both_deformation
 
 
+# def get_deformation(betas):
+#     new_b = torch.reshape(betas, (2,1,const.IMAGE_NROWS, const.IMAGE_NCOLS))
+#     out = tnf.conv2d(new_b, unsqueezed_kernel, padding=padding)
+#     deformation = torch.reshape(out,(const.IMAGE_NROWS ** 2,2))
+#     return deformation
+
+
 torch_C_a = torch.from_numpy(const.P_CENTERS).cuda()
 torch_all_pixel = torch.from_numpy(const.ALL_PIXELS).cuda()
 n_pixels = torch_all_pixel.size()[0]

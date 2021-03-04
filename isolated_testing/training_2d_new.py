@@ -49,7 +49,7 @@ class Estimator2DNImages:
                                                g_inv=dense_gamma_inv,
                                                sdp2=const.TEMPLATE_SD2,
                                                sdl2=self.sd2)
-            out = optimizer.optimize_betas(1000)
+            out = optimizer.optimize_betas(100)
             self.betas[n] = out
             del optimizer
             print("--- %s seconds ---" % (time.time() - start_time))
@@ -105,7 +105,7 @@ class Estimator2DNImages:
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
         p_inverse = const.SPARSE_SIGMA_P_INV.todense()
-        for x in range(1):
+        for x in range(2):
             a_left = sl.inv(self.number_of_images * kkl
                                       + self.sd2 * p_inverse)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
