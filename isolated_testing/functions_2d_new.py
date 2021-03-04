@@ -5,9 +5,6 @@ import os
 import matplotlib.pyplot as plt
 import scipy.sparse as ss
 
-from helpers.sparse_size_calculator import sparse_dia_memory_usage, \
-    sparse_coo_memory_usage, sparse_other_memory_usage
-
 
 def flatten_image(image):
     return image.flatten()

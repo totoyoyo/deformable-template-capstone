@@ -102,7 +102,7 @@ class Estimator2DNImages:
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
         p_inverse = const.SPARSE_SIGMA_P_INV.todense()
-        for x in range(5):
+        for x in range(1):
             a_left = sl.inv(self.number_of_images * kkl
                                       + self.sd2 * p_inverse)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))

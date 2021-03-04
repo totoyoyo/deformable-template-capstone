@@ -35,20 +35,39 @@ import scipy.sparse as ss
 import torch
 import torch.sparse as ts
 
-A = ss.coo_matrix([[1, 2, 0], [0, 0, 3], [4, 0, 5]], dtype='float32')
-indices = np.vstack((A.row,A.col))
-values = A.data
-i = torch.LongTensor(indices)
-v = torch.FloatTensor(values)
-shape = A.shape
+# A = ss.coo_matrix([[1, 2, 0], [0, 0, 3], [4, 0, 5]], dtype='float32')
+# indices = np.vstack((A.row,A.col))
+# values = A.data
+# i = torch.LongTensor(indices)
+# v = torch.FloatTensor(values)
+# shape = A.shape
+#
+# s = torch.sparse_coo_tensor(indices=indices,
+#                             values=values,
+#                             size=shape)
+# out = s.to_dense()
+#
+# one = np.float32(1.0)
+# e = np.exp(one,dtype='float32')
 
-s = torch.sparse_coo_tensor(indices=indices,
-                            values=values,
-                            size=shape)
-out = s.to_dense()
+np1 = np.array([[1],[2],[3]])
+np2 = np.array([[4],[5],[6]])
 
-one = np.float32(1.0)
-e = np.exp(one,dtype='float32')
+lnp = [np1,np2]
+
+t = list(map(lambda x: torch.from_numpy(x),lnp))
+
+sd2 = 2
+c = 6  # actually should depend on bandwith l
+
+x   = np.arange(0, 2*c + 1)
+RBF = np.exp( -  (1/(2*sd2))  * (x - c)**2 )
+RBF2 = np.outer(RBF,RBF)
+import matplotlib.pyplot as plt
+
+plt.imshow(RBF2, cmap = 'jet')
+plt.colorbar();
+
 
 
 print('done')

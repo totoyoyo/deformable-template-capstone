@@ -30,8 +30,8 @@ new = e32 * e32
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 
 
-IMAGE_NROWS = 50
-IMAGE_NCOLS = 50
+IMAGE_NROWS = 100
+IMAGE_NCOLS = 100
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
@@ -177,7 +177,7 @@ def invert_to_dense(sparse_mat):
 
 def to_sparse(dense_mat,
               error=1e-6):
-    dense_mat[dense_mat < error] = 0.0
+    dense_mat[abs(dense_mat) < error] = 0.0
     out = ss.csc_matrix(dense_mat)
     return out
 
