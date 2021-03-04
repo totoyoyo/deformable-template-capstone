@@ -115,21 +115,10 @@ t_a = torch.unsqueeze(t_a,0)
 t_a = torch.unsqueeze(t_a,0)
 
 
-out = tnf.conv2d(t_a, t_kernel, padding=center_kernel)
-out = torch.squeeze(out)
 
+pixels = torch.tensor([[0,0],[0,1],[0,2]])
+centers = torch.tensor([[0,0],[0,1],[0,2]])
+rep_pixels = pixels.repeat_interleave(repeats=3, dim = 0)
+tiled_centers = centers.repeat(3,1)
 
-np_out = out.numpy()
-plt.imshow(np_out, cmap = 'gray')
-plt.colorbar()
-plt.show()
 print('done')
-
-from scipy import signal
-Conv = signal.fftconvolve(a, np_kernel, mode='same')
-
-
-plt.imshow(Conv, cmap = 'gray');
-plt.colorbar()
-plt.title("template");
-plt.show()

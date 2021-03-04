@@ -72,6 +72,20 @@ class KBpA(torch.nn.Module):
         out = kBp @ self.alphas
         return out
 
+    # def forward(self):
+    #     deformation = get_deformation(self.betas)
+    #     deformed_pixel = self.all_pixels - deformation
+    #     rep_pixels = deformed_pixel.repeat_interleave(repeats=n_centers,
+    #                                                   dim=0)
+    #     tiled_centers = self.all_p_centers.repeat(n_pixels, 1)
+    #     diff_vector = rep_pixels - tiled_centers
+    #     diff_squared = torch.square(diff_vector)
+    #     summed_square = torch.sum(diff_squared, dim=1)
+    #     gaussian_out = torch.exp((-1/(2 * self.sdp2)) * summed_square)
+    #     reshaped_gauss = torch.reshape(gaussian_out, (n_pixels,n_pixels))
+    #     out = reshaped_gauss @ self.alphas
+    #     return out
+
     def string(self):
         return f'b = {self.betas.item()}'
 
