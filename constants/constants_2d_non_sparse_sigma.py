@@ -30,8 +30,8 @@ new = e32 * e32
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 
 
-IMAGE_NROWS = 20
-IMAGE_NCOLS = 20
+IMAGE_NROWS = 28
+IMAGE_NCOLS = 28
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
@@ -153,22 +153,23 @@ AP = np.float32(1)
 MU_P = np.zeros((KP, 1), dtype='float32')
 
 
-def create_sparse_sigma_something_inverse(something_centers, k_something, some_sd2,
+def create_dense_sigma_something_inverse(something_centers, k_something, some_sd2,
                                           error):
     _xx = np.repeat(something_centers, k_something, axis=0)
     _yy = np.tile(something_centers, (k_something, 1))
     the_inv = gaussian_kernel_2d(_xx,_yy,some_sd2).reshape((k_something, k_something))
     the_inv[np.abs(the_inv) < error] = 0.0
-    s_inv = ss.csc_matrix(the_inv)
-    return s_inv
+    return the_inv
 
-SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
+
+SIGMA_P_INV = create_dense_sigma_something_inverse(P_CENTERS, KP, TEMPLATE_SD2,
                                                        1e-6)
 if TD_SAME:
-    SPARSE_SIGMA_G_INV = SPARSE_SIGMA_P_INV
+    SIGMA_G_INV = SIGMA_P_INV
 else:
-    SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
+    SIGMA_G_INV = create_dense_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
                                                        1e-6)
+
 
 def invert_to_dense(sparse_mat):
     dense = sparse_mat.todense()

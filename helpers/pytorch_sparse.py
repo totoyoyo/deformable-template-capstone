@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-import constants.constants_2d_sparse as const
+import constants.constants_2d_non_sparse_sigma as const
 import functions.functions_2d_sparse as func
 
 # Convert from diag to coo and then to tensor

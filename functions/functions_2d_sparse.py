@@ -1,4 +1,4 @@
-import constants.constants_2d_sparse as const
+import constants.constants_2d_non_sparse_sigma as const
 import numpy as np
 import datetime
 import os
