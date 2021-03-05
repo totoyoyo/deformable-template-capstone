@@ -7,3 +7,27 @@ For 4sd,
 For 5sd,
 0.0000037
 
+Speeds:
+50x50
+Beta speeds for convolution
+8.78
+7.8
+7.8
+
+Beta speeds for matmul
+12.48
+11.44
+
+100x100
+
+Conv:
+124.36 sec
+122.9 sec
+
+Matmul:
+137 sec
+136
+
+Unplugged 28x28 1000 steps
+8 sec per optimization
+

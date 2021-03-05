@@ -172,15 +172,6 @@ def calculate_kBp(betas):
                                              sparse_type=ss.csc_matrix)
     return out_matrix
 
-def calculate_kBp_and_deformation(betas):
-    deformation = S_PIXEL_G_CENTERS_MATRIX.dot(betas)
-    deformed_pixel = const.ALL_PIXELS - deformation
-    out_matrix = get_sparse_pixel_by_centers(deformed_pixel,
-                                const.P_CENTERS,
-                                const.TEMPLATE_SD2,
-                                sparse_type=ss.csc_matrix)
-    return out_matrix, deformed_pixel
-
 def generate_gaussian_kernel(sd2):
     sd = np.sqrt(sd2)
     c = np.ceil(sd * 4)

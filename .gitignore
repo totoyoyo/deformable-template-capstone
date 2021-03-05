@@ -3,3 +3,4 @@ latex/*
 !latex/*.tex
 outputs/*
 plots/*
+data/*

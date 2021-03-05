@@ -49,7 +49,7 @@ class Estimator2DNImages:
                                                g_inv=dense_gamma_inv,
                                                sdp2=const.TEMPLATE_SD2,
                                                sdl2=self.sd2)
-            out = optimizer.optimize_betas(100)
+            out = optimizer.optimize_betas(1000)
             self.betas[n] = out
             del optimizer
             print("--- %s seconds ---" % (time.time() - start_time))
@@ -68,10 +68,10 @@ class Estimator2DNImages:
 
     def update_Gamma(self):
         print("Updating Gamma", self.Gamma_update_count, "time")
-        current_Gamma = const.invert_to_dense(self.Gamma_Inv)
         coef = (1 / (self.number_of_images + const.AG))
         left = self.number_of_images * self._bbtl()
-        right = const.AG * current_Gamma
+        # FIX THIS
+        right = const.AG * const.invert_to_dense(const.SPARSE_SIGMA_G_INV)
         new_gamma = coef * (left + right)
         # self.Gamma = (1 / (self.number_of_images + const.AG)) \
         #              * (self.number_of_images * self._bbtl()
@@ -183,6 +183,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
+my_estimator.run_estimation(10)
 my_estimator.show_plots()
 # my_estimator.save_data()
