@@ -3,6 +3,7 @@ import torch
 import constants_2d_new as const
 import functions_2d_new as func
 
+
 # Convert from diag to coo and then to tensor
 # Also learn how to clear gpu memory
 # func.S_PIXEL_G_CENTERS_MATRIX.
@@ -25,10 +26,10 @@ n_pixels = torch_all_pixel.size()[0]
 n_centers = torch_C_a.size()[0]
 ones_pixels = torch.ones((1, n_pixels), dtype=torch.float32,
                          device=torch.device('cuda'))
-ones_centers = torch.ones((1, n_centers),dtype=torch.float32,
+ones_centers = torch.ones((1, n_centers), dtype=torch.float32,
                           device=torch.device('cuda'))
-one_col2 = torch.ones((2, 1),dtype=torch.float32,
-                          device=torch.device('cuda'))
+one_col2 = torch.ones((2, 1), dtype=torch.float32,
+                      device=torch.device('cuda'))
 
 
 class KBpA(torch.nn.Module):
@@ -62,7 +63,10 @@ class PyTorchOptimizer():
     def __init__(self, alphas, image, curr_beta, g_inv, sdp2, sdl2):
         self.alphas = torch.from_numpy(alphas).float().cuda()
         self.curr_betas = torch.from_numpy(curr_beta).float().cuda()
-        self.image = torch.from_numpy(image.reshape(-1, 1)).float().cuda()
+        self.curr_betas = torch.tensor(curr_beta, dtype=torch.float32,
+                                       device=torch.device('cuda'))
+        self.image = torch.tensor(curr_beta, dtype=torch.float32,
+                                  device=torch.device('cuda'))
         self.g_inv = torch.from_numpy(g_inv).float().cuda()
         self.sdp2 = sdp2
         self.sdl2 = sdl2
@@ -82,7 +86,7 @@ class PyTorchOptimizer():
             pred = image_predictor()
 
             # Dont forget to multiply by the sd
-            loss_right = (1/(2 * self.sdl2)) * criterion(self.image, pred)
+            loss_right = (1 / (2 * self.sdl2)) * criterion(self.image, pred)
 
             loss_left = None
             for betas in image_predictor.parameters():
