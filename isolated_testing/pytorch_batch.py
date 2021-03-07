@@ -19,7 +19,15 @@ def get_pt_sparse_K(sparse_scipy_matrix):
     return pt_sparse
 
 
+def get_pt_dense_K(sparse_scipy_matrix):
+    dense_numpy = sparse_scipy_matrix.todense()
+    torch_tensor = torch.from_numpy(dense_numpy).float().cuda()
+    return torch_tensor
+
 torch_K = get_pt_sparse_K(func.S_PIXEL_G_CENTERS_MATRIX)
+torch_K_dense = get_pt_dense_K(func.S_PIXEL_G_CENTERS_MATRIX)
+
+
 torch_C_a = torch.from_numpy(const.P_CENTERS).cuda()
 torch_all_pixel = torch.from_numpy(const.ALL_PIXELS).cuda()
 n_pixels = torch_all_pixel.size()[0]
@@ -30,7 +38,8 @@ ones_centers = torch.ones((1, n_centers), dtype=torch.float32,
                           device=torch.device('cuda'))
 one_col2 = torch.ones((2, 1), dtype=torch.float32,
                       device=torch.device('cuda'))
-
+torch_all_images = torch.tensor(const.FLAT_IMAGES, dtype=torch.float32,
+                                  device=torch.device('cuda'))
 
 class KBpA(torch.nn.Module):
 
@@ -43,7 +52,7 @@ class KBpA(torch.nn.Module):
         self.all_p_centers = all_p_centers
 
     def forward(self):
-        deformation = torch.sparse.mm(torch_K, self.betas)
+        deformation = torch_K_dense @ self.betas
         deformed_pixel = self.all_pixels - deformation
         p_norm_squared = torch.square(deformed_pixel) @ one_col2
         c_norm_squared = torch.square(self.all_p_centers) @ one_col2
@@ -60,13 +69,11 @@ class KBpA(torch.nn.Module):
 
 
 class PyTorchOptimizer():
-    def __init__(self, alphas, image, curr_beta, g_inv, sdp2, sdl2):
+    def __init__(self, alphas, curr_beta, g_inv, sdp2, sdl2):
         self.alphas = torch.from_numpy(alphas).float().cuda()
-        self.curr_betas = torch.from_numpy(curr_beta).float().cuda()
         self.curr_betas = torch.tensor(curr_beta, dtype=torch.float32,
                                        device=torch.device('cuda'))
-        self.image = torch.tensor(curr_beta, dtype=torch.float32,
-                                  device=torch.device('cuda'))
+        self.image = torch_all_images
         self.g_inv = torch.from_numpy(g_inv).float().cuda()
         self.sdp2 = sdp2
         self.sdl2 = sdl2
@@ -79,7 +86,11 @@ class PyTorchOptimizer():
                                all_p_centers=torch_C_a
                                ).cuda()
         criterion = torch.nn.MSELoss(reduction='sum').cuda()
-        optimizer = torch.optim.Adam(image_predictor.parameters())
+        # optimizer = torch.optim.SGD(image_predictor.parameters(),
+        #                             lr=0.001,
+        #                             nesterov=True)
+
+        optimizer = torch.optim.AdamW(image_predictor.parameters())
         # optimizer = torch.optim.RMSprop(image_predictor.parameters())
         # optimizer = torch.optim.LBFGS(params=image_predictor.parameters())
         for i in range(iter):
@@ -90,9 +101,10 @@ class PyTorchOptimizer():
 
             loss_left = None
             for betas in image_predictor.parameters():
-                loss_left = (1 / 2) * torch.trace(betas.T @
-                                                  self.g_inv @
-                                                  betas)
+                beta_t = torch.transpose(betas, 1, 2)
+                before_trace = beta_t @ self.g_inv @ betas
+                diag = torch.diagonal(before_trace,offset=0,dim1=-2,dim2=-1)
+                loss_left = (1 / 2) * torch.sum(diag)
 
             loss = loss_left + loss_right
             optimizer.zero_grad()
@@ -102,4 +114,5 @@ class PyTorchOptimizer():
 
         for betas in image_predictor.parameters():
             to_numpy = betas.detach().cpu().numpy()
-            return to_numpy
+            list_of_numpy = list(to_numpy)
+            return list_of_numpy

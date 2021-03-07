@@ -6,7 +6,7 @@ import scipy.linalg as sl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import pytorch_conv as pt_op
+import pytorch_batch as pt_op
 import time
 
 float_one = np.float32(1)
@@ -39,25 +39,19 @@ class Estimator2DNImages:
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
         dense_gamma_inv = self.Gamma_Inv.toarray()
-        def update_best_beta(n):
-            curr_beta = self.betas[n]
-            start_time = time.time()
-            copy_curr_beta = np.copy(curr_beta)
-            optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
-                                               image=self.images[n],
-                                               curr_beta=copy_curr_beta,
-                                               g_inv=dense_gamma_inv,
-                                               sdp2=const.TEMPLATE_SD2,
-                                               sdl2=self.sd2)
-            out = optimizer.optimize_betas(1000)
-            self.betas[n] = out
-            del optimizer
-            print("--- %s seconds ---" % (time.time() - start_time))
-            print("beta at" + str(n))
-            print(out)
+        curr_beta = self.betas
+        start_time = time.time()
+        optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
+                                           curr_beta=curr_beta,
+                                           g_inv=dense_gamma_inv,
+                                           sdp2=const.TEMPLATE_SD2,
+                                           sdl2=self.sd2)
+        out = optimizer.optimize_betas(1000)
+        self.betas = out
+        print("--- %s seconds ---" % (time.time() - start_time))
+        print("beta!at")
+        print(out)
 
-        for n in range(self.number_of_images):
-            update_best_beta(n)
 
     # Depends on current best betas
     def _bbtl(self):
@@ -183,6 +177,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(10)
+my_estimator.run_estimation(5)
 my_estimator.show_plots()
 # my_estimator.save_data()

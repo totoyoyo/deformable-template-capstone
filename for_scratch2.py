@@ -23,3 +23,5 @@ AA = [np.array([[1,2,3],
                [4,5,6]])]
 
 A_t = torch.tensor(AA)
+
+A_t_numpy = list(A_t.numpy())
