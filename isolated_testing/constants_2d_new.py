@@ -33,10 +33,10 @@ new = e32 * e32
 IMAGE_NROWS = 28
 IMAGE_NCOLS = 28
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
-IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
-IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
-IMAGE1[10:14, 10:14] = 1.0
-IMAGE2[11:15, 11:15] = 1.0
+# IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
+# IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
+# IMAGE1[10:14, 10:14] = 1.0
+# IMAGE2[11:15, 11:15] = 1.0
 
 
 # IMAGE3 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float64')

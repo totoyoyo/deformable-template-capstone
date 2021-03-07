@@ -98,16 +98,18 @@ class Estimator2DNImages:
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        p_inverse = const.SPARSE_SIGMA_P_INV.todense()
+        p_inverse = const.SPARSE_SIGMA_P_INV.toarray()
         for x in range(2):
             a_left = sl.inv(self.number_of_images * kkl
                                       + self.sd2 * p_inverse)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
             new_alpha = a_left @ a_right
-            new_sd2 = (1 / (self.number_of_images * const.IMAGE_TOTAL * const.AP)) \
-                      * (self.number_of_images * (self.YTY + self.alphas.T @ kkl @ self.alphas
-                              - 2 * self.alphas.T @ kyl)
-                         + const.AP * const.SD_INIT)
+            new_sd2_coef = (1 / (self.number_of_images * const.IMAGE_TOTAL + const.AP))
+            new_sd2_bigterm_1 = self.alphas.T @ kkl @ self.alphas
+            new_sd2_bigterm_2 = - 2 * self.alphas.T @ kyl
+            new_sd2 = new_sd2_coef * ((self.number_of_images *
+                                      (self.YTY + new_sd2_bigterm_1)
+                                      - new_sd2_bigterm_2) + const.AP * const.SD_INIT)
             self.alphas = new_alpha
             self.sd2 = new_sd2.item()
         # self.update_predictions()
@@ -152,13 +154,13 @@ class Estimator2DNImages:
 
     def show_plots(self):
         path = "..\\plots\\2D\\"
-        for n in range(self.number_of_images):
-            image_to_show = func.unflatten_image(self.images[n])
-            plt.imshow(image_to_show)
-            image_name = "image" + str(n)
-            plt.title(image_name)
-            func.handle_save_plot(path, image_name)
-            plt.show()
+        # for n in range(self.number_of_images):
+        #     image_to_show = func.unflatten_image(self.images[n])
+        #     plt.imshow(image_to_show)
+        #     image_name = "image" + str(n)
+        #     plt.title(image_name)
+        #     func.handle_save_plot(path, image_name)
+        #     plt.show()
 
         for n in range(self.number_of_images):
             prediction_to_show = func.unflatten_image(self.predictions[n])
@@ -177,6 +179,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
+my_estimator.run_estimation(10)
 my_estimator.show_plots()
 # my_estimator.save_data()
