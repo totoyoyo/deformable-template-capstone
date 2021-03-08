@@ -19,7 +19,7 @@ def convert_to_1d(arr):
         return arr
 
 def faster_norm_squared(arr):
-    return np.sum(arr * arr)
+    return np.sum(arr * arr,dtype='float32')
 
 def convert_to_2d(mat):
     if mat.ndim < 2:

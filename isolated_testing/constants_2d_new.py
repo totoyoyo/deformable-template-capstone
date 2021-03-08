@@ -32,7 +32,7 @@ new = e32 * e32
 
 IMAGE_NROWS = 28
 IMAGE_NCOLS = 28
-IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+IMAGE_TOTAL = np.float32(IMAGE_NROWS * IMAGE_NCOLS)
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 # IMAGE1[10:14, 10:14] = 1.0
@@ -205,5 +205,3 @@ ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()].astype('float32')
 ONE_COL2 = np.array([1,1])
 
 ONE_KP = np.ones((KP,))
-
-ONE_L = np.ones((IMAGE_TOTAL,))

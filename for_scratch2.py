@@ -32,4 +32,10 @@ t2 = np.matrix([[1,3]]).T
 t3 = t1 @ t2
 
 
+four = np.float32(4)
+onfor = 1.0/four
+
+for n in range(5.0):
+    print(n)
+
 print('done')

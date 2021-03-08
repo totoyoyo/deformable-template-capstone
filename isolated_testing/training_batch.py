@@ -10,6 +10,7 @@ import pytorch_batch as pt_op
 import time
 
 float_one = np.float32(1)
+float_two = np.float32(2)
 
 class Estimator2DNImages:
 
@@ -17,9 +18,9 @@ class Estimator2DNImages:
         self.template = None
         self.start_time = time.time()
         self.estimation_time = 0
-        self.number_of_images = len(const.FLAT_IMAGES)
+        self.number_of_images = np.float32(len(const.FLAT_IMAGES))
         self.alphas: np.ndarray = const.ALPHAS_INIT
-        self.betas = [const.BETAS_INIT] * self.number_of_images
+        self.betas = [const.BETAS_INIT] * int(self.number_of_images)
         self.sd2: int = const.SD_INIT
         # KBP ARE SPARSE
         self.kBps = \
@@ -29,8 +30,8 @@ class Estimator2DNImages:
         self.Gamma_Inv = const.SPARSE_SIGMA_G_INV
         self.images = const.FLAT_IMAGES
         yty = list(map((lambda image: func.faster_norm_squared(image)), self.images))
-        self.YTY = (1 / self.number_of_images) \
-                   * sum(yty)  # Many images
+        self.YTY = (float_one / self.number_of_images) \
+                   * np.sum(yty)  # Many images
         self.predictions = None
         self.Gamma_update_count = 0
         self.asd2_update_count = 0
@@ -57,12 +58,12 @@ class Estimator2DNImages:
     def _bbtl(self):
         self.update_all_betas()
         bbt = list(map((lambda beta: beta @ beta.T), self.betas))
-        out = (1 / self.number_of_images) * sum(bbt)
+        out = (float_one / self.number_of_images) * sum(bbt)
         return out
 
     def update_Gamma(self):
         print("Updating Gamma", self.Gamma_update_count, "time")
-        coef = (1 / (self.number_of_images + const.AG))
+        coef = (float_one / (self.number_of_images + const.AG))
         left = self.number_of_images * self._bbtl()
         # FIX THIS
         right = const.AG * const.invert_to_dense(const.SPARSE_SIGMA_G_INV)
@@ -87,9 +88,9 @@ class Estimator2DNImages:
         self.update_kBps()
         ky = list(map((lambda kBp, image: kBp.transpose().dot(image)), self.kBps, self.images))
         kk = list(map((lambda kBp: kBp.transpose().dot(kBp)), self.kBps))
-        kyl = (1 / self.number_of_images) * sum(ky)
+        kyl = (float_one / self.number_of_images) * sum(ky)
         kyl_reshaped = kyl.reshape(-1,1).astype('float32')
-        kk_out = ((1 / self.number_of_images) * sum(kk)).astype('float32')
+        kk_out = ((float_one / self.number_of_images) * sum(kk)).astype('float32')
         # kk_tmp = list(map((lambda kBp: kBp.transpose().dot(kBp).toarray()), self.kBps))
         # kk_out2 = ((1 / self.number_of_images) * sum(kk_tmp)).astype('float32')
         return kyl_reshaped, \
@@ -104,16 +105,16 @@ class Estimator2DNImages:
                                       + self.sd2 * p_inverse)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
             new_alpha = a_left @ a_right
-            new_sd2_coef = (1 / (self.number_of_images * const.IMAGE_TOTAL + const.AP))
+            new_sd2_coef = (float_one / (self.number_of_images * const.IMAGE_TOTAL + const.AP))
             new_sd2_bigterm_1 = self.alphas.T @ kkl @ self.alphas
-            new_sd2_bigterm_2 = - 2 * self.alphas.T @ kyl
+            new_sd2_bigterm_2 = - float_two * self.alphas.T @ kyl
             new_sd2 = new_sd2_coef * \
                       (self.number_of_images *
                        (self.YTY + new_sd2_bigterm_1
                         + new_sd2_bigterm_2)
                        + const.AP * const.SD_INIT)
-            self.alphas = new_alpha
-            self.sd2 = new_sd2.astype('float32').item()
+            self.alphas = new_alpha.astype('float32')
+            self.sd2 = np.float32(new_sd2.item())
         # self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
         self.asd2_update_count += 1
@@ -164,7 +165,7 @@ class Estimator2DNImages:
         #     func.handle_save_plot(path, image_name)
         #     plt.show()
 
-        for n in range(self.number_of_images):
+        for n in range(int(self.number_of_images)):
             prediction_to_show = func.unflatten_image(self.predictions[n])
             plt.imshow(prediction_to_show)
             image_name = "Prediction" + str(n)
