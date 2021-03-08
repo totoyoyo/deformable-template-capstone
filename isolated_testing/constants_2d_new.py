@@ -151,7 +151,7 @@ def gaussian_kernel_input2_sd2(input2, sd2):
 
 
 AG = np.float32(1)
-AP = np.float32(1)
+AP = np.float32(0)
 MU_P = np.zeros((KP, 1), dtype='float32')
 
 
