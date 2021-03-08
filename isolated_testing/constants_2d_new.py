@@ -188,6 +188,24 @@ IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
 
 ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()].astype('float32')
 
+import random
+
+def get_spread_out_kernels(all_pixels, distance, randomize = False):
+    if randomize:
+        new_pixels = random.sample(all_pixels,len(all_pixels))
+    else:
+        new_pixels = all_pixels
+    to_return = []
+    for pixel_point in new_pixels:
+        if not any(np.linalg.norm(existing - pixel_point) < distance for existing in to_return):
+            to_return.append(pixel_point)
+    return to_return
+
+
+
+
+
+
 # one_point = gaussian_kernel_one_point(ALL_PIXELS,0.2)
 # import matplotlib.pyplot as plt
 # plt.imshow(SIGMA_G,cmap='jet')

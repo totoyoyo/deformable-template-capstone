@@ -50,11 +50,28 @@ def get_list_of_indexes_for_slicing(slice_length,total_length):
 
 
 t1 = get_list_of_indexes_for_slicing(2,10)
-t2 = get_list_of_indexes_for_slicing(3,10)
+t2 = get_list_of_indexes_for_slicing(1,10)
 t3 = get_list_of_indexes_for_slicing(5,2)
 
 for i in t2:
     print(i[0])
     print(i[1])
+
+import random
+
+def get_spread_out_kernels(all_pixels, distance, randomize = False):
+    if randomize:
+        new_pixels = random.sample(all_pixels,len(all_pixels))
+    else:
+        new_pixels = all_pixels
+    to_return = []
+    for pixel_point in new_pixels:
+        if not any(np.linalg.norm(existing - pixel_point) < distance for existing in to_return):
+            to_return.append(pixel_point)
+    return to_return
+
+
+out =
+
 
 print('done')

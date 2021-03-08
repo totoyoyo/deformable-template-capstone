@@ -10,7 +10,7 @@ import pytorch_batch as pt_op
 import time
 
 float_one = np.float32(1)
-batch_size = 2
+batch_size = 1
 
 
 class Estimator2DNImages:
