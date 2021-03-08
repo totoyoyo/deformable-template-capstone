@@ -152,13 +152,13 @@ class Estimator2DNImages:
 
     def show_plots(self):
         path = "..\\plots\\2D\\"
-        for n in range(self.number_of_images):
-            image_to_show = func.unflatten_image(self.images[n])
-            plt.imshow(image_to_show)
-            image_name = "image" + str(n)
-            plt.title(image_name)
-            func.handle_save_plot(path, image_name)
-            plt.show()
+        # for n in range(self.number_of_images):
+        #     image_to_show = func.unflatten_image(self.images[n])
+        #     plt.imshow(image_to_show)
+        #     image_name = "image" + str(n)
+        #     plt.title(image_name)
+        #     func.handle_save_plot(path, image_name)
+        #     plt.show()
 
         for n in range(self.number_of_images):
             prediction_to_show = func.unflatten_image(self.predictions[n])
@@ -177,6 +177,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
+my_estimator.run_estimation(10)
 my_estimator.show_plots()
 # my_estimator.save_data()
