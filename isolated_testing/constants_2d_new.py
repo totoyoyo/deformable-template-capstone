@@ -149,9 +149,10 @@ def gaussian_kernel_input2_sd2(input2, sd2):
     out = np.e ** inter
     return out
 
-
-AG = np.float32(1)
-AP = np.float32(0)
+# Big AP smoothens the template
+AG = 1
+# Really important?
+AP = 20
 MU_P = np.zeros((KP, 1), dtype='float32')
 
 

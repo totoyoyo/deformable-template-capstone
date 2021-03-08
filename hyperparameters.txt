@@ -1,0 +1,11 @@
+Notes on hyperparameters:
+The ap and ag matter a lot!
+
+ag being too high means sigmag is not being changed
+
+
+
+ap being too high is just an overall blur
+ap being too small mean there is no prior.
+	Gets the dotted 3s: Template_2021-03-08_34 in
+	C:\Users\ToToYoYo\PycharmProjects\backup data\more plots

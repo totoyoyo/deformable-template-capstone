@@ -24,9 +24,8 @@ def get_pt_dense_K(sparse_scipy_matrix):
     torch_tensor = torch.from_numpy(dense_numpy).float().cuda()
     return torch_tensor
 
-torch_K = get_pt_sparse_K(func.S_PIXEL_G_CENTERS_MATRIX)
+# torch_K = get_pt_sparse_K(func.S_PIXEL_G_CENTERS_MATRIX)
 torch_K_dense = get_pt_dense_K(func.S_PIXEL_G_CENTERS_MATRIX)
-
 
 torch_C_a = torch.from_numpy(const.P_CENTERS).cuda()
 torch_all_pixel = torch.from_numpy(const.ALL_PIXELS).cuda()
@@ -63,6 +62,15 @@ class KBpA(torch.nn.Module):
         kBp = torch.exp(- big_matrix / (2 * self.sdp2))
         out = kBp @ self.alphas
         return out
+
+    def forward(self):
+        deformed_pixel = self.all_pixels - (torch_K_dense @ self.betas)
+        return torch.exp(
+            - (torch.square(deformed_pixel) @ one_col2 @ ones_centers
+               + (torch.square(self.all_p_centers) @ one_col2 @ ones_pixels).T
+               - 2 * (deformed_pixel @ self.all_p_centers.T))
+            / (2 * self.sdp2)) \
+               @ self.alphas
 
     def string(self):
         return f'b = {self.betas.item()}'

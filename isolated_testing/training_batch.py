@@ -38,7 +38,7 @@ class Estimator2DNImages:
 
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
-        dense_gamma_inv = self.Gamma_Inv.toarray()
+        dense_gamma_inv = self.Gamma_Inv.todense()
         curr_beta = self.betas
         start_time = time.time()
         optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
@@ -98,7 +98,7 @@ class Estimator2DNImages:
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        p_inverse = const.SPARSE_SIGMA_P_INV.toarray()
+        p_inverse = const.SPARSE_SIGMA_P_INV.todense()
         for x in range(2):
             a_left = sl.inv(self.number_of_images * kkl
                                       + self.sd2 * p_inverse)
@@ -127,9 +127,10 @@ class Estimator2DNImages:
 
 
     def run_estimation(self, iterations):
+        self.update_alpha_and_sd2()
         for _ in range(iterations):
-            self.update_alpha_and_sd2()
             self.update_Gamma()
+            self.update_alpha_and_sd2()
         self.calculate_template()
         self.update_predictions()
         end_time = time.time()

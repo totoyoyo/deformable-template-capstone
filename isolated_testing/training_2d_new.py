@@ -113,8 +113,8 @@ class Estimator2DNImages:
             new_sd2_coef = (1 / (self.number_of_images * const.IMAGE_TOTAL + const.AP))
             new_sd2_bigterm_1 = self.alphas.T @ kkl @ self.alphas
             new_sd2_bigterm_2 = - 2 * self.alphas.T @ kyl
-            new_sd2 = new_sd2_coef * ((self.number_of_images *
-                                      (self.YTY + new_sd2_bigterm_1)
+            new_sd2 = new_sd2_coef * (self.number_of_images *
+                                      (self.YTY + new_sd2_bigterm_1
                                       - new_sd2_bigterm_2) + const.AP * const.SD_INIT)
             self.alphas = new_alpha
             self.sd2 = new_sd2.item()
