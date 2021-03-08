@@ -128,7 +128,7 @@ def get_pixel_by_centers_matrix(all_pixels, all_centers, sd2):
 
 
 def get_sparse_pixel_by_centers(all_pixels, all_centers, sd2,
-                                sparse_type=ss.dia_matrix,
+                                sparse_type=ss.csc_matrix,
                                 error=1e-6):
     out = get_pixel_by_centers_matrix(all_pixels=all_pixels,
                                       all_centers=all_centers,

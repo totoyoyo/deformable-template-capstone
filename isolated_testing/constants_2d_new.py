@@ -1,11 +1,14 @@
 import numpy as np
 from sys import getsizeof
-import read_image as ri
+import read_image_grey as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 
-TEMPLATE_SD2 = np.float32(1)
-DEFORM_SD2 = np.float32(1)
+# SD can be 15% of total side length
+# so if side length is 100
+# sd can be 15
+TEMPLATE_SD2 = 4
+DEFORM_SD2 = 4
 TD_SAME = True
 SD_INIT = np.float32(1)
 
@@ -30,8 +33,8 @@ new = e32 * e32
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 
 
-IMAGE_NROWS = 28
-IMAGE_NCOLS = 28
+IMAGE_NROWS = 100
+IMAGE_NCOLS = 100
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
@@ -55,28 +58,50 @@ IMAGES = ri.png
 FLAT_IMAGES = list(map(lambda image: image.reshape(-1, 1),
                        IMAGES))
 
+def get_all_pixels():
+    IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
+    all_pixels = np.c_[IX.ravel(),IY.ravel()].astype('float32')
+    return all_pixels
+
+ALL_PIXELS = get_all_pixels()
+
+# Choose how to pick kernels
 
 def kernel_on_every_pixel(img_dim_x, img_dim_y):
-    rx, ry = np.arange(0, img_dim_x, 1), np.arange(0, img_dim_y, 1)
-    gx, gy = np.meshgrid(rx, ry)
-
-    # Pair up elems from gx and gy to create array of pairs
-    X_2D = np.c_[gx.ravel(), gy.ravel()]
-
-    return X_2D.astype('float32')
-
-
-def kernel_on_every_pixel_fix(img_dim_x, img_dim_y):
     IY, IX = np.meshgrid(np.arange(img_dim_y), np.arange(img_dim_x))
 
     x_2d = np.c_[IX.ravel(), IY.ravel()]
 
     return x_2d.astype('float32')
 
+def get_spread_out_kernels(all_pixels, distance, randomize = False):
+    if randomize:
+        new_pixels = np.random.permutation(all_pixels)
+    else:
+        new_pixels = all_pixels
+    to_return = []
+    for pixel_point in new_pixels:
+        if not any(np.linalg.norm(existing - pixel_point) < distance for existing in to_return):
+            to_return.append(pixel_point)
+    return np.array(to_return)
 
-P_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
 
-G_CENTERS = kernel_on_every_pixel_fix(IMAGE_NROWS, IMAGE_NCOLS)
+
+
+# P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+#
+# G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+
+
+P_CENTERS = get_spread_out_kernels(ALL_PIXELS,
+                                   distance=np.sqrt(TEMPLATE_SD2),
+                                   randomize=False)
+
+G_CENTERS = get_spread_out_kernels(ALL_PIXELS,
+                                   distance=np.sqrt(DEFORM_SD2),
+                                   randomize=False)
+
+
 
 KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
@@ -152,7 +177,7 @@ def gaussian_kernel_input2_sd2(input2, sd2):
 # Big AP smoothens the template
 AG = 1
 # Really important?
-AP = 20
+AP = 1
 MU_P = np.zeros((KP, 1), dtype='float32')
 
 
@@ -184,25 +209,10 @@ def to_sparse(dense_mat,
     out = ss.csc_matrix(dense_mat)
     return out
 
-IY, IX = np.meshgrid(np.arange(IMAGE_NCOLS),np.arange(IMAGE_NROWS))
-
-ALL_PIXELS = np.c_[IX.ravel(),IY.ravel()].astype('float32')
 
 import random
 
-def get_spread_out_kernels(all_pixels, distance, randomize = False):
-    if randomize:
-        new_pixels = np.random.permutation(all_pixels)
-    else:
-        new_pixels = all_pixels
-    to_return = []
-    for pixel_point in new_pixels:
-        if not any(np.linalg.norm(existing - pixel_point) < distance for existing in to_return):
-            to_return.append(pixel_point)
-    return np.array(to_return)
 
-
-newpix = get_spread_out_kernels(ALL_PIXELS,distance=2,randomize=False)
 
 
 
