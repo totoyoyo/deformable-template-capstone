@@ -10,6 +10,8 @@ import pytorch_batch as pt_op
 import time
 
 float_one = np.float32(1)
+batch_size = 2
+
 
 class Estimator2DNImages:
 
@@ -39,18 +41,25 @@ class Estimator2DNImages:
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
         dense_gamma_inv = self.Gamma_Inv.todense()
-        curr_beta = self.betas
-        start_time = time.time()
-        optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
-                                           curr_beta=curr_beta,
-                                           g_inv=dense_gamma_inv,
-                                           sdp2=const.TEMPLATE_SD2,
-                                           sdl2=self.sd2)
-        out = optimizer.optimize_betas(1000)
-        self.betas = out
-        print("--- %s seconds ---" % (time.time() - start_time))
-        print("beta!at")
-        print(out)
+        list_of_start_end_indexes = func.get_list_of_indexes_for_slicing(batch_size,
+                                                                    self.number_of_images)
+        for start_end in list_of_start_end_indexes:
+            start = start_end[0]
+            end = start_end[1]
+            curr_beta = self.betas[start:end]
+            curr_images = self.images[start:end]
+            start_time = time.time()
+            optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
+                                               curr_beta=curr_beta,
+                                               g_inv=dense_gamma_inv,
+                                               sdp2=const.TEMPLATE_SD2,
+                                               sdl2=self.sd2,
+                                               images=curr_images)
+            out = optimizer.optimize_betas(1000)
+            self.betas[start:end] = out
+            print("--- %s seconds ---" % (time.time() - start_time))
+            print(f"beta at {start} to {end} (exclusive)")
+            print(out)
 
 
     # Depends on current best betas

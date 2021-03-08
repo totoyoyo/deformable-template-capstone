@@ -180,6 +180,18 @@ def generate_gaussian_kernel(sd2):
     RBF2 = np.outer(RBF, RBF)
     return c.astype('int'), RBF2
 
+def get_list_of_indexes_for_slicing(slice_length,total_length):
+    i = 0
+    l = []
+    while(i < total_length):
+        end = min(total_length, i + slice_length)
+        indexes = [i,end]
+        i = end
+        l.append(indexes)
+    return l
+
+
+
 #
 # rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
 #          np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)

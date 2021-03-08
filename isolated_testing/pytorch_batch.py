@@ -37,8 +37,8 @@ ones_centers = torch.ones((1, n_centers), dtype=torch.float32,
                           device=torch.device('cuda'))
 one_col2 = torch.ones((2, 1), dtype=torch.float32,
                       device=torch.device('cuda'))
-torch_all_images = torch.tensor(const.FLAT_IMAGES, dtype=torch.float32,
-                                  device=torch.device('cuda'))
+# torch_all_images = torch.tensor(const.FLAT_IMAGES, dtype=torch.float32,
+#                                   device=torch.device('cuda'))
 
 class KBpA(torch.nn.Module):
 
@@ -77,11 +77,13 @@ class KBpA(torch.nn.Module):
 
 
 class PyTorchOptimizer():
-    def __init__(self, alphas, curr_beta, g_inv, sdp2, sdl2):
+    def __init__(self, alphas, curr_beta, g_inv, sdp2, sdl2, images):
         self.alphas = torch.from_numpy(alphas).float().cuda()
         self.curr_betas = torch.tensor(curr_beta, dtype=torch.float32,
                                        device=torch.device('cuda'))
-        self.image = torch_all_images
+        # self.image = torch_all_images
+        self.image = torch.tensor(images, dtype=torch.float32,
+                                  device=torch.device('cuda'))
         self.g_inv = torch.from_numpy(g_inv).float().cuda()
         self.sdp2 = sdp2
         self.sdl2 = sdl2

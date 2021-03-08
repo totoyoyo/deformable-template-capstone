@@ -32,4 +32,29 @@ t2 = np.matrix([[1,3]]).T
 t3 = t1 @ t2
 
 
+a = list(range(10))
+b = a[0:5]
+b[1:2] = [2,4]
+print(a)
+
+
+def get_list_of_indexes_for_slicing(slice_length,total_length):
+    i = 0
+    l = []
+    while(i < total_length):
+        end = min(total_length, i + slice_length)
+        indexes = [i,end]
+        i = end
+        l.append(indexes)
+    return l
+
+
+t1 = get_list_of_indexes_for_slicing(2,10)
+t2 = get_list_of_indexes_for_slicing(3,10)
+t3 = get_list_of_indexes_for_slicing(5,2)
+
+for i in t2:
+    print(i[0])
+    print(i[1])
+
 print('done')
