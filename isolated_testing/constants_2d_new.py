@@ -7,8 +7,8 @@ import scipy.sparse as ss
 # SD can be 15% of total side length
 # so if side length is 100
 # sd can be 15
-TEMPLATE_SD2 = 4
-DEFORM_SD2 = 4
+TEMPLATE_SD2 = 1
+DEFORM_SD2 = 1
 TD_SAME = True
 SD_INIT = np.float32(1)
 
@@ -84,6 +84,21 @@ def get_spread_out_kernels(all_pixels, distance, randomize = False):
         if not any(np.linalg.norm(existing - pixel_point) < distance for existing in to_return):
             to_return.append(pixel_point)
     return np.array(to_return)
+
+
+def get_spread_out_kernels(all_pixels, distance, randomize = False):
+    if randomize:
+        new_pixels = np.random.permutation(all_pixels)
+    else:
+        new_pixels = all_pixels
+    to_return = np.array([new_pixels[0]])
+    for pixel_point in new_pixels:
+        diff = to_return - np.array([pixel_point])
+        norms = np.linalg.norm(diff, axis=1)
+        if not np.any(norms < distance):
+            to_return = np.vstack((to_return,pixel_point))
+    return to_return
+
 
 
 
