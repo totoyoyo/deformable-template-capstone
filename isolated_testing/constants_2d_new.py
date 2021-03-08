@@ -1,6 +1,6 @@
 import numpy as np
 from sys import getsizeof
-import read_image as ri
+import read_image_grey as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 
@@ -30,8 +30,8 @@ new = e32 * e32
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 
 
-IMAGE_NROWS = 28
-IMAGE_NCOLS = 28
+IMAGE_NROWS = 100
+IMAGE_NCOLS = 100
 IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
