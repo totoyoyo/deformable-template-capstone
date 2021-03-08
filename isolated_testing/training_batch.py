@@ -88,8 +88,8 @@ class Estimator2DNImages:
         ky = list(map((lambda kBp, image: kBp.transpose().dot(image)), self.kBps, self.images))
         kk = list(map((lambda kBp: kBp.transpose().dot(kBp)), self.kBps))
         kyl = (1 / self.number_of_images) * sum(ky)
-        kyl_reshaped = kyl.reshape(-1,1).astype('float32')
-        kk_out = ((1 / self.number_of_images) * sum(kk)).astype('float32')
+        kyl_reshaped = kyl.reshape(-1,1)
+        kk_out = ((1 / self.number_of_images) * sum(kk))
         # kk_tmp = list(map((lambda kBp: kBp.transpose().dot(kBp).toarray()), self.kBps))
         # kk_out2 = ((1 / self.number_of_images) * sum(kk_tmp)).astype('float32')
         return kyl_reshaped, \
@@ -100,11 +100,11 @@ class Estimator2DNImages:
         kyl, kkl = self.ky_kk()
         p_inverse = const.SPARSE_SIGMA_P_INV.todense()
         for x in range(2):
-            a_left = np.linalg.inv(self.number_of_images * kkl
+            a_left = sl.inv(self.number_of_images * kkl
                                       + self.sd2 * p_inverse)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
             new_alpha = a_left @ a_right
-            new_sd2_coef = (1 / (self.number_of_images * const.IMAGE_TOTAL + const.AP))
+            new_sd2_coef = (1 / (self.number_of_images * const.IMAGE_TOTAL * const.AP))
             new_sd2_bigterm_1 = self.alphas.T @ kkl @ self.alphas
             new_sd2_bigterm_2 = - 2 * self.alphas.T @ kyl
             new_sd2 = new_sd2_coef * \
@@ -113,7 +113,7 @@ class Estimator2DNImages:
                         + new_sd2_bigterm_2)
                        + const.AP * const.SD_INIT)
             self.alphas = new_alpha
-            self.sd2 = new_sd2.astype('float32').item()
+            self.sd2 = new_sd2.item()
         # self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
         self.asd2_update_count += 1
