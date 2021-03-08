@@ -25,3 +25,11 @@ AA = [np.array([[1,2,3],
 A_t = torch.tensor(AA)
 
 A_t_numpy = list(A_t.numpy())
+
+
+t1 = np.matrix([[1, 2], [3, 4]]).T
+t2 = np.matrix([[1,3]]).T
+t3 = t1 @ t2
+
+
+print('done')

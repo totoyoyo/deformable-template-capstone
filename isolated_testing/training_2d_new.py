@@ -38,7 +38,7 @@ class Estimator2DNImages:
 
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
-        dense_gamma_inv = self.Gamma_Inv.toarray()
+        dense_gamma_inv = self.Gamma_Inv.todense()
         def update_best_beta(n):
             curr_beta = self.betas[n]
             start_time = time.time()

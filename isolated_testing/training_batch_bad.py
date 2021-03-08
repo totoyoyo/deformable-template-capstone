@@ -98,12 +98,13 @@ class Estimator2DNImages:
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
         kyl, kkl = self.ky_kk()
-        p_inverse = const.SPARSE_SIGMA_P_INV.todense()
+        #NOTE: SOMEHOW THIS TOARRAY INSTEAD OF TODENSE BREAKS THE CODE
+        p_inverse2 = const.SPARSE_SIGMA_P_INV.toarray()
         for x in range(2):
-            a_left = np.linalg.inv(self.number_of_images * kkl
-                                      + self.sd2 * p_inverse)
-            a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
-            new_alpha = a_left @ a_right
+            a_left2 = np.linalg.inv(self.number_of_images * kkl
+                            + self.sd2 * p_inverse2)
+            a_right2 = (self.number_of_images * kyl + self.sd2 * (p_inverse2 @ const.MU_P))
+            new_alpha2 = a_left2 @ a_right2
             new_sd2_coef = (1 / (self.number_of_images * const.IMAGE_TOTAL + const.AP))
             new_sd2_bigterm_1 = self.alphas.T @ kkl @ self.alphas
             new_sd2_bigterm_2 = - 2 * self.alphas.T @ kyl
@@ -112,7 +113,7 @@ class Estimator2DNImages:
                        (self.YTY + new_sd2_bigterm_1
                         + new_sd2_bigterm_2)
                        + const.AP * const.SD_INIT)
-            self.alphas = new_alpha
+            self.alphas = new_alpha2
             self.sd2 = new_sd2.astype('float32').item()
         # self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
