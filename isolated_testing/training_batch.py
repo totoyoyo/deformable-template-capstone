@@ -3,6 +3,7 @@ import constants_2d_new as const
 import numpy as np
 import time
 import scipy.linalg as sl
+import numpy.linalg as nl
 
 # My gradiants
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ import pytorch_batch as pt_op
 import time
 
 float_one = np.float32(1)
-batch_size = 1
+batch_size = 100
 
 
 class Estimator2DNImages:
@@ -57,7 +58,7 @@ class Estimator2DNImages:
             self.betas[start:end] = out
             print("--- %s seconds ---" % (time.time() - start_time))
             print(f"beta at {start} to {end} (exclusive)")
-            print(out)
+            # print(out)
 
 
     # Depends on current best betas
@@ -77,7 +78,8 @@ class Estimator2DNImages:
         # self.Gamma = (1 / (self.number_of_images + const.AG)) \
         #              * (self.number_of_images * self._bbtl()
         #                 + const.AG * const.SIGMA_G)
-        tmp_inv = sl.inv(new_gamma)
+        # tmp_inv = nl.pinv(new_gamma, hermitian=True)
+        tmp_inv = nl.pinv(new_gamma, rcond=1e-6, hermitian=True)
         self.Gamma_Inv = const.to_sparse(tmp_inv)
         print("Finished Gamma", self.Gamma_update_count, "time")
         self.Gamma_update_count += 1
@@ -109,8 +111,9 @@ class Estimator2DNImages:
         for x in range(2):
             a_left_before_inv = self.number_of_images * kkl \
                                 + self.sd2 * p_inverse
-            a_left_before_inv[abs(a_left_before_inv) < 1e-4] = 0.0
-            a_left = sl.inv(a_left_before_inv)
+            # a_left_before_inv[abs(a_left_before_inv) < 1e-6] = 0.0
+            a_left = nl.pinv(a_left_before_inv,rcond=1e-6,hermitian=True)
+            # a_left = nl.pinv(a_left_before_inv,hermitian=True)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
             new_alpha = a_left @ a_right
             new_sd2_coef = (self.number_of_images * const.IMAGE_TOTAL + const.AP)
@@ -166,13 +169,13 @@ class Estimator2DNImages:
 
     def show_plots(self):
         path = "..\\plots\\2D\\"
-        for n in range(self.number_of_images):
-            image_to_show = func.unflatten_image(self.images[n])
-            plt.imshow(image_to_show)
-            image_name = "image" + str(n)
-            plt.title(image_name)
-            func.handle_save_plot(path, image_name)
-            plt.show()
+        # for n in range(self.number_of_images):
+        #     image_to_show = func.unflatten_image(self.images[n])
+        #     plt.imshow(image_to_show)
+        #     image_name = "image" + str(n)
+        #     plt.title(image_name)
+        #     func.handle_save_plot(path, image_name)
+        #     plt.show()
 
         for n in range(self.number_of_images):
             prediction_to_show = func.unflatten_image(self.predictions[n])
@@ -191,6 +194,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
+my_estimator.run_estimation(10)
 my_estimator.show_plots()
 # my_estimator.save_data()

@@ -22,9 +22,7 @@ class Estimator2DNImages:
         self.betas = [const.BETAS_INIT] * self.number_of_images
         self.sd2: int = const.SD_INIT
         # KBP ARE SPARSE
-        self.kBps = \
-            list(map((lambda beta: func.calculate_kBp(beta)),
-                     self.betas))
+        self.kBps = None
         # self.Gamma: np.ndarray = const.SIGMA_G
         self.Gamma_Inv = const.SPARSE_SIGMA_G_INV
         self.images = const.FLAT_IMAGES

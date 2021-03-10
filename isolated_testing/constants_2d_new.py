@@ -1,6 +1,6 @@
 import numpy as np
 from sys import getsizeof
-import read_cropped as ri
+import read_image_digit_5 as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 
@@ -10,7 +10,7 @@ import scipy.sparse as ss
 TEMPLATE_SD2 = 1
 DEFORM_SD2 = 1
 TD_SAME = True
-SD_INIT = np.float32(1)
+SD_INIT = 1
 
 e32 = np.exp(SD_INIT, dtype='float32')
 new = e32 * e32
@@ -54,6 +54,9 @@ IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 
 
 IMAGES = ri.png
+IMAGE_NROWS, IMAGE_NCOLS = IMAGES[0].shape
+IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+
 
 FLAT_IMAGES = list(map(lambda image: image.reshape(-1, 1),
                        IMAGES))
@@ -93,13 +96,13 @@ def kernel_other_pixel(all_pixels, even = True):
     return filtered_pixels
 
 #
-P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
-
-G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
-
-# P_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
+# P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 #
-# G_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
+# G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+
+P_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
+
+G_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
 
 
 # P_CENTERS = get_spread_out_kernels(ALL_PIXELS,
@@ -183,7 +186,7 @@ def gaussian_kernel_input2_sd2(input2, sd2):
     return out
 
 # Big AP smoothens the template
-AG = 1
+AG = 2 * KG + 2
 # Really important?
 AP = 1
 MU_P = np.zeros((KP, 1), dtype='float32')
@@ -206,46 +209,11 @@ else:
     SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
                                                        1e-6)
 
-import time
-print('here')
-dense_g = SPARSE_SIGMA_G_INV.todense()
-#
-start_time = time.time()
-invresult = sl.inv(dense_g)
-invresultg = sl.inv(invresult)
-end_time = time.time()
-print(f"time took {start_time-end_time} for inv")
-
-# start_time = time.time()
-# pinvresult = sl.pinv(dense_g)
-# pinvresultg = sl.pinv(pinvresult)
-# end_time = time.time()
-# print(f"time took {start_time-end_time} for pinv")
-#
-# start_time = time.time()
-# pinv2result = sl.pinv2(dense_g)
-# pinv2resultg = sl.pinv2(pinv2result)
-# end_time = time.time()
-# print(f"time took {start_time-end_time} for inv2")
-# #
-# start_time = time.time()
-# pinvhresult = sl.pinvh(dense_g)
-# pinvrhesultg = sl.pinvh(pinvhresult)
-# end_time = time.time()
-# print(f"time took {start_time-end_time} for pinvh")
-
-start_time = time.time()
-pinvhresult = np.linalg.pinv(dense_g,hermitian=True)
-pinvrhesultg = np.linalg.pinv(pinvhresult,hermitian=True)
-end_time = time.time()
-print(f"time took {start_time-end_time} for numpy pinv")
-
-
 
 
 def invert_to_dense(sparse_mat):
     dense = sparse_mat.todense()
-    inv_dense = sl.inv(dense)
+    inv_dense = np.linalg.pinv(dense,rcond=1e-6,hermitian=True)
     return inv_dense
 
 def to_sparse(dense_mat,
