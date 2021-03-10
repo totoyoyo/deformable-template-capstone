@@ -7,9 +7,6 @@ A = torch.tensor(A)
 
 B = [[1,0,0], [0,1,0], [0,0,1]]
 
-
-
-
 B = torch.tensor(B)
 
 AB = B @ A
@@ -59,6 +56,11 @@ for i in t2:
 
 import random
 
+a = np.array([[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]])
+# la = list(a)
+# filtered = list(filter(lambda array: (array[0] + array[1]) % 2 == 0, la))
+# filtered_a = np.array(filtered)
+new_a = a[np.sum(a,axis=1) % 2 == 0]
 
 
 print('done')

@@ -107,8 +107,10 @@ class Estimator2DNImages:
         kyl, kkl = self.ky_kk()
         p_inverse = const.SPARSE_SIGMA_P_INV.todense()
         for x in range(2):
-            a_left = sl.inv(self.number_of_images * kkl
-                                      + self.sd2 * p_inverse)
+            a_left_before_inv = self.number_of_images * kkl \
+                                + self.sd2 * p_inverse
+            a_left_before_inv[abs(a_left_before_inv) < 1e-4] = 0.0
+            a_left = sl.inv(a_left_before_inv)
             a_right = (self.number_of_images * kyl + self.sd2 * (p_inverse @ const.MU_P))
             new_alpha = a_left @ a_right
             new_sd2_coef = (self.number_of_images * const.IMAGE_TOTAL + const.AP)

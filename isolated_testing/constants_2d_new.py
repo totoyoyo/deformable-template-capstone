@@ -1,6 +1,6 @@
 import numpy as np
 from sys import getsizeof
-import read_image_grey as ri
+import read_cropped as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 
@@ -79,18 +79,6 @@ def get_spread_out_kernels(all_pixels, distance, randomize = False):
         new_pixels = np.random.permutation(all_pixels)
     else:
         new_pixels = all_pixels
-    to_return = []
-    for pixel_point in new_pixels:
-        if not any(np.linalg.norm(existing - pixel_point) < distance for existing in to_return):
-            to_return.append(pixel_point)
-    return np.array(to_return)
-
-
-def get_spread_out_kernels(all_pixels, distance, randomize = False):
-    if randomize:
-        new_pixels = np.random.permutation(all_pixels)
-    else:
-        new_pixels = all_pixels
     to_return = np.array([new_pixels[0]])
     for pixel_point in new_pixels:
         diff = to_return - np.array([pixel_point])
@@ -99,23 +87,28 @@ def get_spread_out_kernels(all_pixels, distance, randomize = False):
             to_return = np.vstack((to_return,pixel_point))
     return to_return
 
+def kernel_other_pixel(all_pixels, even = True):
+    mod_out = 0 if even else 1
+    filtered_pixels = all_pixels[np.sum(all_pixels,axis=1) % 2 == mod_out]
+    return filtered_pixels
 
-
-
-
-# P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 #
-# G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+P_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+
+G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
+
+# P_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
+#
+# G_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
 
 
-P_CENTERS = get_spread_out_kernels(ALL_PIXELS,
-                                   distance=np.sqrt(TEMPLATE_SD2),
-                                   randomize=False)
-
-G_CENTERS = get_spread_out_kernels(ALL_PIXELS,
-                                   distance=np.sqrt(DEFORM_SD2),
-                                   randomize=False)
-
+# P_CENTERS = get_spread_out_kernels(ALL_PIXELS,
+#                                    distance=np.sqrt(TEMPLATE_SD2),
+#                                    randomize=False)
+#
+# G_CENTERS = get_spread_out_kernels(ALL_PIXELS,
+#                                    distance=np.sqrt(DEFORM_SD2),
+#                                    randomize=False)
 
 
 KP = P_CENTERS.shape[0]
@@ -212,6 +205,43 @@ if TD_SAME:
 else:
     SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
                                                        1e-6)
+
+import time
+print('here')
+dense_g = SPARSE_SIGMA_G_INV.todense()
+#
+start_time = time.time()
+invresult = sl.inv(dense_g)
+invresultg = sl.inv(invresult)
+end_time = time.time()
+print(f"time took {start_time-end_time} for inv")
+
+# start_time = time.time()
+# pinvresult = sl.pinv(dense_g)
+# pinvresultg = sl.pinv(pinvresult)
+# end_time = time.time()
+# print(f"time took {start_time-end_time} for pinv")
+#
+# start_time = time.time()
+# pinv2result = sl.pinv2(dense_g)
+# pinv2resultg = sl.pinv2(pinv2result)
+# end_time = time.time()
+# print(f"time took {start_time-end_time} for inv2")
+# #
+# start_time = time.time()
+# pinvhresult = sl.pinvh(dense_g)
+# pinvrhesultg = sl.pinvh(pinvhresult)
+# end_time = time.time()
+# print(f"time took {start_time-end_time} for pinvh")
+
+start_time = time.time()
+pinvhresult = np.linalg.pinv(dense_g,hermitian=True)
+pinvrhesultg = np.linalg.pinv(pinvhresult,hermitian=True)
+end_time = time.time()
+print(f"time took {start_time-end_time} for numpy pinv")
+
+
+
 
 def invert_to_dense(sparse_mat):
     dense = sparse_mat.todense()

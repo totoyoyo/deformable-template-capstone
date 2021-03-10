@@ -1,0 +1,9 @@
+use pseudo inverse to correct instability
+
+
+sigma goes to zero if the kernels are many and small
+
+inv takes 300 seconds to do twice on SigmaG
+pinv takes 
+pinv2 takes
+pinvh takes
