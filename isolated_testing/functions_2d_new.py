@@ -191,6 +191,20 @@ def get_list_of_indexes_for_slicing(slice_length,total_length):
     return l
 
 
+def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
+    """
+
+    :param betas:
+    :param beta_centers:
+    :param image_row:
+    :param image_col:
+    :return: 2 by image_row by image_col array (the 2 is the 2 channels of betas)
+    """
+    empty_array = np.zeros((2,image_row,image_col), dtype='float32')
+    rows, cols = beta_centers.T
+    empty_array[:, rows, cols] = betas.T
+    return empty_array
+
 
 #
 # rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \

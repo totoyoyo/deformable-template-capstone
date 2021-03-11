@@ -44,6 +44,7 @@ class KBpA(torch.nn.Module):
 
     def __init__(self, alphas, curr_betas, sdp2, all_pixels, all_p_centers):
         super().__init__()
+        #beta shape (images, centers,2)
         self.betas = torch.nn.Parameter(curr_betas)
         self.alphas = alphas
         self.sdp2 = sdp2
@@ -64,6 +65,7 @@ class KBpA(torch.nn.Module):
         return out
 
     def forward(self):
+        # deformation (images, pixels, 2)
         deformed_pixel = self.all_pixels - (torch_K_dense @ self.betas)
         return torch.exp(
             - (torch.square(deformed_pixel) @ one_col2 @ ones_centers

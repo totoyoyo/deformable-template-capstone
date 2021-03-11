@@ -63,4 +63,71 @@ a = np.array([[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]])
 new_a = a[np.sum(a,axis=1) % 2 == 0]
 
 
+
+betas_sample = [np.array([[1,2],
+                          [3,4],
+                          [5,6]]),
+                np.array([[7, 8],
+                          [9,10],
+                          [11,12]]),
+                np.array([[13,14],
+                          [15,16],
+                          [17,18]])
+                ]
+
+IMAGE_DIM = (3,3)
+G_CENTERS = np.array([[0,1],
+                      [1,2],
+                      [2,2]])
+to_fill = np.array([1,2,3])
+
+rows, cols = G_CENTERS.T
+betas = np.array([[5,6],
+                 [7,8],
+                 [9,10]])
+empty_array = np.zeros((2,3,3))
+empty_array[:,rows,cols] = betas.T
+
+
+
+def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
+    """
+
+    :param betas:
+    :param beta_centers:
+    :param image_row:
+    :param image_col:
+    :return: 2 by image_row by image_col array (the 2 is the 2 channels of betas)
+    """
+    empty_array = np.zeros((2,image_row,image_col), dtype='float32')
+    rows, cols = beta_centers.T
+    empty_array[:, rows, cols] = betas.T
+    return empty_array
+
+
+
+# empty_array[rows, cols] = to_fill
+
+betas_torch = torch.Tensor(betas_sample)
+kernel_t = torch.Tensor([[[1,2,3],
+                         [4,5,6],
+                         [7,8,9]],
+                         [[11, 22, 33],
+                         [44, 55, 66],
+                         [77, 88, 99]]
+                         ])
+
+bigger_kernel = kernel_t.expand(3,2,3,3)
+
+def conv_res_to_deformation(res, batch_size):
+    flat_res = res.reshape((batch_size, 2, -1))
+    deformation = torch.transpose(flat_res, 1, 2)
+    return deformation
+
+flat_b_k = bigger_kernel.reshape((3,2,-1))
+flat_b_k_2 = torch.transpose(flat_b_k,1,2)
+
+#dim (batch, pixels, 2)
+
+
 print('done')
