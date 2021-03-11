@@ -7,13 +7,7 @@ import scipy.sparse as ss
 # SD can be 15% of total side length
 # so if side length is 100
 # sd can be 15
-TEMPLATE_SD2 = 1
-DEFORM_SD2 = 1
-TD_SAME = True
-SD_INIT = 1
 
-e32 = np.exp(SD_INIT, dtype='float32')
-new = e32 * e32
 
 # IMAGE_NROWS = 10
 # IMAGE_NCOLS = 10
@@ -33,9 +27,9 @@ new = e32 * e32
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS)).astype('float64')
 
 
-IMAGE_NROWS = 100
-IMAGE_NCOLS = 100
-IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
+# IMAGE_NROWS = 100
+# IMAGE_NCOLS = 100
+# IMAGE_TOTAL = IMAGE_NROWS * IMAGE_NCOLS
 # IMAGE1 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 # IMAGE2 = np.zeros((IMAGE_NROWS, IMAGE_NCOLS),dtype='float32')
 # IMAGE1[10:14, 10:14] = 1.0
@@ -100,10 +94,15 @@ def kernel_other_pixel(all_pixels, even = True):
 #
 # G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
+
+TEMPLATE_SD2 = 1
+DEFORM_SD2 = 4
+
 P_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
 
 G_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
 
+TD_SAME = TEMPLATE_SD2 == DEFORM_SD2 and np.array_equal(P_CENTERS,G_CENTERS)
 
 # P_CENTERS = get_spread_out_kernels(ALL_PIXELS,
 #                                    distance=np.sqrt(TEMPLATE_SD2),
@@ -113,11 +112,18 @@ G_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
 #                                    distance=np.sqrt(DEFORM_SD2),
 #                                    randomize=False)
 
-
 KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
+
+# Big AP smoothens the template
+AG = 2*KG + 2
+# Really important?
+AP = 1
+
+
 ALPHAS_INIT = np.zeros((KP, 1),dtype='float32')
 BETAS_INIT = np.zeros((KG, 2),dtype='float32')
+SD_INIT = 1
 
 
 def gaussian_kernel_2d(x_val, center_val, sd2):
@@ -185,10 +191,7 @@ def gaussian_kernel_input2_sd2(input2, sd2):
     out = np.e ** inter
     return out
 
-# Big AP smoothens the template
-AG = 2 * KG + 2
-# Really important?
-AP = 1
+
 MU_P = np.zeros((KP, 1), dtype='float32')
 
 

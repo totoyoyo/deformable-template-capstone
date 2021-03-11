@@ -3,7 +3,19 @@ use pseudo inverse to correct instability
 
 sigma goes to zero if the kernels are many and small
 
+
+Gaussian on every pixel
+For scipy:
 inv takes 300 seconds to do twice on SigmaG
-pinv takes 
-pinv2 takes
-pinvh takes
+pinv takes 1328 seconds ..
+pinv2 takes 569.45 sec
+pinvh takes 722 sec for pinvh
+pinv numpy takes 1183 sec (non hermitian)
+	hermitian takes 240 sec
+
+Summary, pinv numpy is best!
+
+
+Look up condition number
+
+Float32 and float64 yielded very different results
