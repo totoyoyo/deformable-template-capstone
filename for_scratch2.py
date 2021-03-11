@@ -90,21 +90,6 @@ empty_array[:,rows,cols] = betas.T
 
 
 
-def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
-    """
-
-    :param betas:
-    :param beta_centers:
-    :param image_row:
-    :param image_col:
-    :return: 2 by image_row by image_col array (the 2 is the 2 channels of betas)
-    """
-    empty_array = np.zeros((2,image_row,image_col), dtype='float32')
-    rows, cols = beta_centers.T
-    empty_array[:, rows, cols] = betas.T
-    return empty_array
-
-
 
 # empty_array[rows, cols] = to_fill
 
@@ -127,7 +112,35 @@ def conv_res_to_deformation(res, batch_size):
 flat_b_k = bigger_kernel.reshape((3,2,-1))
 flat_b_k_2 = torch.transpose(flat_b_k,1,2)
 
+def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
+    """
+    :param betas:
+    :param beta_centers:
+    :param image_row:
+    :param image_col:
+    :return: 2 by image_row by image_col array (the 2 is the 2 channels of betas)
+    """
+    empty_array = np.zeros((2,image_row,image_col), dtype='float32')
+    rows, cols = beta_centers.T
+    empty_array[:, rows, cols] = betas.T
+    return empty_array
+
+
+
+empty_tensor = torch.zeros((10,2,3,3))
+#beta shape (images, centers,2)
+#out has shape (images, 2, centers)
+out = empty_tensor[:,:, rows, cols]
+
+firstdim = empty_tensor.size()[0]
 #dim (batch, pixels, 2)
 
+
+kernel_t = torch.Tensor([[1,2,3],
+                         [4,5,6],
+                         [7,8,9],
+                         ])
+
+bigger_kernel = kernel_t.expand(3,1,3,3)
 
 print('done')

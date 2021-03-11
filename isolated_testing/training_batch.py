@@ -7,7 +7,7 @@ import numpy.linalg as nl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import pytorch_batch as pt_op
+import pytorch_batch_conv as pt_op
 import time
 
 float_one = np.float32(1)

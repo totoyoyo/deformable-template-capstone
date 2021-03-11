@@ -31,3 +31,18 @@ Matmul:
 Unplugged 28x28 1000 steps
 8 sec per optimization
 
+NEW:
+for 28x28 22 imagess
+conv
+speed 7.5 sec
+
+Same but with mat mul of dense k
+speed 6.9 sec
+
+
+for 100x100 3 images:
+conv
+
+
+matmul batch
+speed 152.74

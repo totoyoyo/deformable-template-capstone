@@ -1,6 +1,6 @@
 import numpy as np
 from sys import getsizeof
-import read_image_digit_5 as ri
+import read_image_cropped as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 
@@ -211,7 +211,6 @@ if TD_SAME:
 else:
     SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(G_CENTERS, KG, DEFORM_SD2,
                                                        1e-6)
-
 
 
 def invert_to_dense(sparse_mat):

@@ -193,7 +193,6 @@ def get_list_of_indexes_for_slicing(slice_length,total_length):
 
 def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
     """
-
     :param betas:
     :param beta_centers:
     :param image_row:
