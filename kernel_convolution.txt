@@ -42,6 +42,7 @@ speed 6.9 sec
 
 for 100x100 3 images:
 conv
+150.5
 
 
 matmul batch

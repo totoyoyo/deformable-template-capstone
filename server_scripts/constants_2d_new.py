@@ -1,6 +1,6 @@
 import numpy as np
 from sys import getsizeof
-import read_image_digit_3 as ri
+import read_image_cropped as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 

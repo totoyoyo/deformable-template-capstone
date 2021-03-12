@@ -1,4 +1,7 @@
-import numpy as np
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] ="0,1"
+
 import torch
 import constants_2d_new as const
 import functions_2d_new as func

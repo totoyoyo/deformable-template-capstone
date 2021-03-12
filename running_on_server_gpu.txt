@@ -1,0 +1,10 @@
+How to run the file on the server:
+	1. put files in home/peeranat/project
+	2. Note: make sure to use os.path.dirname(full_path) when saving or loading
+		Ex. print(os.path.dirname(full_path) + "/myfile_two.txt")
+	
+	3. the name of the folder on the GPU node is /raw_data_peeranat/
+
+
+Use the command:
+	srun -u --partition=colleague --nodelist=20-196  python3.6 /raw_data_peeranat/.....
