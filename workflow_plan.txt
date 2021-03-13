@@ -1,0 +1,12 @@
+Workflow:
+
+1. Train
+    - Create an estimator for every class
+    - Train the model
+    - Save the data
+
+2. Classify
+    - Create a classifier
+    - Classify
+
+3. Store data

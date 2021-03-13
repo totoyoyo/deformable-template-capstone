@@ -1,6 +1,6 @@
 import numpy as np
 from sys import getsizeof
-import read_image_digit_3 as ri
+import read_image_cropped as ri
 import scipy.linalg as sl
 import scipy.sparse as ss
 
@@ -225,13 +225,34 @@ def to_sparse(dense_mat,
     return out
 
 
-import random
+# import random
+# import pycuda.driver as drv
+# import pycuda.gpuarray as gpuarray
+# import pycuda.autoinit
+# import skcuda.linalg as linalg
+#
+# import time
+# print('here')
+# dense_g = SPARSE_SIGMA_G_INV.todense()
+# #
+# start_time = time.time()
+# invresult = sl.inv(dense_g)
+# invresultg = sl.inv(invresult)
+# end_time = time.time()
+# print(f"time took {start_time-end_time} for inv")
+#
+# start_time = time.time()
+# pinvhresult = np.linalg.pinv(dense_g,hermitian=True)
+# pinvrhesultg = np.linalg.pinv(pinvhresult,hermitian=True)
+# end_time = time.time()
+# print(f"time took {start_time-end_time} for numpy pinv")
 
-
-
-
-
-
+# start_time = time.time()
+# a_gpu = gpuarray.to_gpu(dense_g)
+# a_inv_gpu = linalg.pinv(a_gpu)
+# out = a_inv_gpu.get()
+# end_time = time.time()
+# print(f"time took {start_time-end_time} for gpu inv")
 
 # one_point = gaussian_kernel_one_point(ALL_PIXELS,0.2)
 # import matplotlib.pyplot as plt

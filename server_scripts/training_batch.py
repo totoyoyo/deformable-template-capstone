@@ -1,6 +1,11 @@
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '10'
+os.environ['GOTO_NUM_THREADS'] = '10'
+os.environ['OMP_NUM_THREADS'] = '10'
+
+import numpy as np
 import functions_2d_new as func
 import constants_2d_new as const
-import numpy as np
 import time
 import scipy.linalg as sl
 import numpy.linalg as nl
@@ -106,6 +111,7 @@ class Estimator2DNImages:
 
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
+        start_time = time.time()
         kyl, kkl = self.ky_kk()
         p_inverse = const.SPARSE_SIGMA_P_INV.todense()
         for x in range(2):
@@ -127,6 +133,7 @@ class Estimator2DNImages:
             self.sd2 = new_sd2.item()
         # self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
+        print("--- %s seconds ---" % (time.time() - start_time))
         self.asd2_update_count += 1
 
     def save_data(self):

@@ -1,17 +1,17 @@
+import numpy as np
 import functions_2d_new as func
 import constants_2d_new as const
-import numpy as np
 import time
 import scipy.linalg as sl
 import numpy.linalg as nl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import pytorch_batch_conv as pt_op
+import pytorch_batch as pt_op
 import time
 
 float_one = np.float32(1)
-batch_size = 100
+batch_size = 2
 
 
 class Estimator2DNImages:
@@ -106,6 +106,7 @@ class Estimator2DNImages:
 
     def update_alpha_and_sd2(self):
         print("Updating alpha", self.asd2_update_count, "time")
+        start_time = time.time()
         kyl, kkl = self.ky_kk()
         p_inverse = const.SPARSE_SIGMA_P_INV.todense()
         for x in range(2):
@@ -127,6 +128,7 @@ class Estimator2DNImages:
             self.sd2 = new_sd2.item()
         # self.update_predictions()
         print("Finish updating alpha", self.asd2_update_count, "time")
+        print("--- %s seconds ---" % (time.time() - start_time))
         self.asd2_update_count += 1
 
     def save_data(self):

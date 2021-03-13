@@ -8,3 +8,65 @@ How to run the file on the server:
 
 Use the command:
 	srun -u --partition=colleague --nodelist=20-196  python3.6 /raw_data_peeranat/.....
+	
+	
+For sbatch
+
+sample sbatch:
+-------
+#!/bin/bash
+
+#SBATCH --nodes=1
+#SBATCH --nodelist=20-196
+#SBATCH --job-name=toto_capstone
+#SBATCH --partition=colleague
+#SBATCH --qos=colleague
+#SBATCH --mail-type=end
+
+srun -u python3.6 /raw_data_peeranat/for_running/file_writing_show_path.py
+-----
+
+run this with "sbatch ./project/......sh"
+
+
+Speedtests:
+
+GPU: same as pc
+CPU: slow by default! (for my computer its 62 sec)
+
+For 10 threads all (optimal):
+    alpha update speed:
+    42 sec
+
+    gamma update speed (100x100 3 images)
+    163 sec
+
+
+For 20 threads all:
+    alpha update speed:
+    65 sec
+
+    gamma update speed (100x100 3 images)
+    163 sec
+
+For 6 threads all:
+    alpha update speed:
+    51 sec
+
+    gamma update speed (100x100 3 images)
+     sec
+
+For 8 threads all:
+    alpha update speed:
+    46 sec
+
+    gamma update speed (100x100 3 images)
+     sec
+	 
+For 12 threads all:
+    alpha update speed:
+    48 sec
+
+    gamma update speed (100x100 3 images)
+     sec
+

@@ -1,0 +1,15 @@
+For 100x100
+Limit is at the beta optimization
+9 is too much
+
+1 is 52.16
+
+2 is 101.19
+
+3 is good: 150 sec
+
+4 is : 199 sec
+
+5 is : 246.5 sec
+
+8 is ok: super slow : 392 sec
