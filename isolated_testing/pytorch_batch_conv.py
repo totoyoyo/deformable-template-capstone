@@ -83,7 +83,7 @@ class KBpA(torch.nn.Module):
         self.sdp2 = sdp2
         self.all_pixels = all_pixels
         self.all_p_centers = all_p_centers
-        self.calc_deformation = CalcDeformation().cuda()
+        # self.calc_deformation = CalcDeformation().cuda()
 
     def forward(self):
         # deformation (images, pixels, 2)
@@ -92,7 +92,8 @@ class KBpA(torch.nn.Module):
         # deformation_images = do_batch_convolution(beta_images_tensor, kernel)
         # deformation1 = conv_res_to_deformation(res=deformation_images,batch_size=batch_size)
         # deformation = (torch_K_dense @ self.betas)
-        deformation = self.calc_deformation(self.betas)
+        # deformation = self.calc_deformation(self.betas)
+        deformation = get_deformation_from_conv(self.betas)
         deformed_pixel = self.all_pixels - deformation
         return torch.exp(
             - (torch.square(deformed_pixel) @ one_col2 @ ones_centers

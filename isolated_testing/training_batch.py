@@ -199,6 +199,6 @@ class Estimator2DNImages:
 #
 #
 my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(10)
+my_estimator.run_estimation(5)
 my_estimator.show_plots()
 # my_estimator.save_data()
