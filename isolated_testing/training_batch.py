@@ -7,7 +7,7 @@ import numpy.linalg as nl
 
 # My gradiants
 import matplotlib.pyplot as plt
-import pytorch_batch as pt_op
+import pytorch_batch_conv as pt_op
 import time
 
 float_one = np.float32(1)
@@ -48,6 +48,7 @@ class Estimator2DNImages:
             curr_beta = self.betas[start:end]
             curr_images = self.images[start:end]
             start_time = time.time()
+            print(f"beta at {start} to {end} (exclusive)")
             optimizer = pt_op.PyTorchOptimizer(alphas=self.alphas,
                                                curr_beta=curr_beta,
                                                g_inv=dense_gamma_inv,
@@ -57,7 +58,6 @@ class Estimator2DNImages:
             out = optimizer.optimize_betas(1000)
             self.betas[start:end] = out
             print("--- %s seconds ---" % (time.time() - start_time))
-            print(f"beta at {start} to {end} (exclusive)")
             # print(out)
 
 
@@ -72,6 +72,8 @@ class Estimator2DNImages:
         print("Updating Gamma", self.Gamma_update_count, "time")
         coef = (self.number_of_images + const.AG)
         left = self.number_of_images * self._bbtl()
+        print("Betas calculated, updating gamma")
+        start_time = time.time()
         # FIX THIS
         right = const.AG * const.invert_to_dense(const.SPARSE_SIGMA_G_INV)
         new_gamma = (left + right)/coef
@@ -82,6 +84,7 @@ class Estimator2DNImages:
         tmp_inv = nl.pinv(new_gamma, rcond=1e-6, hermitian=True)
         self.Gamma_Inv = const.to_sparse(tmp_inv)
         print("Finished Gamma", self.Gamma_update_count, "time")
+        print("--- %s seconds ---" % (time.time() - start_time))
         self.Gamma_update_count += 1
 
     def update_kBps(self):  # Can be part of minimization?

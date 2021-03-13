@@ -36,7 +36,7 @@ CPU: slow by default! (for my computer its 62 sec)
 
 For 10 threads all (optimal):
     alpha update speed:
-    42 sec
+    42 sec, 49 sec, 43 sec
 
     gamma update speed (100x100 3 images)
     163 sec

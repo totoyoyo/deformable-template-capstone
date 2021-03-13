@@ -116,7 +116,7 @@ KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
 
 # Big AP smoothens the template
-AG = 2*KG + 2
+AG = 2 * KG + 2
 # Really important?
 AP = 1
 

@@ -11,8 +11,6 @@ import torch.nn.functional as tnf
 
 padding, kernel = func.generate_gaussian_kernel(const.DEFORM_SD2)
 
-g_centers_tensors = torch.from_numpy(const.G_CENTERS)
-
 #INTERMEDIATE FUNCTIONS
 def make_beta_tensors_for_conv(betas):
     batch_size = betas.size()[0]
@@ -110,8 +108,6 @@ class KBpA(torch.nn.Module):
 class PyTorchOptimizer():
     def __init__(self, alphas, curr_beta, g_inv, sdp2, sdl2, images):
         self.alphas = torch.from_numpy(alphas).float().cuda()
-        map(lambda beta: func.make_image_of_betas_for_conv(),
-            curr_beta)
         self.curr_betas = torch.tensor(curr_beta, dtype=torch.float32,
                                        device=torch.device('cuda'))
         # self.image = torch_all_images
