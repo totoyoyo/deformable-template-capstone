@@ -95,7 +95,7 @@ def kernel_other_pixel(all_pixels, even = True):
 # G_CENTERS = kernel_on_every_pixel(IMAGE_NROWS, IMAGE_NCOLS)
 
 
-TEMPLATE_SD2 = 1
+TEMPLATE_SD2 = 4
 DEFORM_SD2 = 4
 
 P_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
@@ -116,7 +116,7 @@ KP = P_CENTERS.shape[0]
 KG = G_CENTERS.shape[0]
 
 # Big AP smoothens the template
-AG = 2 * KG + 2
+AG = len(IMAGES)
 # Really important?
 AP = 1
 

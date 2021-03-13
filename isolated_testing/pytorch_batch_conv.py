@@ -155,4 +155,5 @@ class PyTorchOptimizer():
         for betas in image_predictor.parameters():
             to_numpy = betas.detach().cpu().numpy()
             list_of_numpy = list(to_numpy)
+            torch.cuda.empty_cache()
             return list_of_numpy
