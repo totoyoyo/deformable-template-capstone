@@ -7,12 +7,25 @@ import save
 
 ### do some training
 
+DO_TRAIN = True
+DO_CLASSIFY = True
+
 """
 Should be list of dictionaries
 """
-results = None
+
+
+
+
 """
 Dictionary should contain (name, alphas, sd2, Gamma inv)
+"""
+
+"""
+Note, Gamma_Inv is NOT sparse!!!
+For 5000x5000 Gamma_Inv (for 100x100 images)
+Size of sparse representation is 299991156 bytes
+size of dense representation is  200000000 bytes
 """
 
 """ Could be a dataframe?"""

@@ -1,0 +1,7 @@
+Templatesd2
+sd2
+ag
+ap
+epochs
+iters
+init sd:
