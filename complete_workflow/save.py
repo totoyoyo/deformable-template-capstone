@@ -15,6 +15,15 @@ def handle_saving_npdata(parent_path, npdata, data_name, suffix):
     np.savetxt(parent_path / (data_name+suffix),
                X=npdata)
 
+def handle_duplicate_names(parent_path, wanted_name):
+    new_path = parent_path / wanted_name
+    counter = 0
+    while(new_path.is_dir() and counter < 20):
+        new_path = parent_path / (wanted_name + (str(counter)))
+        counter += 1
+    return new_path
+
+
 
 
 
@@ -27,4 +36,6 @@ a = np.array([1,2,3,4])
 #                     2,
 #                     2)
 
-handle_saving_npdata(main_path,[25],"sd",".data")
+# handle_saving_npdata(main_path,[25],"sd",".data")
+
+yo = handle_duplicate_names(main_path, "train_output")

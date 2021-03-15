@@ -70,7 +70,7 @@ def create_sparse_sigma_something_inverse(something_centers, k_something, some_s
 
 class TrainingConstants:
 
-    def __init__(self, ag, ap, t_sd2, d_sd2, init_sd, images, epochs=1000,
+    def __init__(self, images, ag, ap, t_sd2, d_sd2, init_sd, epochs=1000,
                  iterations=5):
         self.AG = ag
         self.AP = ap
