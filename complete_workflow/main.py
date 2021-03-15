@@ -1,6 +1,6 @@
 import classify
 import train
-import constants
+import constants_maker as const
 import functions
 import load
 import save
@@ -9,11 +9,24 @@ import save
 
 DO_TRAIN = True
 DO_CLASSIFY = True
+AG = None
+TEMPLATE_SD2 = None
+AP = None
+DEFORM_SD2 = None
+EPOCHS = None
+ITERATIONS = None
+INIT_SD2 = None
 
+templates = 0
 """
 Should be list of dictionaries
 """
 
+
+
+def do_training():
+    for x in templates:
+        curr_constants = const.TrainingConstants()
 
 
 
