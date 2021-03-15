@@ -11,7 +11,7 @@ import time
 import save
 
 float_one = np.float32(1)
-batch_size = 2
+batch_size = 10
 
 
 class Estimator2DNImages:
@@ -207,6 +207,14 @@ class Estimator2DNImages:
                                       npdata=prediction_to_show,
                                       data_name=image_name,
                                       suffix=".data")
+            orig_to_show = func.unflatten_image(
+                self.images[n],
+                self.cons_obj.image_ncol)
+            image_name = "orig_image" + str(n)
+            save.handle_saving_plots(path,
+                                     orig_to_show,
+                                     image_name)
+
         template_to_show = func.unflatten_image(self.template,
                                                 self.cons_obj.image_ncol)
         image_name = "template"

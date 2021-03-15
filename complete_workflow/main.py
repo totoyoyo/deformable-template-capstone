@@ -1,23 +1,30 @@
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '8'
+os.environ['GOTO_NUM_THREADS'] = '8'
+os.environ['OMP_NUM_THREADS'] = '8'
+
 import classify
 import trainer
 import constants_maker as const
-import functions
 import load
 import save
 import pathlib
+import sys
+
 ### do some training
 
 DO_TRAIN = True
 DO_CLASSIFY = True
+DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output'
+
 AG = 5
 TEMPLATE_SD2 = 4
 AP = 1
-DEFORM_SD2 = 4
+DEFORM_SD2 = 1
 EPOCHS = 1000
 ITERATIONS = 5
 INIT_SD2 = 1
 
-templates = 0
 """
 Should be list of dictionaries
 """
@@ -36,9 +43,9 @@ def make_constant_object(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
                          d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
                          iterations=ITERATIONS):
     images = load.load_train_images_digits(template_path=template_path)
-    obj = const.TrainingConstants(images=images, ag=ag, ap=ap, t_sd2=t_sd2,
+    obj = const.TrainingConstants(images=images, ag=len(images), ap=ap, t_sd2=t_sd2,
                                   d_sd2=d_sd2, init_sd=init_sd,
-                                  epochs=epochs,iterations=iterations)
+                                  epochs=epochs, iterations=iterations)
     return obj
 
 
@@ -47,6 +54,11 @@ def train():
     data_path = pathlib.Path(__file__).resolve().parent / 'input_data'
     main_path = pathlib.Path(__file__).resolve().parent
     training_output_path = save.handle_duplicate_names(main_path, "train_output")
+    save.handle_saving_parameters(training_output_path,
+                                  ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
+                                  d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
+                                  iterations=ITERATIONS)
+    # sys.stdout = open(training_output_path / "printed.txt", "w")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
         const_obj = make_constant_object(template_path=template_path)
@@ -54,8 +66,13 @@ def train():
                              const_object=const_obj,
                              training_output_path=training_output_path)
 
+    # sys.stdout.close()
 
-train()
+    return training_output_path
+
+
+train_output_path = train() if DO_TRAIN else None
+
 
 """
 Dictionary should contain (name, alphas, sd2, Gamma inv)

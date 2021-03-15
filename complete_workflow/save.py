@@ -9,7 +9,8 @@ def handle_saving_plots(parent_path, array_to_plot, plotname):
     plt.title(plotname)
     plt.colorbar()
     plt.savefig(save_path)
-    plt.show()
+    plt.clf()
+    # plt.show()
 
 def handle_saving_npdata(parent_path, npdata, data_name, suffix):
     np.savetxt(parent_path / (data_name+suffix),
@@ -22,6 +23,28 @@ def handle_duplicate_names(parent_path, wanted_name):
         new_path = parent_path / (wanted_name + (str(counter)))
         counter += 1
     return new_path
+
+
+def handle_saving_parameters(parent_path,ag, ap, t_sd2,
+                         d_sd2, init_sd, epochs,
+                         iterations):
+    parent_path.mkdir(parents=True, exist_ok=True)
+    np.savetxt(parent_path / ("ag" + ".data"),
+               X=[ag])
+    np.savetxt(parent_path / ("ap" + ".data"),
+               X=[ap])
+    np.savetxt(parent_path / ("t_sd2" + ".data"),
+               X=[t_sd2])
+    np.savetxt(parent_path / ("d_sd2" + ".data"),
+               X=[d_sd2])
+    np.savetxt(parent_path / ("init_sd" + ".data"),
+               X=[init_sd])
+    np.savetxt(parent_path / ("epochs" + ".data"),
+               X=[epochs])
+    np.savetxt(parent_path / ("iterations" + ".data"),
+               X=[iterations])
+
+
 
 
 
