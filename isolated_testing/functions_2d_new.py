@@ -205,6 +205,8 @@ def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
     return empty_array
 
 
+
+
 #
 # rx, ry = np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NCOLS), \
 #          np.random.normal(loc=0.0, scale=1.8, size=const.IMAGE_NROWS)

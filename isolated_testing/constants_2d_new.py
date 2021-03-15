@@ -96,7 +96,7 @@ def kernel_other_pixel(all_pixels, even = True):
 
 
 TEMPLATE_SD2 = 2.5
-DEFORM_SD2 = 2.5
+DEFORM_SD2 = 1
 
 P_CENTERS = kernel_other_pixel(ALL_PIXELS, even=True)
 

@@ -1,7 +1,8 @@
 import numpy as np
 from sys import getsizeof
 import scipy.linalg as sl
-
+import scipy.sparse as ss
+import functions_maker as func
 
 # SD can be 15% of total side length
 # so if side length is 100
@@ -101,12 +102,34 @@ class TrainingConstants:
                 self.g_centers, self.kg, self.deform_sd2,
                 1e-6)
 
+        self.S_PIXEL_G_CENTERS_MATRIX = func.get_sparse_pixel_by_centers(
+            all_pixels=self.all_pixels,
+            all_centers=self.g_centers,
+            sd2=self.deform_sd2,
+            error=1e-6)
+
+    def calculate_template(self, alphas):
+        return (func.get_pixel_by_centers_matrix(self.all_pixels,
+                                            self.p_centers,
+                                            self.template_sd2) @ alphas)
+
+    def calculate_kBp(self, betas):
+        deformation = self.S_PIXEL_G_CENTERS_MATRIX.dot(betas)
+        deformed_pixel = self.all_pixels - deformation
+        out_matrix = func.get_sparse_pixel_by_centers(deformed_pixel,
+                                                 all_centers=self.p_centers,
+                                                 sd2=self.template_sd2)
+        return out_matrix
 
     def get_all_pixels(self):
         IY, IX = np.meshgrid(np.arange(self.image_ncol),
                              np.arange(self.image_nrow))
         all_pixels = np.c_[IX.ravel(), IY.ravel()].astype('float32')
         return all_pixels
+
+    def kBpa(self,betas, alphas):
+        kBp = self.calculate_kBp(betas)
+        return kBp @ alphas
 
 
 
