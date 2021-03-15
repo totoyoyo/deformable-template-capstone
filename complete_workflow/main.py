@@ -1,5 +1,5 @@
 import classify
-import train
+import trainer
 import constants_maker as const
 import functions
 import load
