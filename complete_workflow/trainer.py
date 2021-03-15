@@ -3,11 +3,12 @@ import functions_maker as func
 import constants_maker as const
 import time
 import numpy.linalg as nl
-
+import pathlib
 # My gradiants
 import matplotlib.pyplot as plt
 import pytorch_train_classify as pt_op
 import time
+import save
 
 float_one = np.float32(1)
 batch_size = 2
@@ -15,7 +16,10 @@ batch_size = 2
 
 class Estimator2DNImages:
 
-    def __init__(self, cons_obj=const.TrainingConstants()) :
+    def __init__(self, cons_obj=const.TrainingConstants(),
+                 template_name='template0',
+                 training_output_path=pathlib.Path()):
+        self.template_name = template_name
         self.template = None
         self.cons_obj = cons_obj
         self.start_time = time.time()
@@ -35,6 +39,8 @@ class Estimator2DNImages:
         self.predictions = None
         self.Gamma_update_count = 0
         self.asd2_update_count = 0
+        self.epochs = cons_obj.epochs
+        self.training_output_path = training_output_path
 
 
     def update_all_betas(self):
@@ -55,7 +61,7 @@ class Estimator2DNImages:
                                                sdp2=self.cons_obj.template_sd2,
                                                sdl2=self.sd2,
                                                images=curr_images)
-            out = optimizer.optimize_betas(1000)
+            out = optimizer.optimize_betas(self.epochs)
             self.betas[start:end] = out
             print("--- %s seconds ---" % (time.time() - start_time))
             # print(out)
@@ -138,12 +144,34 @@ class Estimator2DNImages:
         self.asd2_update_count += 1
 
     def save_data(self):
-        path = "../outputs/"
-        func.handle_save_arr(path, "alpha", self.alphas)
-        # func.handle_save_arr(path, "beta", self.betas)
-        # func.handle_save_arr(path, "Gamma", self.Gamma)
-        func.handle_save_arr(path, "sigma_squared", [self.sd2])
-        func.handle_save_arr(path, "time", [self.estimation_time])
+        path = self.training_output_path / self.template_name
+        alphas = self.alphas
+        save.handle_saving_npdata(parent_path=path,
+                                  npdata=alphas,
+                                  data_name="alphas",
+                                  suffix=".data")
+        g_inv = self.Gamma_Inv.todense()
+        save.handle_saving_npdata(parent_path=path,
+                                  npdata=g_inv,
+                                  data_name="g_inv",
+                                  suffix=".data")
+        sd2 = self.sd2
+        save.handle_saving_npdata(parent_path=path,
+                                  npdata=[sd2],
+                                  data_name="sd2",
+                                  suffix=".data")
+        for n in range(self.number_of_images):
+            beta = self.betas[n]
+            beta_name = "beta" + str(n)
+            save.handle_saving_npdata(parent_path=path,
+                                      npdata=beta,
+                                      data_name=beta_name,
+                                      suffix=".data")
+        time_taken = self.estimation_time
+        save.handle_saving_npdata(parent_path=path,
+                                  npdata=[time_taken],
+                                  data_name="time",
+                                  suffix=".time")
 
 
     def run_estimation(self, iterations):
@@ -157,53 +185,43 @@ class Estimator2DNImages:
         total = end_time - self.start_time
         self.estimation_time = total
 
-        # print("Here is the time")
-        # print(total)
-        # print("here are alphas, sd2, and Gamma in that order")
-        # print("here are sd2")
-        # print(self.alphas)
-        # print(self.sd2)
-        # print(self.Gamma)
-        # print("here are betas")
-        # print(self.betas)
-        # print("here are predictions")
-        # print(self.predictions)
-        # print("here is the template")
-
     def calculate_template(self):
         tmp_template = self.cons_obj.calculate_template(self.alphas)
         tmp_template[tmp_template < 1e-5] = 0.0
         self.template = tmp_template
 
-    def show_plots(self):
-        path = "..\\plots\\2D\\"
-        # for n in range(self.number_of_images):
-        #     image_to_show = func.unflatten_image(self.images[n])
-        #     plt.imshow(image_to_show)
-        #     image_name = "image" + str(n)
-        #     plt.title(image_name)
-        #     func.handle_save_plot(path, image_name)
-        #     plt.show()
-
+    def save_images(self):
+        path = self.training_output_path / self.template_name
+        path.mkdir(parents=True, exist_ok=True)
         for n in range(self.number_of_images):
-            prediction_to_show = func.unflatten_image(self.predictions[n],
-                                                      self.cons_obj.image_ncol)
-            plt.imshow(prediction_to_show)
-            image_name = "Prediction" + str(n)
-            plt.title(image_name)
-            func.handle_save_plot(path, image_name)
-            plt.show()
-
+            prediction_to_show = func.unflatten_image(
+                self.predictions[n],
+                self.cons_obj.image_ncol)
+            image_name = "prediction" + str(n)
+            save.handle_saving_plots(path,
+                                     prediction_to_show,
+                                     image_name)
+            save.handle_saving_npdata(parent_path=path,
+                                      npdata=prediction_to_show,
+                                      data_name=image_name,
+                                      suffix=".data")
         template_to_show = func.unflatten_image(self.template,
                                                 self.cons_obj.image_ncol)
-        plt.imshow(template_to_show)
-        image_name = "Template"
-        plt.title(image_name)
-        func.handle_save_plot(path, image_name)
-        plt.show()
-#
-#
-my_estimator = Estimator2DNImages()
-my_estimator.run_estimation(5)
-my_estimator.show_plots()
+        image_name = "template"
+        save.handle_saving_plots(path,
+                                 template_to_show,
+                                 image_name)
+        save.handle_saving_npdata(parent_path=path,
+                                  npdata=template_to_show,
+                                  data_name=image_name,
+                                  suffix=".data")
+
+    def save_all(self):
+        self.save_images()
+        self.save_data()
+
+
+# my_estimator = Estimator2DNImages()
+# my_estimator.run_estimation(5)
+# my_estimator.show_plots()
 # my_estimator.save_data()

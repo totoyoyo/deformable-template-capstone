@@ -70,7 +70,8 @@ def create_sparse_sigma_something_inverse(something_centers, k_something, some_s
 
 class TrainingConstants:
 
-    def __init__(self, ag, ap, t_sd2, d_sd2, init_sd, images):
+    def __init__(self, ag, ap, t_sd2, d_sd2, init_sd, images, epochs=1000,
+                 iterations=5):
         self.AG = ag
         self.AP = ap
         self.template_sd2 = t_sd2
@@ -107,6 +108,8 @@ class TrainingConstants:
             all_centers=self.g_centers,
             sd2=self.deform_sd2,
             error=1e-6)
+        self.epochs = epochs
+        self.iterations = iterations
 
     def calculate_template(self, alphas):
         return (func.get_pixel_by_centers_matrix(self.all_pixels,

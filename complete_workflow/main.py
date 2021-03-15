@@ -23,10 +23,10 @@ Should be list of dictionaries
 """
 
 
-
-def do_training():
-    for x in templates:
-        curr_constants = const.TrainingConstants()
+def do_training_and_save(template_name, const_object):
+    to_train = trainer.Estimator2DNImages(cons_obj=const_object,
+                                          template_name=template_name)
+    to_train.run_estimation(const_object.iterations)
 
 
 
