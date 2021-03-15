@@ -16,7 +16,7 @@ batch_size = 2
 
 class Estimator2DNImages:
 
-    def __init__(self, cons_obj=const.TrainingConstants(),
+    def __init__(self, cons_obj :const.TrainingConstants,
                  template_name='template0',
                  training_output_path=pathlib.Path()):
         self.template_name = template_name
@@ -48,6 +48,7 @@ class Estimator2DNImages:
         dense_gamma_inv = self.Gamma_Inv.todense()
         list_of_start_end_indexes = func.get_list_of_indexes_for_slicing(batch_size,
                                                                     self.number_of_images)
+        pytorch_constant = pt_op.PyTorchConstants(const_object=self.cons_obj)
         for start_end in list_of_start_end_indexes:
             start = start_end[0]
             end = start_end[1]
@@ -60,7 +61,8 @@ class Estimator2DNImages:
                                                g_inv=dense_gamma_inv,
                                                sdp2=self.cons_obj.template_sd2,
                                                sdl2=self.sd2,
-                                               images=curr_images)
+                                               images=curr_images,
+                                               pytorch_const=pytorch_constant)
             out = optimizer.optimize_betas(self.epochs)
             self.betas[start:end] = out
             print("--- %s seconds ---" % (time.time() - start_time))

@@ -9,13 +9,13 @@ import pathlib
 
 DO_TRAIN = True
 DO_CLASSIFY = True
-AG = None
-TEMPLATE_SD2 = None
-AP = None
-DEFORM_SD2 = None
-EPOCHS = None
-ITERATIONS = None
-INIT_SD2 = None
+AG = 5
+TEMPLATE_SD2 = 4
+AP = 1
+DEFORM_SD2 = 4
+EPOCHS = 1000
+ITERATIONS = 5
+INIT_SD2 = 1
 
 templates = 0
 """
@@ -23,9 +23,8 @@ Should be list of dictionaries
 """
 
 
-def do_training_and_save(template_name, const_object):
-    main_path = pathlib.Path(__file__).resolve().parent
-    training_output_path = save.handle_duplicate_names(main_path, "train_output")
+def do_training_and_save(template_name, const_object,
+                         training_output_path):
     to_train = trainer.Estimator2DNImages(cons_obj=const_object,
                                           template_name=template_name,
                                           training_output_path=training_output_path)
@@ -46,11 +45,14 @@ def make_constant_object(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
 
 def train():
     data_path = pathlib.Path(__file__).resolve().parent / 'input_data'
+    main_path = pathlib.Path(__file__).resolve().parent
+    training_output_path = save.handle_duplicate_names(main_path, "train_output")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
         const_obj = make_constant_object(template_path=template_path)
         do_training_and_save(template_name=template_name,
-                             const_object=const_obj)
+                             const_object=const_obj,
+                             training_output_path=training_output_path)
 
 
 train()
