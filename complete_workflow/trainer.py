@@ -152,7 +152,7 @@ class Estimator2DNImages:
                                   npdata=alphas,
                                   data_name="alphas",
                                   suffix=".data")
-        g_inv = self.Gamma_Inv.todense()
+        g_inv = self.Gamma_Inv.todense().astype('float32')
         save.handle_saving_npdata(parent_path=path,
                                   npdata=g_inv,
                                   data_name="g_inv",

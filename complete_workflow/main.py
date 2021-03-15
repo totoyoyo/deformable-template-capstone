@@ -1,9 +1,13 @@
+SERVER = False
 import os
-os.environ['OPENBLAS_NUM_THREADS'] = '8'
-os.environ['GOTO_NUM_THREADS'] = '8'
-os.environ['OMP_NUM_THREADS'] = '8'
+
+if SERVER:
+    os.environ['OPENBLAS_NUM_THREADS'] = '10'
+    os.environ['GOTO_NUM_THREADS'] = '10'
+    os.environ['OMP_NUM_THREADS'] = '10'
 
 import classify
+import pytorch_train_classify
 import trainer
 import constants_maker as const
 import load
@@ -21,9 +25,12 @@ AG = 5
 TEMPLATE_SD2 = 4
 AP = 1
 DEFORM_SD2 = 1
-EPOCHS = 1000
-ITERATIONS = 5
+EPOCHS = 1
+ITERATIONS = 1
 INIT_SD2 = 1
+SAVE_PRINTS = False
+COINS = True
+
 
 """
 Should be list of dictionaries
@@ -42,7 +49,10 @@ def do_training_and_save(template_name, const_object,
 def make_constant_object(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
                          d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
                          iterations=ITERATIONS):
-    images = load.load_train_images_digits(template_path=template_path)
+    if not COINS:
+        images = load.load_train_images_digits(template_path=template_path)
+    else:
+        images = load.load_train_images_coins(template_path=template_path)
     obj = const.TrainingConstants(images=images, ag=len(images), ap=ap, t_sd2=t_sd2,
                                   d_sd2=d_sd2, init_sd=init_sd,
                                   epochs=epochs, iterations=iterations)
@@ -51,22 +61,26 @@ def make_constant_object(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
 
 
 def train():
-    data_path = pathlib.Path(__file__).resolve().parent / 'input_data'
+    if not COINS:
+        data_path = pathlib.Path(__file__).resolve().parent / 'input_data'
+    else:
+        data_path = pathlib.Path(__file__).resolve().parent / 'input_coins'
     main_path = pathlib.Path(__file__).resolve().parent
     training_output_path = save.handle_duplicate_names(main_path, "train_output")
     save.handle_saving_parameters(training_output_path,
                                   ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
                                   d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
                                   iterations=ITERATIONS)
-    # sys.stdout = open(training_output_path / "printed.txt", "w")
+    if SAVE_PRINTS:
+        sys.stdout = open(training_output_path / "printed.txt", "w")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
         const_obj = make_constant_object(template_path=template_path)
         do_training_and_save(template_name=template_name,
                              const_object=const_obj,
                              training_output_path=training_output_path)
-
-    # sys.stdout.close()
+    if SAVE_PRINTS:
+        sys.stdout.close()
 
     return training_output_path
 
@@ -89,7 +103,9 @@ size of dense representation is  200000000 bytes
 """row: name alphas, sd2, gamma_inv"""
 
 
-### do some classification
+
+
+
 
 """
 Now,we have a list of images with labels on them
