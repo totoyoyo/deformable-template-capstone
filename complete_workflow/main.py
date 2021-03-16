@@ -16,9 +16,9 @@ import sys
 
 ### do some training
 
-DO_TRAIN = True
+DO_TRAIN = False
 DO_CLASSIFY = True
-DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output'
+DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output10'
 
 AG = 5
 TEMPLATE_SD2 = 4
@@ -93,9 +93,12 @@ def make_constant_object_classify(input_path, training_output_path):
         images = load.load_train_images_digits(template_path=input_path)
     else:
         images = load.load_train_images_coins(template_path=input_path)
-    obj = const.TrainingConstants(images=images, ag=len(images), ap=ap, t_sd2=t_sd2,
-                                  d_sd2=d_sd2, init_sd=init_sd,
-                                  epochs=epochs, iterations=iterations)
+
+    hyper_dict = load.load_hyperparameters(training_output_path)
+    obj = const.TrainingConstants(images=images, ag=hyper_dict['ag'],
+                                  ap=hyper_dict['ap'], t_sd2=hyper_dict['t_sd2'],
+                                  d_sd2=hyper_dict['d_sd2'], init_sd=hyper_dict['init_sd'],
+                                  epochs=hyper_dict['epochs'], iterations=hyper_dict['iterations'])
     return obj
 
 
@@ -106,7 +109,9 @@ def classify():
         input_path = pathlib.Path(__file__).resolve().parent / 'input_coins'
 
     train_result_path = TRAIN_OUTPUT_PATH
-    const_obj_classify = make_constant_object_classify(input_path/ 'template1')
+    const_obj_classify = make_constant_object_classify(input_path/ 'template1',
+                                                       train_result_path)
+
     img_to_classify = load.load_classify_images(input_path,coins=COINS)
 
     image_classifier = classifier.ImageClassifier(cons_obj=const_obj_classify,
@@ -115,16 +120,17 @@ def classify():
 
     for template_path in train_result_path.glob('template*'):
         template_name = template_path.stem
-        curr_template = classifier.TemplateClass(trained_template_path=None,
+        curr_template = classifier.TemplateClass(trained_template_path=template_path,
                                                  name=template_name)
-        image_classifier.template_search(epochs=1000,
+        image_classifier.template_search(epochs=1,
                                          template=curr_template)
 
     res = image_classifier.compute_and_save_results()
     save.handle_save_classification_results(train_result_path, res)
+    return res
 
 if DO_CLASSIFY:
-    classify()
+    classify_results = classify()
 
 
 

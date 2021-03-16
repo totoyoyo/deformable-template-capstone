@@ -52,13 +52,13 @@ def load_classify_images(input_data=Path(), coins=False):
             arr = get_coin_array(image_path)
         else:
             arr = get_digit_array(image_path)
-        image_name = image_path.stem
+        image_name = image_path.name
         img_dict = {
             'name' : image_name,
             'arr' : arr,
             'true_template_name' : template_name
         }
-        print(img_dict)
+        # print(img_dict)
         image_dict_list.append(img_dict)
     return image_dict_list
 
@@ -78,7 +78,27 @@ def get_digit_array(image_path):
     return image
 
 
+def load_hyperparameters(training_output_path=Path()):
+    dict_out = {}
+    for data_path in training_output_path.glob("*.data"):
+        data_name = data_path.stem
+        data = np.loadtxt(data_path)
+        dict_out[data_name] = data.item()
+    return dict_out
 
+
+def load_template(template_output_path=Path()):
+    dict_out = {}
+    for data_path in template_output_path.glob("*.data"):
+        data_name = data_path.stem
+        data = np.loadtxt(data_path)
+        dict_out[data_name] = data
+    for g_inv_path in template_output_path.glob("*.npy"):
+        g_inv = np.load(g_inv_path)
+    return dict_out, g_inv
+
+
+# out = load_hyperparameters(main_path/'train_output6')
 
 # p = main_path / "input_coins"
 #

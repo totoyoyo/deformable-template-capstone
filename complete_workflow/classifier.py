@@ -5,6 +5,8 @@ import constants_maker as const
 import time
 import pandas as pd
 import save
+from pathlib import Path
+import load
 
 """
 Takes a list of images:
@@ -26,18 +28,17 @@ class TemplateClass:
 
     def __init__(self, trained_template_path, name):
         self.alpha = None
-        self.betas = None
         self.g_inv = None
         self.sd2 = None
         self.name = name
-        self.load_data()
+        self.load_data(trained_template_path)
 
-    def load_data(self):
-        self.alpha = None
-        self.betas = None
-        self.g_inv = None
-        self.sd2 = None
-        self.name = None
+    def load_data(self, path=Path()):
+        dict_out, ginv = load.load_template(path)
+        self.alpha = dict_out['alphas'].reshape(-1,1)
+        self.g_inv = ginv
+        self.sd2 = dict_out['sd2'].item()
+
 
 
 import pytorch_train_classify as pt_op
@@ -63,13 +64,15 @@ class ImageClassifier:
                                             total_length=self.number_of_images)
         pytorch_constant = pt_op.PyTorchConstants(const_object=self.cons_obj)
         res = []
-        npix = self.cons_obj.all_pixels
+        npix = self.cons_obj.image_total
         to_add = (npix / 2) * np.log(2 * np.pi * template.sd2)
         for start_end in list_of_start_end_indexes:
             start = start_end[0]
             end = start_end[1]
             curr_images = self.images[start:end]
             raw_images = [image['arr'] for image in curr_images]
+            flat_images = list(map(lambda image: image.reshape(-1, 1),
+                                    raw_images))
             name_images = [image['name'] for image in curr_images][0]
             start_time = time.time()
             print(f"images at {start} to {end} (exclusive)")
@@ -77,10 +80,10 @@ class ImageClassifier:
                                               g_inv=template.g_inv,
                                               sdp2=self.cons_obj.template_sd2,
                                               sdl2=template.sd2,
-                                              images=raw_images,
+                                              images=flat_images,
                                               pytorch_const=pytorch_constant)
             betas, out = optimizer.optimize_betas(epochs)
-            prediction_image = self.compute_prediction_image(betas, template.alpha)
+            prediction_image = self.compute_prediction_image(betas[0], template.alpha)
             self.save_image(prediction_image,img_name=name_images,
                             template_name=template.name)
             prob = -(to_add + out)
@@ -107,4 +110,4 @@ class ImageClassifier:
         save.handle_saving_npdata(parent_path=path,
                                   npdata=image_to_save,
                                   data_name=image_name,
-                                  suffix=".data")
+                                  suffix=".classify_out")
