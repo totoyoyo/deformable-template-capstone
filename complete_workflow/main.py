@@ -6,13 +6,11 @@ if SERVER:
     os.environ['OPENBLAS_NUM_THREADS'] = '4'
 
 import classifier
-import pytorch_train_classify
 import trainer
 import constants_maker as const
 import load
 import save
 import pathlib
-import sys
 
 ### do some training
 
@@ -27,14 +25,13 @@ DEFORM_SD2 = 1
 EPOCHS = 1
 ITERATIONS = 1
 INIT_SD2 = 1
-COINS = False
+COINS = True
 
 
 """
 Should be list of dictionaries
 """
 
-# original_stdout = sys.stdout
 
 def do_training_and_save(template_name, const_object,
                          training_output_path):
@@ -72,7 +69,6 @@ def train():
                                   iterations=ITERATIONS)
     if SAVE_PRINTS:
         save.redirect_stdout_to_txt(training_output_path / "printed_during_train.txt")
-        # sys.stdout = open(training_output_path / "printed.txt", "w")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
         const_obj = make_constant_object_train(template_path=template_path)
@@ -124,7 +120,7 @@ def classify():
         template_name = template_path.stem
         curr_template = classifier.TemplateClass(trained_template_path=template_path,
                                                  name=template_name)
-        image_classifier.template_search(epochs=1,
+        image_classifier.template_search(epochs=EPOCHS,
                                          template=curr_template)
     res = image_classifier.compute_and_save_results()
     if SAVE_PRINTS:
