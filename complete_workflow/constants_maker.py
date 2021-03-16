@@ -71,45 +71,47 @@ def create_sparse_sigma_something_inverse(something_centers, k_something, some_s
 class TrainingConstants:
 
     def __init__(self, images, ag, ap, t_sd2, d_sd2, init_sd, epochs=1000,
-                 iterations=5):
-        self.AG = ag
-        self.AP = ap
-        self.template_sd2 = t_sd2
-        self.deform_sd2 = d_sd2
-        self.init_sd = init_sd
-        self.images = images
-        self.image_nrow, self.image_ncol = self.images[0].shape
-        self.image_total = self.image_nrow * self.image_ncol
-        self.flat_images = list(map(lambda image: image.reshape(-1, 1),
-                                    self.images))
-        self.all_pixels = self.get_all_pixels()
-        self.p_centers = kernel_other_pixel(self.all_pixels, even=True)
+                 iterations=5,
+                 train=True):
+        if train:
+            self.AG = ag
+            self.AP = ap
+            self.template_sd2 = t_sd2
+            self.deform_sd2 = d_sd2
+            self.init_sd = init_sd
+            self.images = images
+            self.image_nrow, self.image_ncol = self.images[0].shape
+            self.image_total = self.image_nrow * self.image_ncol
+            self.flat_images = list(map(lambda image: image.reshape(-1, 1),
+                                        self.images))
+            self.all_pixels = self.get_all_pixels()
+            self.p_centers = kernel_other_pixel(self.all_pixels, even=True)
 
-        self.g_centers = kernel_other_pixel(self.all_pixels, even=True)
-        TD_SAME = self.template_sd2 == self.deform_sd2 \
-                  and np.array_equal(self.p_centers, self.g_centers)
-        self.kp = self.p_centers.shape[0]
-        self.kg = self.g_centers.shape[0]
-        self.alphas_init = np.zeros((self.kp, 1), dtype='float32')
-        self.betas_init = np.zeros((self.kg, 2), dtype='float32')
-        self.mup = np.zeros((self.kp, 1), dtype='float32')
-        self.SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(
-            self.p_centers, self.kp, self.template_sd2,
-            1e-6)
-        if TD_SAME:
-            self.SPARSE_SIGMA_G_INV = self.SPARSE_SIGMA_P_INV
-        else:
-            self.SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(
-                self.g_centers, self.kg, self.deform_sd2,
+            self.g_centers = kernel_other_pixel(self.all_pixels, even=True)
+            TD_SAME = self.template_sd2 == self.deform_sd2 \
+                      and np.array_equal(self.p_centers, self.g_centers)
+            self.kp = self.p_centers.shape[0]
+            self.kg = self.g_centers.shape[0]
+            self.alphas_init = np.zeros((self.kp, 1), dtype='float32')
+            self.betas_init = np.zeros((self.kg, 2), dtype='float32')
+            self.mup = np.zeros((self.kp, 1), dtype='float32')
+            self.SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(
+                self.p_centers, self.kp, self.template_sd2,
                 1e-6)
+            if TD_SAME:
+                self.SPARSE_SIGMA_G_INV = self.SPARSE_SIGMA_P_INV
+            else:
+                self.SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(
+                    self.g_centers, self.kg, self.deform_sd2,
+                    1e-6)
 
-        self.S_PIXEL_G_CENTERS_MATRIX = func.get_sparse_pixel_by_centers(
-            all_pixels=self.all_pixels,
-            all_centers=self.g_centers,
-            sd2=self.deform_sd2,
-            error=1e-6)
-        self.epochs = epochs
-        self.iterations = iterations
+            self.S_PIXEL_G_CENTERS_MATRIX = func.get_sparse_pixel_by_centers(
+                all_pixels=self.all_pixels,
+                all_centers=self.g_centers,
+                sd2=self.deform_sd2,
+                error=1e-6)
+            self.epochs = epochs
+            self.iterations = iterations
 
     def calculate_template(self, alphas):
         return (func.get_pixel_by_centers_matrix(self.all_pixels,

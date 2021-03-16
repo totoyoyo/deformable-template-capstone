@@ -8,8 +8,12 @@ How to run the file on the server:
 
 Use the command:
 	srun -u --partition=colleague --nodelist=20-196  python3.6 /raw_data_peeranat/.....
-	
-	
+
+srun -u --partition=copigpu --nodelist=20-196  python3.6 /raw_data_peeranat/complete_workflow/main.py
+
+srun -u --partition=colleague --nodelist=20-196  python3.6 /raw_data_peeranat/complete_workflow/main.py
+
+
 For sbatch
 
 sample sbatch:
@@ -23,10 +27,13 @@ sample sbatch:
 #SBATCH --qos=colleague
 #SBATCH --mail-type=end
 
-srun -u python3.6 /raw_data_peeranat/for_running/file_writing_show_path.py
+python3.6 /raw_data_peeranat/for_running/file_writing_show_path.py
 -----
 
 run this with "sbatch ./project/......sh"
+
+Mail:
+nano /var/spool/mail/peeranat
 
 
 Speedtests:
@@ -69,4 +76,69 @@ For 12 threads all:
 
     gamma update speed (100x100 3 images)
      sec
+
+
+New data: (copigpu and copi) (colleague gone!)
+
+My run:
+	54 sec
+
+10 threads all
+	86seconds copigpu
+	103 copi
+1 thread:
+	161 sec copigpu
+all threads:
+	447
+30 threads:
+	410
+10 threads after adding more numthread settings:
+	110
+8 threads:
+	72
+	86 + 82
+7 threads:
+	80
+5 threads:
+	77
+	69 + 60
+4 threads:
+	75
+	69 + 53 	
+3 threads
+	79 + 67
+2 threads:
+	108
+	
+4 threads best for copi	
+
+server np:
+[peeranat@20-200 ~]$ srun -u --partition=copigpu --nodelist=20-196  python3.6 /raw_data_peeranat/complete_workflow/main.py
+blas_mkl_info:
+  NOT AVAILABLE
+blis_info:
+  NOT AVAILABLE
+openblas_info:
+    libraries = ['openblas', 'openblas']
+    library_dirs = ['/usr/local/lib']
+    language = c
+    define_macros = [('HAVE_CBLAS', None)]
+blas_opt_info:
+    libraries = ['openblas', 'openblas']
+    library_dirs = ['/usr/local/lib']
+    language = c
+    define_macros = [('HAVE_CBLAS', None)]
+lapack_mkl_info:
+  NOT AVAILABLE
+openblas_lapack_info:
+    libraries = ['openblas', 'openblas']
+    library_dirs = ['/usr/local/lib']
+    language = c
+    define_macros = [('HAVE_CBLAS', None)]
+lapack_opt_info:
+    libraries = ['openblas', 'openblas']
+    library_dirs = ['/usr/local/lib']
+    language = c
+    define_macros = [('HAVE_CBLAS', None)]
+None
 

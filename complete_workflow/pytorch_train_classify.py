@@ -4,6 +4,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 import torch
 import torch.nn.functional as tnf
 import functions_maker as func
+import classify
 
 # Convert from diag to coo and then to tensor
 # Also learn how to clear gpu memory
@@ -145,3 +146,7 @@ class KBpA(torch.nn.Module):
 
     def string(self):
         return f'b = {self.betas.item()}'
+
+class PyTorchClassify:
+
+    def __init__(self, template: classify.TemplateClass):

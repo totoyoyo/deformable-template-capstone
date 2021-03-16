@@ -144,3 +144,16 @@ kernel_t = torch.Tensor([[1,2,3],
 bigger_kernel = kernel_t.expand(3,1,3,3)
 
 print('done')
+
+
+g = np.ones((5000, 5000))
+np.savetxt("g64.txt",X=g)
+np.savetxt("g32.txt",X=g.astype('float32'))
+np.save("g64",g)
+np.save("g32",g.astype('float32'))
+
+np.savez("g64z",g)
+np.savez("g32z",g.astype('float32'))
+
+
+

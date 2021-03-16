@@ -1,10 +1,9 @@
 SERVER = False
+SAVE_PRINTS = False
 import os
 
 if SERVER:
-    os.environ['OPENBLAS_NUM_THREADS'] = '10'
-    os.environ['GOTO_NUM_THREADS'] = '10'
-    os.environ['OMP_NUM_THREADS'] = '10'
+    os.environ['OPENBLAS_NUM_THREADS'] = '4'
 
 import classify
 import pytorch_train_classify
@@ -28,7 +27,6 @@ DEFORM_SD2 = 1
 EPOCHS = 1
 ITERATIONS = 1
 INIT_SD2 = 1
-SAVE_PRINTS = False
 COINS = True
 
 
@@ -36,6 +34,7 @@ COINS = True
 Should be list of dictionaries
 """
 
+# original_stdout = sys.stdout
 
 def do_training_and_save(template_name, const_object,
                          training_output_path):
@@ -72,7 +71,8 @@ def train():
                                   d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
                                   iterations=ITERATIONS)
     if SAVE_PRINTS:
-        sys.stdout = open(training_output_path / "printed.txt", "w")
+        save.redirect_stdout_to_txt(training_output_path / "printed.txt")
+        # sys.stdout = open(training_output_path / "printed.txt", "w")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
         const_obj = make_constant_object(template_path=template_path)
@@ -80,8 +80,8 @@ def train():
                              const_object=const_obj,
                              training_output_path=training_output_path)
     if SAVE_PRINTS:
-        sys.stdout.close()
-
+        save.bring_back_stdout()
+    print("yo")
     return training_output_path
 
 

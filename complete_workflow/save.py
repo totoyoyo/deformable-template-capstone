@@ -1,6 +1,18 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+import sys
+
+
+original_stdout = sys.stdout
+
+def redirect_stdout_to_txt(file_path):
+    sys.stdout = open(file_path, "w")
+
+def bring_back_stdout():
+    if sys.stdout is not original_stdout:
+        sys.stdout.close()
+    sys.stdout = original_stdout
 
 
 def handle_saving_plots(parent_path, array_to_plot, plotname):
@@ -15,6 +27,11 @@ def handle_saving_plots(parent_path, array_to_plot, plotname):
 def handle_saving_npdata(parent_path, npdata, data_name, suffix):
     np.savetxt(parent_path / (data_name+suffix),
                X=npdata)
+
+def handle_saving_compressed_npdata(parent_path, npdata, data_name, suffix):
+    np.save(parent_path / (data_name),
+            npdata)
+
 
 def handle_duplicate_names(parent_path, wanted_name):
     new_path = parent_path / wanted_name
