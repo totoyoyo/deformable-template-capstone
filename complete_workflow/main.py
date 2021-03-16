@@ -85,7 +85,47 @@ def train():
     return training_output_path
 
 
-train_output_path = train() if DO_TRAIN else None
+TRAIN_OUTPUT_PATH = train() if DO_TRAIN else DEFAULT_CLASSIFY_PATH
+
+
+def make_constant_object_classify(input_path, training_output_path):
+    if not COINS:
+        images = load.load_train_images_digits(template_path=input_path)
+    else:
+        images = load.load_train_images_coins(template_path=input_path)
+    obj = const.TrainingConstants(images=images, ag=len(images), ap=ap, t_sd2=t_sd2,
+                                  d_sd2=d_sd2, init_sd=init_sd,
+                                  epochs=epochs, iterations=iterations)
+    return obj
+
+
+def classify():
+    if not COINS:
+        input_path = pathlib.Path(__file__).resolve().parent / 'input_data'
+    else:
+        input_path = pathlib.Path(__file__).resolve().parent / 'input_coins'
+
+    train_result_path = TRAIN_OUTPUT_PATH
+    const_obj_classify = make_constant_object_classify(input_path/ 'template1')
+    img_to_classify = load.load_classify_images(input_path,coins=COINS)
+
+    image_classifier = classifier.ImageClassifier(cons_obj=const_obj_classify,
+                                                  images=img_to_classify,
+                                                  output=train_result_path)
+
+    for template_path in train_result_path.glob('template*'):
+        template_name = template_path.stem
+        curr_template = classifier.TemplateClass(trained_template_path=None,
+                                                 name=template_name)
+        image_classifier.template_search(epochs=1000,
+                                         template=curr_template)
+
+    res = image_classifier.compute_and_save_results()
+    save.handle_save_classification_results(train_result_path, res)
+
+if DO_CLASSIFY:
+    classify()
+
 
 
 """
