@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 import sys
-
+import json
 
 original_stdout = sys.stdout
 
@@ -60,6 +60,18 @@ def handle_saving_parameters(parent_path,ag, ap, t_sd2,
                X=[epochs])
     np.savetxt(parent_path / ("iterations" + ".data"),
                X=[iterations])
+    dict_hyper = {
+        "ag" : ag,
+        "ap" : ap,
+        "t_sd2": t_sd2,
+        "d_sd2": d_sd2,
+        "init_sd": init_sd,
+        "epochs": epochs,
+        "iterations": iterations
+    }
+    with open(parent_path / ("hyper" + ".json"), 'w') as fp:
+        json.dump(dict_hyper, fp)
+
 
 
 

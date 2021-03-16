@@ -171,4 +171,19 @@ l1 = df.apply(lambda row: row.nlargest(1).values[-1],axis=1)
 diff = l1-l2
 
 
+import json
+
+
+data = {
+    "hey":"yo",
+    "something": 20
+}
+
+with open('data.json', 'w') as fp:
+    json.dump(data, fp)
+
+with open('data.json', 'r') as fp:
+    new_data = json.load(fp)
+
+
 # df.loc['yo'] = [1,2,3,4]

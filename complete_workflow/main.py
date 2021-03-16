@@ -1,5 +1,6 @@
 SERVER = False
 SAVE_PRINTS = False
+COINS = False
 import os
 
 if SERVER:
@@ -25,7 +26,6 @@ DEFORM_SD2 = 1
 EPOCHS = 1
 ITERATIONS = 1
 INIT_SD2 = 1
-COINS = True
 
 
 """
