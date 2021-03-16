@@ -158,8 +158,17 @@ print('done')
 #
 #
 
-import pandas as pandas
-df = pandas.DataFrame(columns=['a','b','c','d'])
+import pandas as pd
+# df = pandas.DataFrame(columns=['a','b','c','d'])
+
+
+df = pd.DataFrame({'Col{}'.format(i):np.random.randint(0,100,5) for i in range(5)})
+
+l2 = df.apply(lambda row: row.nlargest(2).values[-1],axis=1)
+
+l1 = df.apply(lambda row: row.nlargest(1).values[-1],axis=1)
+
+diff = l1-l2
 
 
 # df.loc['yo'] = [1,2,3,4]

@@ -97,6 +97,21 @@ class ImageClassifier:
 
     def compute_and_save_results(self):
         out = self.df_out.transpose()
+        max_template = out.idxmax(axis=1)
+        large2 = out.apply(lambda row: row.nlargest(2).values[-1], axis=1)
+
+        large1 = out.apply(lambda row: row.nlargest(1).values[-1], axis=1)
+
+        diff = large1 - large2
+        out['Diff'] = diff
+        out['Max'] = max_template
+        out['Truth'] = [image['true_template_name'] for image in self.images]
+        out['Correct'] = out['Truth'] == out['Max']
+        total_images = out.shape[0]
+        total_correct = sum(out['Correct'])
+        out["Rate"] = total_correct/total_images
+
+        out.to_csv(path_or_buf=self.classify_output_path / "final_results.csv")
         return out
 
     def save_image(self, image, img_name, template_name):

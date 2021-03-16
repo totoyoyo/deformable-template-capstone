@@ -16,7 +16,7 @@ import sys
 
 ### do some training
 
-DO_TRAIN = False
+DO_TRAIN = True
 DO_CLASSIFY = True
 DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output10'
 
@@ -71,7 +71,7 @@ def train():
                                   d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
                                   iterations=ITERATIONS)
     if SAVE_PRINTS:
-        save.redirect_stdout_to_txt(training_output_path / "printed.txt")
+        save.redirect_stdout_to_txt(training_output_path / "printed_during_train.txt")
         # sys.stdout = open(training_output_path / "printed.txt", "w")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
@@ -81,11 +81,8 @@ def train():
                              training_output_path=training_output_path)
     if SAVE_PRINTS:
         save.bring_back_stdout()
-    print("yo")
     return training_output_path
 
-
-TRAIN_OUTPUT_PATH = train() if DO_TRAIN else DEFAULT_CLASSIFY_PATH
 
 
 def make_constant_object_classify(input_path, training_output_path):
@@ -102,6 +99,8 @@ def make_constant_object_classify(input_path, training_output_path):
     return obj
 
 
+
+
 def classify():
     if not COINS:
         input_path = pathlib.Path(__file__).resolve().parent / 'input_data'
@@ -109,10 +108,13 @@ def classify():
         input_path = pathlib.Path(__file__).resolve().parent / 'input_coins'
 
     train_result_path = TRAIN_OUTPUT_PATH
-    const_obj_classify = make_constant_object_classify(input_path/ 'template1',
+    if SAVE_PRINTS:
+        save.redirect_stdout_to_txt(train_result_path / "printed_during_classify.txt")
+    print("Classifying!")
+    const_obj_classify = make_constant_object_classify(input_path/ 'template0',
                                                        train_result_path)
 
-    img_to_classify = load.load_classify_images(input_path,coins=COINS)
+    img_to_classify = load.load_classify_images(input_path, coins=COINS)
 
     image_classifier = classifier.ImageClassifier(cons_obj=const_obj_classify,
                                                   images=img_to_classify,
@@ -124,13 +126,16 @@ def classify():
                                                  name=template_name)
         image_classifier.template_search(epochs=1,
                                          template=curr_template)
-
     res = image_classifier.compute_and_save_results()
-    save.handle_save_classification_results(train_result_path, res)
+    if SAVE_PRINTS:
+        save.bring_back_stdout()
     return res
 
-if DO_CLASSIFY:
-    classify_results = classify()
+
+if __name__ == '__main__':
+    TRAIN_OUTPUT_PATH = train() if DO_TRAIN else DEFAULT_CLASSIFY_PATH
+    if DO_CLASSIFY:
+        classify_results = classify()
 
 
 
