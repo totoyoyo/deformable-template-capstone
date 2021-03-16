@@ -73,7 +73,16 @@ class TrainingConstants:
     def __init__(self, images, ag, ap, t_sd2, d_sd2, init_sd, epochs=1000,
                  iterations=5,
                  train=True):
-        if train:
+        if not train:
+            self.template_sd2 = t_sd2
+            self.deform_sd2 = d_sd2
+            self.all_pixels = self.get_all_pixels()
+            self.p_centers = kernel_other_pixel(self.all_pixels, even=True)
+            self.g_centers = kernel_other_pixel(self.all_pixels, even=True)
+            self.images = images
+            self.image_nrow, self.image_ncol = self.images[0].shape
+            self.image_total = self.image_nrow * self.image_ncol
+        else:
             self.AG = ag
             self.AP = ap
             self.template_sd2 = t_sd2

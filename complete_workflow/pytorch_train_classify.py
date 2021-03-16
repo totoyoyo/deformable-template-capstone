@@ -4,7 +4,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 import torch
 import torch.nn.functional as tnf
 import functions_maker as func
-import classify
+import classifier
 
 # Convert from diag to coo and then to tensor
 # Also learn how to clear gpu memory
@@ -118,6 +118,7 @@ class PyTorchOptimizer:
             torch.cuda.empty_cache()
             return list_of_numpy
 
+
 class KBpA(torch.nn.Module):
 
     def __init__(self, alphas, curr_betas, sdp2, all_pixels, all_p_centers,
@@ -149,4 +150,58 @@ class KBpA(torch.nn.Module):
 
 class PyTorchClassify:
 
-    def __init__(self, template: classify.TemplateClass):
+    def __init__(self, alphas, g_inv, sdp2, sdl2, images,
+                 pytorch_const: PyTorchConstants):
+        self.pytorch_const = pytorch_const
+        self.alphas = torch.from_numpy(alphas).float().cuda()
+
+        # self.image = torch_all_images
+        self.image = torch.tensor(images, dtype=torch.float32,
+                                  device=torch.device('cuda'))
+        # Beta dimention is images, centers,
+        number_of_images = self.image.size()[0]
+        self.curr_betas = torch.zeros((number_of_images,
+                                       pytorch_const.n_centers, 2),
+                                      dtype=torch.float32,
+                                      device=torch.device('cuda'))
+        self.g_inv = torch.from_numpy(g_inv).float().cuda()
+        self.sdp2 = sdp2
+        self.sdl2 = sdl2
+
+    def optimize_betas(self, iter):
+        image_predictor = KBpA(alphas=self.alphas,
+                               curr_betas=self.curr_betas,
+                               sdp2=self.sdp2,
+                               all_pixels=self.pytorch_const.torch_all_pixel,
+                               all_p_centers=self.pytorch_const.torch_C_a,
+                               pytorch_const=self.pytorch_const).cuda()
+        criterion = torch.nn.MSELoss(reduction='sum').cuda()
+        # optimizer = torch.optim.SGD(image_predictor.parameters(),
+        #                             lr=0.001,
+        #                             nesterov=True)
+
+        optimizer = torch.optim.AdamW(image_predictor.parameters())
+        # optimizer = torch.optim.RMSprop(image_predictor.parameters())
+        # optimizer = torch.optim.LBFGS(params=image_predictor.parameters())
+        for i in range(iter):
+            pred = image_predictor()
+
+            # Dont forget to multiply by the sd
+            loss_right = (1 / (2 * self.sdl2)) * criterion(self.image, pred)
+
+            loss_left = None
+            for betas in image_predictor.parameters():
+                beta_t = torch.transpose(betas, 1, 2)
+                before_trace = beta_t @ self.g_inv @ betas
+                diag = torch.diagonal(before_trace,offset=0,dim1=-2,dim2=-1)
+                loss_left = (1 / 2) * torch.sum(diag)
+
+            loss = loss_left + loss_right
+            optimizer.zero_grad()
+            loss.backward()
+            # optimizer.step()
+            optimizer.step()
+
+        loss_np = loss.item()
+        torch.cuda.empty_cache()
+        return loss_np

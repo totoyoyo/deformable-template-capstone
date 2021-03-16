@@ -5,7 +5,7 @@ import os
 if SERVER:
     os.environ['OPENBLAS_NUM_THREADS'] = '4'
 
-import classify
+import classifier
 import pytorch_train_classify
 import trainer
 import constants_maker as const
@@ -27,7 +27,7 @@ DEFORM_SD2 = 1
 EPOCHS = 1
 ITERATIONS = 1
 INIT_SD2 = 1
-COINS = True
+COINS = False
 
 
 """
@@ -45,9 +45,9 @@ def do_training_and_save(template_name, const_object,
     to_train.save_all()
 
 
-def make_constant_object(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
-                         d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
-                         iterations=ITERATIONS):
+def make_constant_object_train(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
+                               d_sd2=DEFORM_SD2, init_sd=INIT_SD2, epochs=EPOCHS,
+                               iterations=ITERATIONS):
     if not COINS:
         images = load.load_train_images_digits(template_path=template_path)
     else:
@@ -75,7 +75,7 @@ def train():
         # sys.stdout = open(training_output_path / "printed.txt", "w")
     for template_path in data_path.glob('template*'):
         template_name = template_path.stem
-        const_obj = make_constant_object(template_path=template_path)
+        const_obj = make_constant_object_train(template_path=template_path)
         do_training_and_save(template_name=template_name,
                              const_object=const_obj,
                              training_output_path=training_output_path)
