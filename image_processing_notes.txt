@@ -1,0 +1,6 @@
+
+cv area interpolation is the same
+as PiL resize
+
+cv2.fastNlMeans with h= 15 or 20 is good for denoise
+
