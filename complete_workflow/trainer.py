@@ -11,8 +11,7 @@ import time
 import save
 
 float_one = np.float32(1)
-batch_size = 10
-
+batch_size = 2
 
 class Estimator2DNImages:
 

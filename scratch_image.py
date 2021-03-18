@@ -12,43 +12,11 @@ np_img = np.array(pil_img)
 # scaled1 = (np_img / 255)
 
 img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-cv_img_n = cv2.resize(img, (100,100),
-                    interpolation=cv2.INTER_NEAREST)
-cv_img_l = cv2.resize(img, (100,100),
-                    interpolation=cv2.INTER_LINEAR)
 cv_img_a = cv2.resize(img, (100,100),
                     interpolation=cv2.INTER_AREA)
-cv_img_c = cv2.resize(img, (100,100),
-                    interpolation=cv2.INTER_CUBIC)
-cv_img_la = cv2.resize(img, (100,100),
-                    interpolation=cv2.INTER_LANCZOS4)
 
-# plt.imshow(np_img, cmap='gray')
-# plt.title("Pil")
-# plt.show()
-#
-plt.imshow(img, cmap='gray')
-plt.title("Opencv orig")
-plt.show()
-#
-# plt.imshow(cv_img_n, cmap='gray')
-# plt.title("Opencv nearest")
-# plt.show()
-#
-# plt.imshow(cv_img_l, cmap='gray')
-# plt.title("Opencv linear")
-# plt.show()
-#
-plt.imshow(cv_img_a, cmap='gray')
-plt.title("Opencv area")
-plt.show()
-#
-# plt.imshow(cv_img_c, cmap='gray')
-# plt.title("Opencv cubic")
-# plt.show()
-#
-# plt.imshow(cv_img_la, cmap='gray')
-# plt.title("Opencv lanc")
+# plt.imshow(cv_img_a, cmap='gray')
+# plt.title("Opencv area")
 # plt.show()
 
 my_h= 20
@@ -65,9 +33,9 @@ from skimage.restoration import (denoise_tv_chambolle, denoise_bilateral,
 my_tv_weight = 0.1
 dst = denoise_tv_chambolle(image=img,
                            weight=my_tv_weight)
-plt.imshow(dst, cmap='gray')
-plt.title("Tv lanc" + str(my_tv_weight))
-plt.show()
+# plt.imshow(dst, cmap='gray')
+# plt.title("Tv lanc" + str(my_tv_weight))
+# plt.show()
 
 #
 # dst = denoise_bilateral(image=img)
@@ -101,14 +69,39 @@ sobel_x = cv2.Sobel(dstf, dx=1, dy=0, ddepth=cv2.CV_64F,
 sobel_y = cv2.Sobel(dstf, dx=0, dy=1, ddepth=cv2.CV_64F,
                            ksize=sobel_k, borderType=cv2.BORDER_REFLECT)
 
-grad_approx = cv2.addWeighted(np.abs(sobel_x), 0.5, np.abs(sobel_y), 0.5, 0)
-plt.imshow(grad_approx, cmap='jet')
-plt.title("sobel approx")
-plt.colorbar()
-plt.show()
 
 grad_correct = np.sqrt((sobel_x **2 + sobel_y**2))
 plt.imshow(grad_correct, cmap='jet')
 plt.title("sobel real")
 plt.colorbar()
 plt.show()
+
+
+cv_img_a = cv2.resize(grad_correct, (100,100),
+                    interpolation=cv2.INTER_AREA)
+plt.imshow(cv_img_a, cmap='jet')
+plt.title("Opencv area")
+plt.show()
+
+cv_img_a = cv2.resize(laplacian, (100,100),
+                    interpolation=cv2.INTER_AREA)
+plt.imshow(cv_img_a, cmap='jet')
+plt.title("Opencv area")
+plt.show()
+
+hh, ww = img.shape
+
+ycen = hh // 2
+xcen = ww // 2
+
+mask1 = np.zeros_like(img)
+mask1 = cv2.circle(mask1,center=(ycen,xcen),radius=100,color=1,thickness=-1)
+masked = cv2.bitwise_and(img, img, mask=mask1)
+# plt.imshow(masked)
+# plt.show()
+
+masked2 = np.where(mask1 == 1, img, 0)
+plt.imshow(masked2)
+plt.show()
+
+

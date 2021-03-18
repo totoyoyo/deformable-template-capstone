@@ -1,4 +1,6 @@
 from pathlib import Path
+
+import cv2
 import matplotlib.pyplot as plt
 main_path = Path(__file__).resolve().parent
 from PIL import Image
@@ -9,21 +11,16 @@ def load_train_images_digits(template_path=Path()):
     image_folder = template_path / "train"
     png_list = []
     for image_path in image_folder.glob("*.png"):
-        image = plt.imread(image_path)
-        png_list.append(image)
-        print(image.shape)
-        print(image.dtype)
+        arr = get_digit_array(image_path)
+        png_list.append(arr)
     return png_list
 
 def load_train_images_coins(template_path=Path()):
     image_folder = template_path / "train"
     jpg_list = []
-    for image_path in image_folder.glob("*.jpg"):
-        img = Image.open(image_path).convert('L')
-        img = img.resize((100, 100))
-        np_img = np.array(img)
-        np_img[np_img == 255] = 0
-        jpg_list.append(np_img / 255)
+    for image_path in image_folder.glob("*.png"):
+        arr = get_coin_array(image_path)
+        jpg_list.append(arr)
     return jpg_list
 
 
@@ -40,7 +37,7 @@ def load_train_images(template_path=Path(), coins=False):
 
 
 def load_classify_images(input_data=Path(), coins=False):
-    types = ('**/test/*.jpg', '**/test/*.png')  # the tuple of file types
+    types = ('**/test/*.absolute_nonsense', '**/test/*.png')  # the tuple of file types
     files_grabbed = []
     for files in types:
         files_grabbed.extend(input_data.glob(files))
@@ -64,12 +61,10 @@ def load_classify_images(input_data=Path(), coins=False):
 
 
 def get_coin_array(image_path):
-    img = Image.open(image_path).convert('L')
-    img = img.resize((100, 100))
-    np_img = np.array(img)
-    np_img[np_img == 255] = 0
-    scaled = (np_img / 255)
+    img = cv2.imread(str(image_path),cv2.IMREAD_GRAYSCALE)
+    scaled = img/255
     return scaled
+
 
 def get_digit_array(image_path):
     image = plt.imread(image_path)
