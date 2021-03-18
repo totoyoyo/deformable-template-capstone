@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import cv2
 import matplotlib.pyplot as plt
 main_path = Path(__file__).resolve().parent
 from PIL import Image
@@ -61,9 +60,10 @@ def load_classify_images(input_data=Path(), coins=False):
 
 
 def get_coin_array(image_path):
-    img = cv2.imread(str(image_path),cv2.IMREAD_GRAYSCALE)
-    scaled = img/255
-    return scaled
+    img1 = plt.imread(image_path)
+    print(img1.shape)
+    print(img1.dtype)
+    return img1
 
 
 def get_digit_array(image_path):
