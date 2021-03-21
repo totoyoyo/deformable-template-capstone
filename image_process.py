@@ -72,7 +72,7 @@ def canny_process_img_and_save(img_path, l_t=150, h_t=300,
     return rescaled
 
 main_path = Path(__file__).resolve().parent
-image_folder = main_path / "orig_coins"
+image_folder = main_path / "orig_coin_5_classes"
 for image_path in image_folder.glob("**/*.jpg"):
     process_img_and_save(image_path,sobel=False,kernel_size=5)
 

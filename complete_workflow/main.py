@@ -19,12 +19,12 @@ DO_TRAIN = True
 DO_CLASSIFY = True
 DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output10'
 
-AG = 5
-TEMPLATE_SD2 = 1
-AP = 1
-DEFORM_SD2 = 1
-EPOCHS = 1
-ITERATIONS = 1
+AG = 2.5
+TEMPLATE_SD2 = 4
+AP = 10
+DEFORM_SD2 = 4
+EPOCHS = 1000
+ITERATIONS = 5
 INIT_SD2 = 1
 
 
@@ -49,7 +49,7 @@ def make_constant_object_train(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
         images = load.load_train_images_digits(template_path=template_path)
     else:
         images = load.load_train_images_coins(template_path=template_path)
-    obj = const.TrainingConstants(images=images, ag=len(images), ap=ap, t_sd2=t_sd2,
+    obj = const.TrainingConstants(images=images, ag=len(images)/4, ap=ap, t_sd2=t_sd2,
                                   d_sd2=d_sd2, init_sd=init_sd,
                                   epochs=epochs, iterations=iterations)
     return obj
