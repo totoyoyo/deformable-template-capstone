@@ -29,6 +29,33 @@ def process_img_and_save(img_path : Path, denoise_h=20,
     im.save(img_folder / (img_orig_name + "_p_l" + str(kernel_size) + ".png"))
     return rescaled
 
+def process_after_cropped(img_path : Path, denoise_h=20, filter=False,
+                            sobel=True, kernel_size=3):
+    img = cv2.imread(str(img_path), cv2.IMREAD_GRAYSCALE)
+    img = cv2.resize(img, (270, 270),
+                     interpolation=cv2.INTER_AREA)
+    denoised = cv2.fastNlMeansDenoising(src=img, dst=None, h=denoise_h)
+    if filter:
+        if sobel:
+            filtered = apply_sobel(denoised, kernel_size)
+        else:
+            filtered = apply_laplacian(denoised, kernel_size)
+    else:
+        filtered = denoised
+    masked = apply_circle_mask(filtered, radius=135)
+    normalized = cv2.equalizeHist(masked)
+    resized_to_100 = cv2.resize(normalized, (100,100),
+                    interpolation=cv2.INTER_AREA)
+    # resized_to_100 = masked
+    rescaled = ((resized_to_100 / resized_to_100.max()) * 255).astype("uint8")
+    im = Image.fromarray(rescaled)
+    img_orig_name = img_path.stem
+    img_folder = img_path.parent
+    im.save(img_folder / (img_orig_name + "no_filter" + ".png"))
+    return rescaled
+
+
+
 
 def apply_sobel(img, kernel_size):
     sobel_x = cv2.Sobel(img, dx=1, dy=0, ddepth=cv2.CV_64F,
@@ -71,10 +98,16 @@ def canny_process_img_and_save(img_path, l_t=150, h_t=300,
     im.save(img_folder / (img_orig_name +"_p_can" + ".png"))
     return rescaled
 
+# main_path = Path(__file__).resolve().parent
+# image_folder = main_path / "orig_coin_5_classes"
+# for image_path in image_folder.glob("**/*.jpg"):
+#     process_img_and_save(image_path,sobel=False,kernel_size=5)
+
+
 main_path = Path(__file__).resolve().parent
-image_folder = main_path / "orig_coin_5_classes"
+image_folder = main_path / "cropped_coins"
 for image_path in image_folder.glob("**/*.jpg"):
-    process_img_and_save(image_path,sobel=False,kernel_size=5)
+    process_after_cropped(image_path)
 
 # Sobel noisy
 #Canny is very sensitive to thresholds

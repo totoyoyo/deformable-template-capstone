@@ -1,6 +1,6 @@
 SERVER = False
 SAVE_PRINTS = False
-COINS = True
+COINS = False
 import os
 
 if SERVER:
@@ -20,9 +20,9 @@ DO_CLASSIFY = True
 DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output10'
 
 AG = 2.5
-TEMPLATE_SD2 = 4
-AP = 10
-DEFORM_SD2 = 4
+TEMPLATE_SD2 = 2
+AP = 100
+DEFORM_SD2 = 2
 EPOCHS = 1000
 ITERATIONS = 5
 INIT_SD2 = 1

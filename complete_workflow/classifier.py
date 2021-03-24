@@ -57,6 +57,14 @@ class ImageClassifier:
         self.df_out = pd.DataFrame(columns=img_names)
         self.neg_probability = []
         self.classify_output_path = output
+        self.save_orig_image(self.images)
+
+    def save_orig_image(self,images):
+        for image in images:
+            im_name = image['name']
+            im_array = image['arr']
+            self.save_image(im_array, img_name=im_name,
+                            template_name="orig")
 
     def template_search(self, epochs, template: TemplateClass):
         list_of_start_end_indexes = func. \
