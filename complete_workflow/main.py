@@ -1,6 +1,27 @@
+# ---------------Constants are here----------
+
+# turn on to limit cpu usage
 SERVER = False
+
+# Save print to file
 SAVE_PRINTS = False
+
+# use coins
 COINS = False
+
+# If not doing training, be sure to set DEFAULT_CLASSIFY_PATH below
+DO_TRAIN = False
+DO_CLASSIFY = True
+
+# Constants for the algorithm, most important are the two SD2 (sd-squared for gaussian)
+TEMPLATE_SD2 = 2
+DEFORM_SD2 = 2
+AG = 2.5
+AP = 100
+EPOCHS = 1000
+ITERATIONS = 5
+INIT_SD2 = 1
+
 import os
 
 if SERVER:
@@ -13,25 +34,10 @@ import load
 import save
 import pathlib
 
-### do some training
-
-DO_TRAIN = True
-DO_CLASSIFY = True
-DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output10'
-
-AG = 2.5
-TEMPLATE_SD2 = 2
-AP = 100
-DEFORM_SD2 = 2
-EPOCHS = 1000
-ITERATIONS = 5
-INIT_SD2 = 1
+DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output'
 
 
-"""
-Should be list of dictionaries
-"""
-
+# ------------- CONSTANTS END ------------
 
 def do_training_and_save(template_name, const_object,
                          training_output_path):
@@ -49,11 +55,10 @@ def make_constant_object_train(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
         images = load.load_train_images_digits(template_path=template_path)
     else:
         images = load.load_train_images_coins(template_path=template_path)
-    obj = const.TrainingConstants(images=images, ag=len(images)/4, ap=ap, t_sd2=t_sd2,
+    obj = const.TrainingConstants(images=images, ag=len(images) / 4, ap=ap, t_sd2=t_sd2,
                                   d_sd2=d_sd2, init_sd=init_sd,
                                   epochs=epochs, iterations=iterations)
     return obj
-
 
 
 def train():
@@ -80,7 +85,6 @@ def train():
     return training_output_path
 
 
-
 def make_constant_object_classify(input_path, training_output_path):
     if not COINS:
         images = load.load_train_images_digits(template_path=input_path)
@@ -95,8 +99,6 @@ def make_constant_object_classify(input_path, training_output_path):
     return obj
 
 
-
-
 def classify():
     if not COINS:
         input_path = pathlib.Path(__file__).resolve().parent / 'input_data'
@@ -107,7 +109,9 @@ def classify():
     if SAVE_PRINTS:
         save.redirect_stdout_to_txt(train_result_path / "printed_during_classify.txt")
     print("Classifying!")
-    const_obj_classify = make_constant_object_classify(input_path/ 'template0',
+
+    sample_template_path = next(input_path.glob("template*"))
+    const_obj_classify = make_constant_object_classify(sample_template_path,
                                                        train_result_path)
 
     img_to_classify = load.load_classify_images(input_path, coins=COINS)
@@ -133,8 +137,6 @@ if __name__ == '__main__':
     if DO_CLASSIFY:
         classify_results = classify()
 
-
-
 """
 Dictionary should contain (name, alphas, sd2, Gamma inv)
 """
@@ -148,11 +150,6 @@ size of dense representation is  200000000 bytes
 
 """ Could be a dataframe?"""
 """row: name alphas, sd2, gamma_inv"""
-
-
-
-
-
 
 """
 Now,we have a list of images with labels on them
@@ -168,10 +165,8 @@ return a list of labels for the images, and a list of likelihoods for all classe
 ie each image should have a list of likelihoods
 """
 
-
 ### do evaluation
 
 """
 Given list of labels and likelihoods 
-
 """

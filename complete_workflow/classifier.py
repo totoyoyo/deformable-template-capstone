@@ -84,11 +84,6 @@ class ImageClassifier:
                             template_name=template.name,
                             path=template_path)
 
-
-
-
-
-
     def template_search(self, epochs, template: TemplateClass):
         list_of_start_end_indexes = func. \
             get_list_of_indexes_for_slicing(slice_length=1,

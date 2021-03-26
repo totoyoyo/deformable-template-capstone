@@ -61,15 +61,15 @@ def load_classify_images(input_data=Path(), coins=False):
 
 def get_coin_array(image_path):
     img1 = plt.imread(image_path)
-    print(img1.shape)
-    print(img1.dtype)
+    name = image_path.stem
+    print("Loading" + name)
     return img1
 
 
 def get_digit_array(image_path):
     image = plt.imread(image_path)
-    print(image.shape)
-    print(image.dtype)
+    name = image_path.stem
+    print("Loading" + name)
     return image
 
 
