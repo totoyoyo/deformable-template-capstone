@@ -10,7 +10,7 @@ SAVE_PRINTS = False
 COINS = False
 
 # If not doing training, be sure to set DEFAULT_CLASSIFY_PATH below
-DO_TRAIN = False
+DO_TRAIN = True
 DO_CLASSIFY = True
 
 # Constants for the algorithm, most important are the two SD2 (sd-squared for gaussian)
@@ -18,8 +18,8 @@ TEMPLATE_SD2 = 2
 DEFORM_SD2 = 2
 AG = 2.5
 AP = 100
-EPOCHS = 1000
-ITERATIONS = 5
+EPOCHS = 1
+ITERATIONS = 2
 INIT_SD2 = 1
 
 import os

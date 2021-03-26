@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+
 main_path = Path(__file__).resolve().parent
 from PIL import Image
 import numpy as np
@@ -13,6 +14,7 @@ def load_train_images_digits(template_path=Path()):
         arr = get_digit_array(image_path)
         png_list.append(arr)
     return png_list
+
 
 def load_train_images_coins(template_path=Path()):
     image_folder = template_path / "train"
@@ -50,9 +52,9 @@ def load_classify_images(input_data=Path(), coins=False):
             arr = get_digit_array(image_path)
         image_name = image_path.name
         img_dict = {
-            'name' : image_name,
-            'arr' : arr,
-            'true_template_name' : template_name
+            'name': image_name,
+            'arr': arr,
+            'true_template_name': template_name
         }
         # print(img_dict)
         image_dict_list.append(img_dict)
@@ -61,15 +63,15 @@ def load_classify_images(input_data=Path(), coins=False):
 
 def get_coin_array(image_path):
     img1 = plt.imread(image_path)
-    name = image_path.stem
-    print("Loading" + name)
+    name = image_path.name
+    print("Loading image: " + name)
     return img1
 
 
 def get_digit_array(image_path):
     image = plt.imread(image_path)
-    name = image_path.stem
-    print("Loading" + name)
+    name = image_path.name
+    print("Loading image: " + name)
     return image
 
 
@@ -91,7 +93,6 @@ def load_template(template_output_path=Path()):
     for g_inv_path in template_output_path.glob("*.npy"):
         g_inv = np.load(g_inv_path)
     return dict_out, g_inv
-
 
 # out = load_hyperparameters(main_path/'train_output6')
 
