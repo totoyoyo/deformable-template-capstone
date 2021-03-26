@@ -64,7 +64,30 @@ class ImageClassifier:
             im_name = image['name']
             im_array = image['arr']
             self.save_image(im_array, img_name=im_name,
-                            template_name="orig")
+                            template_name="orig",
+                            path=self.classify_output_path)
+
+
+    def template_generate(self, template: TemplateClass, iters):
+        cov = np.linalg.pinv(template.g_inv,rcond=1e-6, hermitian=True)
+        n_kernels = np.shape(cov)[0]
+        alphas = template.alpha
+        sd2 = template.sd2
+        m = np.zeros(n_kernels)
+        template_path = self.classify_output_path / template.name
+        for i in range(iters):
+            name = "gen" + str(i)
+            sample_beta = np.random.multivariate_normal(mean=m,cov=cov,size=2, tol=1e-5,
+                                                        check_valid="ignore").T
+            img = self.compute_prediction_image(betas=sample_beta, alphas=alphas)
+            self.save_image(img,img_name=name,
+                            template_name=template.name,
+                            path=template_path)
+
+
+
+
+
 
     def template_search(self, epochs, template: TemplateClass):
         list_of_start_end_indexes = func. \
@@ -93,12 +116,14 @@ class ImageClassifier:
             betas, out = optimizer.optimize_betas(epochs)
             prediction_image = self.compute_prediction_image(betas[0], template.alpha)
             self.save_image(prediction_image,img_name=name_images,
-                            template_name=template.name)
+                            template_name=template.name,
+                            path=self.classify_output_path)
             prob = -(to_add + out)
             res.append(prob)
             print("--- %s seconds ---" % (time.time() - start_time))
         template_name = template.name
         self.df_out.loc[template_name] = res
+        self.template_generate(template=template, iters=5)
 
     def compute_prediction_image(self, betas, alphas):
         return self.cons_obj.kBpa(betas, alphas)
@@ -122,8 +147,7 @@ class ImageClassifier:
         out.to_csv(path_or_buf=self.classify_output_path / "final_results.csv")
         return out
 
-    def save_image(self, image, img_name, template_name):
-        path = self.classify_output_path
+    def save_image(self, image, img_name, template_name, path):
         path.mkdir(parents=True, exist_ok=True)
         image_to_save = func.unflatten_image(image,self.cons_obj.image_ncol)
         image_name = img_name + "_" + template_name

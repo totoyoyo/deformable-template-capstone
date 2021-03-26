@@ -1,0 +1,12 @@
+important const_object thing
+	deform_sd2
+	p_centers
+	all_pixels
+	g_centers
+	image_nrow
+	image_ncol
+	
+7 templates
+7 test
+	
+Investigate 87o.jpg of template 7 vs template 4
