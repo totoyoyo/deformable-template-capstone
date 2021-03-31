@@ -14,12 +14,12 @@ DO_TRAIN = True
 DO_CLASSIFY = True
 
 # Constants for the algorithm, most important are the two SD2 (sd-squared for gaussian)
-TEMPLATE_SD2 = 2
-DEFORM_SD2 = 2
-AG = 2.5
+TEMPLATE_SD2 = 3
+DEFORM_SD2 = 3
+AG = 15
 AP = 100
-EPOCHS = 1
-ITERATIONS = 2
+EPOCHS = 1000
+ITERATIONS = 10
 INIT_SD2 = 1
 
 import os
@@ -34,7 +34,7 @@ import load
 import save
 import pathlib
 
-DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output'
+DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output0'
 
 
 # ------------- CONSTANTS END ------------
@@ -55,7 +55,7 @@ def make_constant_object_train(template_path, ag=AG, ap=AP, t_sd2=TEMPLATE_SD2,
         images = load.load_train_images_digits(template_path=template_path)
     else:
         images = load.load_train_images_coins(template_path=template_path)
-    obj = const.TrainingConstants(images=images, ag=len(images) / 4, ap=ap, t_sd2=t_sd2,
+    obj = const.TrainingConstants(images=images, ag=ag, ap=ap, t_sd2=t_sd2,
                                   d_sd2=d_sd2, init_sd=init_sd,
                                   epochs=epochs, iterations=iterations)
     return obj

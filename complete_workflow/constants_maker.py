@@ -84,8 +84,9 @@ class TrainingConstants:
                                     self.images))
         self.all_pixels = self.get_all_pixels()
         self.p_centers = kernel_other_pixel(self.all_pixels, even=True)
-
         self.g_centers = kernel_other_pixel(self.all_pixels, even=True)
+        # self.p_centers = get_spread_out_kernels(self.all_pixels, distance=3)
+        # self.g_centers = get_spread_out_kernels(self.all_pixels, distance=3)
         TD_SAME = self.template_sd2 == self.deform_sd2 \
                   and np.array_equal(self.p_centers, self.g_centers)
         self.kp = self.p_centers.shape[0]
@@ -95,13 +96,13 @@ class TrainingConstants:
         self.mup = np.zeros((self.kp, 1), dtype='float32')
         self.SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(
             self.p_centers, self.kp, self.template_sd2,
-            1e-6)
+            1e-4)
         if TD_SAME:
             self.SPARSE_SIGMA_G_INV = self.SPARSE_SIGMA_P_INV
         else:
             self.SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(
                 self.g_centers, self.kg, self.deform_sd2,
-                1e-6)
+                1e-4)
 
         self.S_PIXEL_G_CENTERS_MATRIX = func.get_sparse_pixel_by_centers(
             all_pixels=self.all_pixels,

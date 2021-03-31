@@ -69,7 +69,7 @@ class ImageClassifier:
 
 
     def template_generate(self, template: TemplateClass, iters):
-        cov = np.linalg.pinv(template.g_inv,rcond=1e-6, hermitian=True)
+        cov = func.clean_pinv(template.g_inv)
         n_kernels = np.shape(cov)[0]
         alphas = template.alpha
         sd2 = template.sd2
@@ -92,6 +92,7 @@ class ImageClassifier:
         res = []
         npix = self.cons_obj.image_total
         to_add = (npix / 2) * np.log(2 * np.pi * template.sd2)
+        # to_add = 0
         for start_end in list_of_start_end_indexes:
             start = start_end[0]
             end = start_end[1]

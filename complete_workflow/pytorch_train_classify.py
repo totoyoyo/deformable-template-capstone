@@ -197,6 +197,8 @@ class PyTorchClassify:
                 loss_left = (1 / 2) * torch.sum(diag)
 
             loss = loss_left + loss_right
+
+            # loss = loss_right
             optimizer.zero_grad()
             loss.backward()
             # optimizer.step()

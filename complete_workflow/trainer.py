@@ -11,7 +11,7 @@ import time
 import save
 
 float_one = np.float32(1)
-batch_size = 2
+batch_size = 5
 
 class Estimator2DNImages:
 
@@ -30,7 +30,7 @@ class Estimator2DNImages:
         # KBP ARE SPARSE
         self.kBps = None
         # self.Gamma: np.ndarray = const.SIGMA_G
-        self.Gamma_Inv = cons_obj.SPARSE_SIGMA_G_INV
+        self.Gamma_Inv = cons_obj.SPARSE_SIGMA_G_INV.todense()
         self.images = cons_obj.flat_images
         yty = list(map((lambda image: func.faster_norm_squared(image)), self.images))
         self.YTY = (1 / self.number_of_images) \
@@ -44,7 +44,7 @@ class Estimator2DNImages:
 
     def update_all_betas(self):
         # Depends on current beta, Gamma, sd2, predictions, images
-        dense_gamma_inv = self.Gamma_Inv.todense()
+        dense_gamma_inv = self.Gamma_Inv
         list_of_start_end_indexes = func.get_list_of_indexes_for_slicing(batch_size,
                                                                     self.number_of_images)
         pytorch_constant = pt_op.PyTorchConstants(const_object=self.cons_obj)
@@ -89,8 +89,8 @@ class Estimator2DNImages:
         #              * (self.number_of_images * self._bbtl()
         #                 + const.AG * const.SIGMA_G)
         # tmp_inv = nl.pinv(new_gamma, hermitian=True)
-        tmp_inv = nl.pinv(new_gamma, rcond=1e-6, hermitian=True)
-        self.Gamma_Inv = func.to_sparse(tmp_inv)
+        tmp_inv = func.clean_pinv(new_gamma)
+        self.Gamma_Inv = tmp_inv
         print("Finished Gamma", self.Gamma_update_count, "time")
         print("--- %s seconds ---" % (time.time() - start_time))
         self.Gamma_update_count += 1
@@ -124,7 +124,7 @@ class Estimator2DNImages:
             a_left_before_inv = self.number_of_images * kkl \
                                 + self.sd2 * p_inverse
             # a_left_before_inv[abs(a_left_before_inv) < 1e-6] = 0.0
-            a_left = nl.pinv(a_left_before_inv,rcond=1e-6,hermitian=True)
+            a_left = func.clean_pinv(a_left_before_inv)
             # a_left = nl.pinv(a_left_before_inv,hermitian=True)
             a_right = (self.number_of_images * kyl + self.sd2 *
                        (p_inverse @ self.cons_obj.mup))
@@ -151,7 +151,7 @@ class Estimator2DNImages:
                                   npdata=alphas,
                                   data_name="alphas",
                                   suffix=".data")
-        g_inv = self.Gamma_Inv.todense().astype('float32')
+        g_inv = self.Gamma_Inv.astype('float32')
         save.handle_saving_compressed_npdata(parent_path=path,
                                              npdata=g_inv,
                                              data_name="g_inv",

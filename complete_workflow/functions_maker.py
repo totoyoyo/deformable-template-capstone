@@ -4,8 +4,16 @@ import scipy.sparse as ss
 
 def invert_to_dense(sparse_mat):
     dense = sparse_mat.todense()
-    inv_dense = np.linalg.pinv(dense, rcond=1e-6, hermitian=True)
-    return inv_dense
+    # u, s, vh = np.linalg.svd(dense)
+    # raw_inv = np.linalg.inv(dense)
+    pinv_dense = clean_pinv(dense)
+    # dense[dense < 1e-3] = 0
+    # pinv_norm = np.linalg.pinv(dense, rcond=1e-3, hermitian=True)
+    return pinv_dense
+
+def clean_pinv(mat):
+    pinv_mat = np.linalg.pinv(mat, rcond=1e-4, hermitian=True)
+    return pinv_mat
 
 
 def to_sparse(dense_mat,
