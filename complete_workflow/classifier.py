@@ -7,7 +7,7 @@ import pandas as pd
 import save
 from pathlib import Path
 import load
-
+import scipy.stats as stat
 """
 Takes a list of images:
 
@@ -79,6 +79,8 @@ class ImageClassifier:
             name = "gen" + str(i)
             sample_beta = np.random.multivariate_normal(mean=m,cov=cov,size=2, tol=1e-5,
                                                         check_valid="ignore").T
+            # dist = stat.multivariate_normal(cov=cov)
+            # sample_beta = dist.rvs(size=2).T
             img = self.compute_prediction_image(betas=sample_beta, alphas=alphas)
             self.save_image(img,img_name=name,
                             template_name=template.name,

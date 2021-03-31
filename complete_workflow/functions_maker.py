@@ -1,19 +1,26 @@
 # old from constants---------------------
 import numpy as np
 import scipy.sparse as ss
+import scipy.stats as stat
 
 def invert_to_dense(sparse_mat):
     dense = sparse_mat.todense()
     # u, s, vh = np.linalg.svd(dense)
     # raw_inv = np.linalg.inv(dense)
     pinv_dense = clean_pinv(dense)
+    back = clean_pinv(pinv_dense)
     # dense[dense < 1e-3] = 0
     # pinv_norm = np.linalg.pinv(dense, rcond=1e-3, hermitian=True)
     return pinv_dense
 
 def clean_pinv(mat):
-    pinv_mat = np.linalg.pinv(mat, rcond=1e-4, hermitian=True)
+    error = 1e-5
+    copy_mat = mat.copy()
+    copy_mat[abs(copy_mat) < error] = 0.0
+    pinv_mat = np.linalg.pinv(copy_mat, rcond=error, hermitian=True)
+    pinv_mat[abs(pinv_mat) < error] = 0.0
     return pinv_mat
+
 
 
 def to_sparse(dense_mat,

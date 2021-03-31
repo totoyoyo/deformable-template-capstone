@@ -16,7 +16,7 @@ DO_CLASSIFY = True
 # Constants for the algorithm, most important are the two SD2 (sd-squared for gaussian)
 TEMPLATE_SD2 = 3
 DEFORM_SD2 = 3
-AG = 15
+AG = 0.5
 AP = 100
 EPOCHS = 1000
 ITERATIONS = 10

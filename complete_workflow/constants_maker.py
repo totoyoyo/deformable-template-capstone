@@ -64,7 +64,7 @@ def create_sparse_sigma_something_inverse(something_centers, k_something, some_s
     _xx = np.repeat(something_centers, k_something, axis=0)
     _yy = np.tile(something_centers, (k_something, 1))
     the_inv = gaussian_kernel_2d(_xx, _yy, some_sd2).reshape((k_something, k_something))
-    the_inv[np.abs(the_inv) < error] = 0.0
+    the_inv[the_inv < error] = 0.0
     s_inv = ss.csc_matrix(the_inv)
     return s_inv
 
@@ -96,13 +96,13 @@ class TrainingConstants:
         self.mup = np.zeros((self.kp, 1), dtype='float32')
         self.SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(
             self.p_centers, self.kp, self.template_sd2,
-            1e-4)
+            1e-6)
         if TD_SAME:
             self.SPARSE_SIGMA_G_INV = self.SPARSE_SIGMA_P_INV
         else:
             self.SPARSE_SIGMA_G_INV = create_sparse_sigma_something_inverse(
                 self.g_centers, self.kg, self.deform_sd2,
-                1e-4)
+                1e-6)
 
         self.S_PIXEL_G_CENTERS_MATRIX = func.get_sparse_pixel_by_centers(
             all_pixels=self.all_pixels,
