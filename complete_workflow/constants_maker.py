@@ -19,7 +19,7 @@ def kernel_on_every_pixel(img_dim_x, img_dim_y):
 
     x_2d = np.c_[IX.ravel(), IY.ravel()]
 
-    return x_2d.astype('float32')
+    return x_2d
 
 
 def get_spread_out_kernels(all_pixels, distance, randomize=False):
@@ -54,7 +54,7 @@ def gaussian_kernel_2d(x_val, center_val, sd2):
     diff = np.linalg.norm(x_val - center_val, axis=1)
     inter = (-((diff) ** 2)
              / (2 * sd2))
-    out = np.exp(inter, dtype='float32')
+    out = np.exp(inter)
     # Should be a float
     return out
 
@@ -85,15 +85,15 @@ class TrainingConstants:
         self.all_pixels = self.get_all_pixels()
         self.p_centers = kernel_other_pixel(self.all_pixels, even=True)
         self.g_centers = kernel_other_pixel(self.all_pixels, even=True)
-        # self.p_centers = get_spread_out_kernels(self.all_pixels, distance=3)
-        # self.g_centers = get_spread_out_kernels(self.all_pixels, distance=3)
+        # self.p_centers = get_spread_out_kernels(self.all_pixels, distance=1.9)
+        # self.g_centers = get_spread_out_kernels(self.all_pixels, distance=1.9)
         TD_SAME = self.template_sd2 == self.deform_sd2 \
                   and np.array_equal(self.p_centers, self.g_centers)
         self.kp = self.p_centers.shape[0]
         self.kg = self.g_centers.shape[0]
-        self.alphas_init = np.zeros((self.kp, 1), dtype='float32')
-        self.betas_init = np.zeros((self.kg, 2), dtype='float32')
-        self.mup = np.zeros((self.kp, 1), dtype='float32')
+        self.alphas_init = np.zeros((self.kp, 1))
+        self.betas_init = np.zeros((self.kg, 2))
+        self.mup = np.zeros((self.kp, 1))
         self.SPARSE_SIGMA_P_INV = create_sparse_sigma_something_inverse(
             self.p_centers, self.kp, self.template_sd2,
             1e-6)
@@ -128,7 +128,7 @@ class TrainingConstants:
     def get_all_pixels(self):
         IY, IX = np.meshgrid(np.arange(self.image_ncol),
                              np.arange(self.image_nrow))
-        all_pixels = np.c_[IX.ravel(), IY.ravel()].astype('float32')
+        all_pixels = np.c_[IX.ravel(), IY.ravel()]
         return all_pixels
 
     def kBpa(self,betas, alphas):

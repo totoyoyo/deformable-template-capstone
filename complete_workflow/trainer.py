@@ -10,7 +10,6 @@ import pytorch_train_classify as pt_op
 import time
 import save
 
-float_one = np.float32(1)
 batch_size = 5
 
 class Estimator2DNImages:
@@ -151,7 +150,7 @@ class Estimator2DNImages:
                                   npdata=alphas,
                                   data_name="alphas",
                                   suffix=".data")
-        g_inv = self.Gamma_Inv.astype('float32')
+        g_inv = self.Gamma_Inv
         save.handle_saving_compressed_npdata(parent_path=path,
                                              npdata=g_inv,
                                              data_name="g_inv",

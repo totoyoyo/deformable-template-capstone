@@ -21,8 +21,8 @@ class PyTorchConstants:
         self.padding, self.kernel = func.generate_gaussian_kernel(
             const_object.deform_sd2
         )
-        self.torch_C_a = torch.from_numpy(const_object.p_centers).cuda()
-        self.torch_all_pixel = torch.from_numpy(const_object.all_pixels).cuda()
+        self.torch_C_a = torch.from_numpy(const_object.p_centers).float().cuda()
+        self.torch_all_pixel = torch.from_numpy(const_object.all_pixels).float().cuda()
         self.n_pixels = self.torch_all_pixel.size()[0]
         self.n_centers = self.torch_C_a.size()[0]
         self.ones_pixels = torch.ones((1, self.n_pixels), dtype=torch.float32,
@@ -43,7 +43,7 @@ class PyTorchConstants:
         return empty_tensor
 
     def do_batch_convolution(self, beta_images, kernel):
-        t_kernel = torch.from_numpy(kernel).cuda()
+        t_kernel = torch.from_numpy(kernel).float().cuda()
         kernel_row = t_kernel.size()[0]
         kernel_col = t_kernel.size()[1]
         big_kernel = t_kernel.expand(2, 1, kernel_row, kernel_col)

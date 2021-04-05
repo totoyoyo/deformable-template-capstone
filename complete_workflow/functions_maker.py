@@ -5,20 +5,21 @@ import scipy.stats as stat
 
 def invert_to_dense(sparse_mat):
     dense = sparse_mat.todense()
-    # u, s, vh = np.linalg.svd(dense)
+    u, s, vh = np.linalg.svd(dense)
     # raw_inv = np.linalg.inv(dense)
     pinv_dense = clean_pinv(dense)
-    back = clean_pinv(pinv_dense)
+    # back = clean_pinv(pinv_dense)
     # dense[dense < 1e-3] = 0
     # pinv_norm = np.linalg.pinv(dense, rcond=1e-3, hermitian=True)
     return pinv_dense
 
 def clean_pinv(mat):
-    error = 1e-5
+    error = 1e-6
     copy_mat = mat.copy()
-    copy_mat[abs(copy_mat) < error] = 0.0
+    u, s, vh = np.linalg.svd(copy_mat)
+    # copy_mat[copy_mat < error] = 0.0
     pinv_mat = np.linalg.pinv(copy_mat, rcond=error, hermitian=True)
-    pinv_mat[abs(pinv_mat) < error] = 0.0
+    # pinv_mat[pinv_mat < error] = 0.0
     return pinv_mat
 
 
@@ -33,7 +34,7 @@ def gaussian_kernel_original(x_val, sd):
     diff = np.linalg.norm(x_val)
     inter = (-((diff) ** 2)
              / (2 * sd ** 2))
-    out = np.exp(inter, dtype='float32')
+    out = np.exp(inter)
     # Should be a float
     return out
 
@@ -64,7 +65,7 @@ def gaussian_kernel_naive(pixel_row, pixel_col, sd2):
     diff = pixel_row ** 2 + pixel_col ** 2
     inter = (-(diff)
              / (2 * sd2))
-    out = np.exp(inter, dtype='float32')
+    out = np.exp(inter)
     return out
 
 
@@ -141,7 +142,7 @@ def generate_gaussian_kernel(sd2):
     sd = np.sqrt(sd2)
     c = np.ceil(sd * 4)
     x = np.arange(0, 2 * c + 1)
-    RBF = np.exp(- (1 / (2 * sd2)) * (x - c) ** 2, dtype = 'float32')
+    RBF = np.exp(- (1 / (2 * sd2)) * (x - c) ** 2)
     RBF2 = np.outer(RBF, RBF)
     return c.astype('int'), RBF2
 
@@ -163,7 +164,7 @@ def make_image_of_betas_for_conv(betas, beta_centers, image_row, image_col):
     :param image_col:
     :return: 2 by image_row by image_col array (the 2 is the 2 channels of betas)
     """
-    empty_array = np.zeros((2,image_row,image_col), dtype='float32')
+    empty_array = np.zeros((2,image_row,image_col))
     rows, cols = beta_centers.T
     empty_array[:, rows, cols] = betas.T
     return empty_array
