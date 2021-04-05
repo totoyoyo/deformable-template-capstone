@@ -1,6 +1,6 @@
 # Deformable Template Estimation Implementation
 
-This is an implementation of the deformable template estimation based on Allassonnière et al. 2007
+This is an implementation of the deformable template model as described in Allassonnière et al. 2007.
 The paper is freely available [here](http://galton.uchicago.edu/~amit/Papers/em.pdf).
 
 # Quick start
