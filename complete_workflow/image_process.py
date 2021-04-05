@@ -107,7 +107,7 @@ def canny_process_img_and_save(img_path, l_t=150, h_t=300,
 
 
 main_path = Path(__file__).resolve().parent
-image_folder = main_path / "cropped_coins"
+image_folder = main_path / "input_coins"
 for image_path in image_folder.glob("**/*.jpg"):
     process_after_cropped(image_path)
 
