@@ -18,9 +18,14 @@ TEMPLATE_SD2 = 3
 DEFORM_SD2 = 3
 AG = 0.5
 AP = 100
-EPOCHS = 1000
-ITERATIONS = 5
 INIT_SD2 = 1
+
+# Steps for gradient descent
+EPOCHS = 1000
+# Max iteration in EM algorithm
+ITERATIONS = 5
+# Batch size for training (keep this to 2 if using coin images)
+TRAIN_BATCH_SIZE = 2
 
 import os
 
@@ -34,7 +39,7 @@ import load
 import save
 import pathlib
 
-DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output0'
+DEFAULT_CLASSIFY_PATH = pathlib.Path(__file__).resolve().parent / 'train_output'
 
 
 # ------------- CONSTANTS END ------------

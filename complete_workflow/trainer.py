@@ -9,8 +9,9 @@ import matplotlib.pyplot as plt
 import pytorch_train_classify as pt_op
 import time
 import save
+from main import TRAIN_BATCH_SIZE
 
-batch_size = 5
+batch_size = TRAIN_BATCH_SIZE
 
 class Estimator2DNImages:
 

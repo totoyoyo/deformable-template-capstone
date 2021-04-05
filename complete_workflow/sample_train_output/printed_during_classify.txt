@@ -1,0 +1,89 @@
+Classifying!
+Loading image: 10ono_filter.png
+Loading image: 12ono_filter.png
+Loading image: 13ono_filter.png
+Loading image: 1ono_filter.png
+Loading image: 2ono_filter.png
+Loading image: 3ono_filter.png
+Loading image: 5ono_filter.png
+Loading image: 6ono_filter.png
+Loading image: 7ono_filter.png
+Loading image: 8ono_filter.png
+Loading image: 11ono_filter.png
+Loading image: 36ono_filter.png
+Loading image: 43ono_filter.png
+Loading image: 74ono_filter.png
+Loading image: 83ono_filter.png
+Loading image: 97ono_filter.png
+images at 0 to 1 (exclusive)
+--- 64.18152809143066 seconds ---
+images at 1 to 2 (exclusive)
+--- 64.0263466835022 seconds ---
+images at 2 to 3 (exclusive)
+--- 63.904343605041504 seconds ---
+images at 3 to 4 (exclusive)
+--- 64.85142588615417 seconds ---
+images at 4 to 5 (exclusive)
+--- 64.627934217453 seconds ---
+images at 5 to 6 (exclusive)
+--- 63.77163028717041 seconds ---
+images at 0 to 1 (exclusive)
+--- 64.90312910079956 seconds ---
+images at 1 to 2 (exclusive)
+--- 64.60667514801025 seconds ---
+images at 2 to 3 (exclusive)
+--- 65.10883235931396 seconds ---
+images at 3 to 4 (exclusive)
+--- 64.59774804115295 seconds ---
+images at 4 to 5 (exclusive)
+--- 64.15977740287781 seconds ---
+images at 5 to 6 (exclusive)
+--- 64.28622388839722 seconds ---
+images at 0 to 1 (exclusive)
+--- 65.41607093811035 seconds ---
+images at 1 to 2 (exclusive)
+--- 64.65621638298035 seconds ---
+images at 2 to 3 (exclusive)
+--- 65.0450279712677 seconds ---
+images at 3 to 4 (exclusive)
+--- 65.62599349021912 seconds ---
+images at 4 to 5 (exclusive)
+--- 65.61164093017578 seconds ---
+images at 5 to 6 (exclusive)
+--- 65.30652499198914 seconds ---
+images at 0 to 1 (exclusive)
+--- 65.1021101474762 seconds ---
+images at 1 to 2 (exclusive)
+--- 65.03229212760925 seconds ---
+images at 2 to 3 (exclusive)
+--- 65.6652283668518 seconds ---
+images at 3 to 4 (exclusive)
+--- 64.63338375091553 seconds ---
+images at 4 to 5 (exclusive)
+--- 65.24455833435059 seconds ---
+images at 5 to 6 (exclusive)
+--- 65.56112885475159 seconds ---
+images at 0 to 1 (exclusive)
+--- 64.40167164802551 seconds ---
+images at 1 to 2 (exclusive)
+--- 64.51585650444031 seconds ---
+images at 2 to 3 (exclusive)
+--- 63.814512729644775 seconds ---
+images at 3 to 4 (exclusive)
+--- 64.56150269508362 seconds ---
+images at 4 to 5 (exclusive)
+--- 63.95079493522644 seconds ---
+images at 5 to 6 (exclusive)
+--- 64.38086581230164 seconds ---
+images at 0 to 1 (exclusive)
+--- 64.57492923736572 seconds ---
+images at 1 to 2 (exclusive)
+--- 64.4719545841217 seconds ---
+images at 2 to 3 (exclusive)
+--- 64.48735761642456 seconds ---
+images at 3 to 4 (exclusive)
+--- 64.50541591644287 seconds ---
+images at 4 to 5 (exclusive)
+--- 63.9328670501709 seconds ---
+images at 5 to 6 (exclusive)
+--- 64.58976721763611 seconds ---

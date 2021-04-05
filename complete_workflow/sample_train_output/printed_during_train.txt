@@ -1,0 +1,479 @@
+Loading image: 10ono_filter.png
+Loading image: 12ono_filter.png
+Loading image: 13ono_filter.png
+Loading image: 1ono_filter.png
+Loading image: 2ono_filter.png
+Loading image: 3ono_filter.png
+Loading image: 5ono_filter.png
+Loading image: 6ono_filter.png
+Loading image: 7ono_filter.png
+Loading image: 8ono_filter.png
+Updating alpha 0 time
+Finish updating alpha 0 time
+--- 146.82888293266296 seconds ---
+Updating Gamma 0 time
+beta at 0 to 2 (exclusive)
+--- 112.25604391098022 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.3580710887909 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.4342532157898 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.29741501808167 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.30356764793396 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 0 time
+--- 87.96790146827698 seconds ---
+Updating alpha 1 time
+Finish updating alpha 1 time
+--- 138.3173270225525 seconds ---
+Updating Gamma 1 time
+beta at 0 to 2 (exclusive)
+--- 112.33742880821228 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.37317728996277 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.30530428886414 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.36960053443909 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.32578611373901 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 1 time
+--- 80.81713509559631 seconds ---
+Updating alpha 2 time
+Finish updating alpha 2 time
+--- 153.60099577903748 seconds ---
+Updating Gamma 2 time
+beta at 0 to 2 (exclusive)
+--- 112.2615258693695 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.3345775604248 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.12873101234436 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.2071578502655 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.29698276519775 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 2 time
+--- 81.09898924827576 seconds ---
+Updating alpha 3 time
+Finish updating alpha 3 time
+--- 147.32976150512695 seconds ---
+Updating Gamma 3 time
+beta at 0 to 2 (exclusive)
+--- 112.42510080337524 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.2958152294159 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.24453544616699 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.27357316017151 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.24700903892517 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 3 time
+--- 80.61616206169128 seconds ---
+Updating alpha 4 time
+Finish updating alpha 4 time
+--- 146.1876356601715 seconds ---
+Updating Gamma 4 time
+beta at 0 to 2 (exclusive)
+--- 112.31002831459045 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.13554549217224 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.1781542301178 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.2500548362732 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.31883764266968 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 4 time
+--- 89.5791335105896 seconds ---
+Updating alpha 5 time
+Finish updating alpha 5 time
+--- 146.02283191680908 seconds ---
+Loading image: 29ono_filter.png
+Loading image: 35ono_filter.png
+Loading image: 39ono_filter.png
+Loading image: 41ono_filter.png
+Updating alpha 0 time
+Finish updating alpha 0 time
+--- 113.62186527252197 seconds ---
+Updating Gamma 0 time
+beta at 0 to 2 (exclusive)
+--- 112.32264447212219 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.38848447799683 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 0 time
+--- 82.31707048416138 seconds ---
+Updating alpha 1 time
+Finish updating alpha 1 time
+--- 97.73651337623596 seconds ---
+Updating Gamma 1 time
+beta at 0 to 2 (exclusive)
+--- 112.08182978630066 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.18112325668335 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 1 time
+--- 77.14642715454102 seconds ---
+Updating alpha 2 time
+Finish updating alpha 2 time
+--- 103.24021077156067 seconds ---
+Updating Gamma 2 time
+beta at 0 to 2 (exclusive)
+--- 111.92612528800964 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.00194835662842 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 2 time
+--- 72.89460682868958 seconds ---
+Updating alpha 3 time
+Finish updating alpha 3 time
+--- 94.87297797203064 seconds ---
+Updating Gamma 3 time
+beta at 0 to 2 (exclusive)
+--- 111.93801474571228 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.0384373664856 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 3 time
+--- 77.26356816291809 seconds ---
+Updating alpha 4 time
+Finish updating alpha 4 time
+--- 94.84572219848633 seconds ---
+Updating Gamma 4 time
+beta at 0 to 2 (exclusive)
+--- 112.0447449684143 seconds ---
+beta at 2 to 4 (exclusive)
+--- 111.94347143173218 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 4 time
+--- 80.01765036582947 seconds ---
+Updating alpha 5 time
+Finish updating alpha 5 time
+--- 99.30082964897156 seconds ---
+Loading image: 45ono_filter.png
+Loading image: 46ono_filter.png
+Loading image: 48ono_filter.png
+Loading image: 49ono_filter.png
+Loading image: 52ono_filter.png
+Loading image: 55ono_filter.png
+Updating alpha 0 time
+Finish updating alpha 0 time
+--- 120.32390069961548 seconds ---
+Updating Gamma 0 time
+beta at 0 to 2 (exclusive)
+--- 112.29032182693481 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.11953902244568 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.31639075279236 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 0 time
+--- 81.48658299446106 seconds ---
+Updating alpha 1 time
+Finish updating alpha 1 time
+--- 109.61691975593567 seconds ---
+Updating Gamma 1 time
+beta at 0 to 2 (exclusive)
+--- 112.29805612564087 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.31595230102539 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.2915711402893 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 1 time
+--- 83.36895632743835 seconds ---
+Updating alpha 2 time
+Finish updating alpha 2 time
+--- 137.29662799835205 seconds ---
+Updating Gamma 2 time
+beta at 0 to 2 (exclusive)
+--- 112.09981513023376 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.18995594978333 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.32337307929993 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 2 time
+--- 80.29638314247131 seconds ---
+Updating alpha 3 time
+Finish updating alpha 3 time
+--- 133.55586218833923 seconds ---
+Updating Gamma 3 time
+beta at 0 to 2 (exclusive)
+--- 112.36912989616394 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.26200699806213 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.19642663002014 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 3 time
+--- 95.64145255088806 seconds ---
+Updating alpha 4 time
+Finish updating alpha 4 time
+--- 131.10031819343567 seconds ---
+Updating Gamma 4 time
+beta at 0 to 2 (exclusive)
+--- 112.17740178108215 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.21318316459656 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.19035744667053 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 4 time
+--- 92.40252304077148 seconds ---
+Updating alpha 5 time
+Finish updating alpha 5 time
+--- 136.95003509521484 seconds ---
+Loading image: 56ono_filter.png
+Loading image: 60ono_filter.png
+Loading image: 63ono_filter.png
+Loading image: 64ono_filter.png
+Loading image: 65ono_filter.png
+Loading image: 71ono_filter.png
+Loading image: 72ono_filter.png
+Loading image: 73ono_filter.png
+Loading image: 75ono_filter.png
+Loading image: 77ono_filter.png
+Loading image: 80ono_filter.png
+Updating alpha 0 time
+Finish updating alpha 0 time
+--- 165.6856927871704 seconds ---
+Updating Gamma 0 time
+beta at 0 to 2 (exclusive)
+--- 112.40526604652405 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.50490951538086 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.4800136089325 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.50062561035156 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.55790758132935 seconds ---
+beta at 10 to 11 (exclusive)
+--- 57.48701572418213 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 0 time
+--- 100.71421074867249 seconds ---
+Updating alpha 1 time
+Finish updating alpha 1 time
+--- 156.0689196586609 seconds ---
+Updating Gamma 1 time
+beta at 0 to 2 (exclusive)
+--- 112.26957988739014 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.4622106552124 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.46474552154541 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.57985949516296 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.38789892196655 seconds ---
+beta at 10 to 11 (exclusive)
+--- 57.44474673271179 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 1 time
+--- 90.0819525718689 seconds ---
+Updating alpha 2 time
+Finish updating alpha 2 time
+--- 152.06281518936157 seconds ---
+Updating Gamma 2 time
+beta at 0 to 2 (exclusive)
+--- 112.26415991783142 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.262610912323 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.29586362838745 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.40131258964539 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.41378593444824 seconds ---
+beta at 10 to 11 (exclusive)
+--- 57.53466272354126 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 2 time
+--- 98.42213010787964 seconds ---
+Updating alpha 3 time
+Finish updating alpha 3 time
+--- 179.66222167015076 seconds ---
+Updating Gamma 3 time
+beta at 0 to 2 (exclusive)
+--- 112.73615336418152 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.87813591957092 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.81678676605225 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.51648807525635 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.53996777534485 seconds ---
+beta at 10 to 11 (exclusive)
+--- 57.57646584510803 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 3 time
+--- 96.54262804985046 seconds ---
+Updating alpha 4 time
+Finish updating alpha 4 time
+--- 177.01152443885803 seconds ---
+Updating Gamma 4 time
+beta at 0 to 2 (exclusive)
+--- 112.6749153137207 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.38854813575745 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.60159206390381 seconds ---
+beta at 6 to 8 (exclusive)
+--- 112.6415228843689 seconds ---
+beta at 8 to 10 (exclusive)
+--- 112.53800630569458 seconds ---
+beta at 10 to 11 (exclusive)
+--- 57.46695685386658 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 4 time
+--- 95.04816436767578 seconds ---
+Updating alpha 5 time
+Finish updating alpha 5 time
+--- 168.25560998916626 seconds ---
+Loading image: 84ono_filter.png
+Loading image: 85ono_filter.png
+Loading image: 86ono_filter.png
+Loading image: 87ono_filter.png
+Loading image: 88ono_filter.png
+Loading image: 93ono_filter.png
+Updating alpha 0 time
+Finish updating alpha 0 time
+--- 126.05838394165039 seconds ---
+Updating Gamma 0 time
+beta at 0 to 2 (exclusive)
+--- 112.43253350257874 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.50727081298828 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.37436079978943 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 0 time
+--- 91.91214084625244 seconds ---
+Updating alpha 1 time
+Finish updating alpha 1 time
+--- 128.77781677246094 seconds ---
+Updating Gamma 1 time
+beta at 0 to 2 (exclusive)
+--- 112.37802195549011 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.38896894454956 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.40772557258606 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 1 time
+--- 91.91470170021057 seconds ---
+Updating alpha 2 time
+Finish updating alpha 2 time
+--- 130.1499047279358 seconds ---
+Updating Gamma 2 time
+beta at 0 to 2 (exclusive)
+--- 112.20897388458252 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.32424092292786 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.33935904502869 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 2 time
+--- 85.56909132003784 seconds ---
+Updating alpha 3 time
+Finish updating alpha 3 time
+--- 129.3033332824707 seconds ---
+Updating Gamma 3 time
+beta at 0 to 2 (exclusive)
+--- 112.45769143104553 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.3919038772583 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.33096194267273 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 3 time
+--- 88.74149346351624 seconds ---
+Updating alpha 4 time
+Finish updating alpha 4 time
+--- 126.10766315460205 seconds ---
+Updating Gamma 4 time
+beta at 0 to 2 (exclusive)
+--- 112.35896706581116 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.29795098304749 seconds ---
+beta at 4 to 6 (exclusive)
+--- 112.45160007476807 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 4 time
+--- 101.24529433250427 seconds ---
+Updating alpha 5 time
+Finish updating alpha 5 time
+--- 131.2216386795044 seconds ---
+Loading image: 100ono_filter.png
+Loading image: 96ono_filter.png
+Loading image: 98ono_filter.png
+Loading image: 99ono_filter.png
+Updating alpha 0 time
+Finish updating alpha 0 time
+--- 113.79621863365173 seconds ---
+Updating Gamma 0 time
+beta at 0 to 2 (exclusive)
+--- 112.2734317779541 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.30124092102051 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 0 time
+--- 86.67427587509155 seconds ---
+Updating alpha 1 time
+Finish updating alpha 1 time
+--- 104.67100620269775 seconds ---
+Updating Gamma 1 time
+beta at 0 to 2 (exclusive)
+--- 112.2851312160492 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.27954125404358 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 1 time
+--- 87.58300256729126 seconds ---
+Updating alpha 2 time
+Finish updating alpha 2 time
+--- 111.02828240394592 seconds ---
+Updating Gamma 2 time
+beta at 0 to 2 (exclusive)
+--- 112.07650136947632 seconds ---
+beta at 2 to 4 (exclusive)
+--- 111.9238293170929 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 2 time
+--- 79.19876766204834 seconds ---
+Updating alpha 3 time
+Finish updating alpha 3 time
+--- 115.31277656555176 seconds ---
+Updating Gamma 3 time
+beta at 0 to 2 (exclusive)
+--- 112.26276683807373 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.28285884857178 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 3 time
+--- 72.73054122924805 seconds ---
+Updating alpha 4 time
+Finish updating alpha 4 time
+--- 104.42193555831909 seconds ---
+Updating Gamma 4 time
+beta at 0 to 2 (exclusive)
+--- 112.34143328666687 seconds ---
+beta at 2 to 4 (exclusive)
+--- 112.33618354797363 seconds ---
+Betas calculated, updating gamma
+Finished Gamma 4 time
+--- 85.93398475646973 seconds ---
+Updating alpha 5 time
+Finish updating alpha 5 time
+--- 119.87404274940491 seconds ---

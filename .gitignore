@@ -4,5 +4,5 @@ latex/*
 outputs/*
 plots/*
 data/*
-complete_workflow/train_output*
+
 .idea/
